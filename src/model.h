@@ -30,7 +30,7 @@ class Figure {
 public:
   virtual ~Figure() {};
   virtual BoundingBox getBoundingBox() const = 0;
-  virtual void translate(Point diff) = 0;
+  virtual void translate(const Point &diff) = 0;
   virtual std::string str() const = 0;
 };
 typedef std::shared_ptr<Figure> PFigure;
