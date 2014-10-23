@@ -47,7 +47,7 @@ namespace figures {
         Point(std::max(a.x, b.x), std::max(a.y, b.y))
       };
     }
-    void translate(Point diff) override {
+    void translate(const Point &diff) override {
       a = a + diff;
       b = b + diff;
     }
@@ -64,7 +64,7 @@ namespace figures {
     BoundingBox getBoundingBox() const override {
       return box;
     }
-    void translate(Point diff) override {
+    void translate(const Point &diff) override {
       box.leftDown += diff;
       box.rightUp += diff;
     }
