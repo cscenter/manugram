@@ -1,7 +1,7 @@
 #ifndef _MODEL_H
 #define _MODEL_H
 
-#include <boost/format.hpp>
+#include <sstream>
 #include <utility>
 #include <string>
 #include <vector>
@@ -17,8 +17,9 @@ struct Point {
   Point& operator+=(const Point &b) { x += b.x; y += b.y; return *this; }
 
   std::string str() const {
-    static boost::format fmter("(%1%, %2%)");
-    return (fmter % x % y).str();
+    std::stringstream res;
+    res << "(" << x << ", " << y << ")";
+    return res.str();
   }
 };
 
@@ -52,8 +53,9 @@ namespace figures {
       b = b + diff;
     }
     std::string str() const override {
-      static boost::format fmter("segment(%1%--%2%)");
-      return (fmter % a.str() % b.str()).str();
+      std::stringstream res;
+      res << "segment(" << a.str() << "--" << b.str() << ")";
+      return res.str();
     }
   private:
     Point a, b;
