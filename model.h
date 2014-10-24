@@ -29,7 +29,7 @@ struct BoundingBox {
 
 class Figure {
 public:
-  virtual ~Figure() {};
+  virtual ~Figure() {}
   virtual BoundingBox getBoundingBox() const = 0;
   virtual void translate(const Point &diff) = 0;
   virtual std::string str() const = 0;
