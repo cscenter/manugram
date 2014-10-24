@@ -1,6 +1,7 @@
 #ifndef _MODEL_H
 #define _MODEL_H
 
+#include <iostream>
 #include <sstream>
 #include <utility>
 #include <string>
@@ -101,5 +102,7 @@ public:
 private:
   std::list<PFigure> _figures;
 };
+
+std::istream& operator>>(std::istream& in , Model &model);
 
 #endif
