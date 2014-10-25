@@ -5,7 +5,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    modelWidget(nullptr)
 {
     ui->setupUi(this);
 }
@@ -17,10 +18,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_buttonLoad_clicked()
 {
-    Model m;
+    if (this->modelWidget) {
+        ui->wrapperLayout->removeWidget(this->modelWidget);
+        delete this->modelWidget;
+    }
+
+    this->modelWidget = new Ui::ModelWidget();
+    ui->wrapperLayout->addWidget(this->modelWidget);
+
     std::cout << "Loading model:\n";
-    std::ifstream("a.model") >> m;
-    for (PFigure f : m) {
+    std::ifstream("a.model") >> this->modelWidget->model;
+    for (PFigure f : this->modelWidget->model) {
       std::cout << f->str() << "\n";
     }
 }
