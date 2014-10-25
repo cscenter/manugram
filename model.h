@@ -58,6 +58,8 @@ namespace figures {
       res << "segment(" << a.str() << "--" << b.str() << ")";
       return res.str();
     }
+    Point getA() const { return a; }
+    Point getB() const { return b; }
   private:
     Point a, b;
   };
