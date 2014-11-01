@@ -12,6 +12,14 @@ std::istream& operator>>(std::istream& in, Model &model) {
       int x1, y1, x2, y2;
       in >> x1 >> y1 >> x2 >> y2;
       model.addFigure(std::make_shared<figures::Segment>(Point(x1, y1), Point(x2, y2)));
+    } else if (type == "rectangle") {
+      int x1, y1, x2, y2;
+      in >> x1 >> y1 >> x2 >> y2;
+      model.addFigure(std::make_shared<figures::Rectangle>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
+    } else if (type == "ellipse") {
+      int x1, y1, x2, y2;
+      in >> x1 >> y1 >> x2 >> y2;
+      model.addFigure(std::make_shared<figures::Ellipse>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
     } else {
       throw std::runtime_error("Invalid model format");
     }
