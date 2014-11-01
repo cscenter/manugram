@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <exception>
 #include <list>
 
 struct Point {
@@ -140,6 +141,11 @@ public:
 
 private:
   std::list<PFigure> _figures;
+};
+
+class model_format_error : std::runtime_error {
+public:
+    model_format_error(const std::string &message) : std::runtime_error("Invalid model format: " + message) {}
 };
 
 std::istream& operator>>(std::istream& in , Model &model);

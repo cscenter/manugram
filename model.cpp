@@ -1,11 +1,10 @@
 #include "model.h"
 #include <string>
-#include <exception>
 
 std::istream& operator>>(std::istream& in, Model &model) {
   int count;
   if (!(in >> count)) {
-    throw std::runtime_error("Invalid model format: unable to read number of figures");
+    throw model_format_error("unable to read number of figures");
   }
   while (count --> 0) {
     std::string type;
@@ -23,7 +22,7 @@ std::istream& operator>>(std::istream& in, Model &model) {
       in >> x1 >> y1 >> x2 >> y2;
       model.addFigure(std::make_shared<figures::Ellipse>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
     } else {
-      throw std::runtime_error("Invalid model format: unknown type: " + type);
+      throw model_format_error("unknown type: '" + type + "'");
     }
   }
   return in;
