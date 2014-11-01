@@ -141,4 +141,13 @@ private:
 
 std::istream& operator>>(std::istream& in , Model &model);
 
+struct Track {
+  std::vector<Point> points;
+
+  bool empty() const { return points.empty(); }
+  size_t size() const { return points.size(); }
+        Point& operator[](size_t id)       { return points[id]; }
+  const Point& operator[](size_t id) const { return points[id]; }
+};
+
 #endif

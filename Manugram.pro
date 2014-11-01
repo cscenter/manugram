@@ -16,11 +16,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
         model.cpp \
-    modelwidget.cpp
+    modelwidget.cpp \
+    recognition.cpp
 
 HEADERS  += mainwindow.h \
             model.h \
     modelwidget.h \
-    figurepainter.h
+    figurepainter.h \
+    recognition.h
 
 FORMS    += mainwindow.ui
