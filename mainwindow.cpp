@@ -26,9 +26,5 @@ void MainWindow::on_buttonLoad_clicked()
     this->modelWidget = new Ui::ModelWidget();
     ui->wrapperLayout->addWidget(this->modelWidget);
 
-    std::cout << "Loading model:\n";
     std::ifstream("a.model") >> this->modelWidget->model;
-    for (PFigure f : this->modelWidget->model) {
-      std::cout << f->str() << "\n";
-    }
 }
