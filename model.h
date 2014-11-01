@@ -28,19 +28,36 @@ struct BoundingBox {
   Point leftDown, rightUp;
 };
 
+class FigureVisitor;
+
 class Figure {
 public:
   virtual ~Figure() {}
   virtual BoundingBox getBoundingBox() const = 0;
   virtual void translate(const Point &diff) = 0;
   virtual std::string str() const = 0;
+  virtual void visit(FigureVisitor&) = 0;
 };
 typedef std::shared_ptr<Figure> PFigure;
 
 namespace figures {
+  class Segment;
+  class BoundedFigure;
+  class Ellipse;
+  class Rectangle;
+}
+class FigureVisitor {
+public:
+  virtual ~FigureVisitor() {}
+  virtual void accept(figures::Segment&) = 0;
+  virtual void accept(figures::Ellipse&) = 0;
+  virtual void accept(figures::Rectangle&) = 0;
+};
+namespace figures {
   class Segment : public Figure {
   public:
     Segment(const Point &_a, const Point &_b) : a(_a), b(_b) {}
+    void visit(FigureVisitor &v) override { v.accept(*this); }
     ~Segment() override {}
 
     BoundingBox getBoundingBox() const override {
@@ -81,6 +98,7 @@ namespace figures {
   class Ellipse : public BoundedFigure {
   public:
     Ellipse(BoundingBox box) : BoundedFigure(box) {}
+    void visit(FigureVisitor &v) override { v.accept(*this); }
     std::string str() const override {
       std::stringstream res;
       res << "ellipse(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
@@ -90,6 +108,7 @@ namespace figures {
   class Rectangle : public BoundedFigure {
   public:
     Rectangle(BoundingBox box) : BoundedFigure(box) {}
+    void visit(FigureVisitor &v) override { v.accept(*this); }
     std::string str() const override {
       std::stringstream res;
       res << "rectangle(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
