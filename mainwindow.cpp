@@ -3,6 +3,7 @@
 #include "model.h"
 #include <fstream>
 #include <QFileDialog>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,16 +30,23 @@ void MainWindow::on_buttonLoad_clicked()
         return;
     }
 
+    std::unique_ptr<Ui::ModelWidget> modelWidget(new Ui::ModelWidget());
+    std::ifstream file(filename.toStdString());
+    try {
+        file >> modelWidget->model;
+    } catch (model_format_error &e) {
+        QMessageBox::critical(this, "Error while opening model", e.what());
+        return;
+    }
+
     if (this->modelWidget) {
         ui->wrapperLayout->removeWidget(this->modelWidget);
         delete this->modelWidget;
     }
 
-    this->modelWidget = new Ui::ModelWidget();
+    this->modelWidget = modelWidget.release();
     ui->wrapperLayout->addWidget(this->modelWidget);
 
-    std::ifstream file(filename.toStdString());
-    file >> this->modelWidget->model;
     ui->buttonSave->setEnabled(true);
 }
 
