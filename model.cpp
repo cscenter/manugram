@@ -21,7 +21,7 @@ std::istream& operator>>(std::istream& in, Model &model) {
       in >> x1 >> y1 >> x2 >> y2;
       model.addFigure(std::make_shared<figures::Ellipse>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
     } else {
-      throw std::runtime_error("Invalid model format");
+      throw std::runtime_error("Invalid model format: unknown type: " + type);
     }
   }
   return in;
