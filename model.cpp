@@ -4,7 +4,9 @@
 
 std::istream& operator>>(std::istream& in, Model &model) {
   int count;
-  in >> count;
+  if (!(in >> count)) {
+    throw std::runtime_error("Invalid model format: unable to read number of figures");
+  }
   while (count --> 0) {
     std::string type;
     in >> type;
