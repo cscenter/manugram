@@ -28,3 +28,50 @@ std::istream& operator>>(std::istream& in, Model &model) {
   }
   return in;
 }
+
+class FigurePrinter : public FigureVisitor
+{
+public:
+    FigurePrinter(std::ostream &out) : out(out) {}
+    virtual ~FigurePrinter() {}
+
+    virtual void accept(figures::Segment &segm) {
+        out << "segment ";
+        printPoint(segm.getA());
+        out << " ";
+        printPoint(segm.getB());
+        out << "\n";
+    }
+
+    virtual void accept(figures::Ellipse &fig) {
+        out << "ellipse ";
+        printBoundingBox(fig.getBoundingBox());
+        out << "\n";
+    }
+
+    virtual void accept(figures::Rectangle &fig) {
+        out << "rectangle ";
+        printBoundingBox(fig.getBoundingBox());
+        out << "\n";
+    }
+
+private:
+    std::ostream &out;
+    void printPoint(const Point &p) {
+        out << p.x << " " << p.y;
+    }
+    void printBoundingBox(const BoundingBox &box) {
+        printPoint(box.leftDown);
+        out << " ";
+        printPoint(box.rightUp);
+    }
+};
+
+std::ostream& operator<<(std::ostream& out, Model &model) {
+  out << model.size() << '\n';
+  FigurePrinter printer(out);
+  for (PFigure figure : model) {
+    figure->visit(printer);
+  }
+  return out;
+}

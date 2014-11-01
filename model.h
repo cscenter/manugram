@@ -134,12 +134,16 @@ public:
   void removeFigure(iterator it) {
     _figures.erase(it);
   }
+  size_t size() const {
+    return _figures.size();
+  }
 
 private:
   std::list<PFigure> _figures;
 };
 
 std::istream& operator>>(std::istream& in , Model &model);
+std::ostream& operator<<(std::ostream& in , Model &model);
 
 struct Track {
   std::vector<Point> points;
