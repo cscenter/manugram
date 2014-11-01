@@ -66,6 +66,7 @@ namespace figures {
 
   class BoundedFigure : public Figure {
   public:
+    BoundedFigure(BoundingBox box) : box(box) {}
     BoundingBox getBoundingBox() const override {
       return box;
     }
@@ -78,8 +79,22 @@ namespace figures {
   };
 
   class Ellipse : public BoundedFigure {
+  public:
+    Ellipse(BoundingBox box) : BoundedFigure(box) {}
+    std::string str() const override {
+      std::stringstream res;
+      res << "ellipse(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
+      return res.str();
+    }
   };
   class Rectangle : public BoundedFigure {
+  public:
+    Rectangle(BoundingBox box) : BoundedFigure(box) {}
+    std::string str() const override {
+      std::stringstream res;
+      res << "rectangle(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
+      return res.str();
+    }
   };
 } // namespace figures
 
