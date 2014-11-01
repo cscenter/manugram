@@ -28,7 +28,6 @@ public:
         painter.drawRect(rect);
     }
 
-protected:
     QPoint scale(Point p) {
         return QPoint(p.x, p.y);
     }
