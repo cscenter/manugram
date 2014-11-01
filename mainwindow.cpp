@@ -38,4 +38,20 @@ void MainWindow::on_buttonLoad_clicked()
     }
     std::ifstream file(filename.toStdString());
     file >> this->modelWidget->model;
+    ui->buttonSave->setEnabled(true);
+}
+
+void MainWindow::on_buttonSave_clicked()
+{
+    QString filename = QFileDialog::getSaveFileName(
+                this,
+                "Select file to save in",
+                QDir::currentPath(),
+                "Models (*.model)"
+                );
+    if (filename == "") {
+        return;
+    }
+    std::ofstream file(filename.toStdString());
+    file << this->modelWidget->model;
 }

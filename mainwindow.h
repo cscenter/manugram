@@ -22,6 +22,7 @@ private:
 
 private slots:
     void on_buttonLoad_clicked();
+    void on_buttonSave_clicked();
 };
 
 #endif // MAINWINDOW_H
