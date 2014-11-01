@@ -20,6 +20,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
             model.h \
-    modelwidget.h
+    modelwidget.h \
+    figurepainter.h
 
 FORMS    += mainwindow.ui
