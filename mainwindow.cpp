@@ -19,14 +19,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_buttonLoad_clicked()
 {
-    if (this->modelWidget) {
-        ui->wrapperLayout->removeWidget(this->modelWidget);
-        delete this->modelWidget;
-    }
-
-    this->modelWidget = new Ui::ModelWidget();
-    ui->wrapperLayout->addWidget(this->modelWidget);
-
     QString filename = QFileDialog::getOpenFileName(
                 this,
                 "Select file with a model",
@@ -36,6 +28,15 @@ void MainWindow::on_buttonLoad_clicked()
     if (filename == "") {
         return;
     }
+
+    if (this->modelWidget) {
+        ui->wrapperLayout->removeWidget(this->modelWidget);
+        delete this->modelWidget;
+    }
+
+    this->modelWidget = new Ui::ModelWidget();
+    ui->wrapperLayout->addWidget(this->modelWidget);
+
     std::ifstream file(filename.toStdString());
     file >> this->modelWidget->model;
     ui->buttonSave->setEnabled(true);
