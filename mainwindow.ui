@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Load from a.model</string>
+     <string>Load model</string>
     </property>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget">
