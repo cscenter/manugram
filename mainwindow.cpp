@@ -18,7 +18,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_buttonLoad_clicked()
+void MainWindow::on_actionOpen_triggered()
 {
     QString filename = QFileDialog::getOpenFileName(
                 this,
@@ -47,10 +47,10 @@ void MainWindow::on_buttonLoad_clicked()
     this->modelWidget = modelWidget.release();
     ui->wrapperLayout->addWidget(this->modelWidget);
 
-    ui->buttonSave->setEnabled(true);
+    ui->actionSaveAs->setEnabled(true);
 }
 
-void MainWindow::on_buttonSave_clicked()
+void MainWindow::on_actionSaveAs_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(
                 this,

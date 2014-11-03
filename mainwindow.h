@@ -21,8 +21,8 @@ private:
     Ui::ModelWidget *modelWidget;
 
 private slots:
-    void on_buttonLoad_clicked();
-    void on_buttonSave_clicked();
+    void on_actionOpen_triggered();
+    void on_actionSaveAs_triggered();
 };
 
 #endif // MAINWINDOW_H
