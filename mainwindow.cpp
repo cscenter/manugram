@@ -18,6 +18,21 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+void MainWindow::on_actionNew_triggered() {
+    setModelWidget(new Ui::ModelWidget());
+}
+
+void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
+    if (this->modelWidget) {
+        ui->wrapperFrame->layout()->removeWidget(this->modelWidget);
+        delete this->modelWidget;
+    }
+
+    this->modelWidget = newWidget;
+    ui->wrapperFrame->layout()->addWidget(this->modelWidget);
+    ui->actionSaveAs->setEnabled(true);
+}
+
 void MainWindow::on_actionOpen_triggered() {
     QString filename = QFileDialog::getOpenFileName(
                            this,
@@ -38,15 +53,7 @@ void MainWindow::on_actionOpen_triggered() {
         return;
     }
 
-    if (this->modelWidget) {
-        ui->wrapperFrame->layout()->removeWidget(this->modelWidget);
-        delete this->modelWidget;
-    }
-
-    this->modelWidget = modelWidget.release();
-    ui->wrapperFrame->layout()->addWidget(this->modelWidget);
-
-    ui->actionSaveAs->setEnabled(true);
+    setModelWidget(modelWidget.release());
 }
 
 void MainWindow::on_actionSaveAs_triggered() {

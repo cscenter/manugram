@@ -19,9 +19,12 @@ private:
     Ui::MainWindow *ui;
     Ui::ModelWidget *modelWidget;
 
+    void setModelWidget(Ui::ModelWidget *widget);
+
 private slots:
     void on_actionOpen_triggered();
     void on_actionSaveAs_triggered();
+    void on_actionNew_triggered();
 };
 
 #endif // MAINWINDOW_H
