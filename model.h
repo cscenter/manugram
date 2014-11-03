@@ -1,5 +1,5 @@
-#ifndef _MODEL_H
-#define _MODEL_H
+#ifndef MODEL_H
+#define MODEL_H
 
 #include <iostream>
 #include <sstream>
@@ -162,4 +162,4 @@ struct Track {
   const Point& operator[](size_t id) const { return points[id]; }
 };
 
-#endif
+#endif // MODEL_H
