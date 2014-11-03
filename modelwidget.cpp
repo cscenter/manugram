@@ -8,11 +8,10 @@
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
-    QWidget(parent)
-{
+    QWidget(parent) {
 }
 
-void Ui::ModelWidget::paintEvent(QPaintEvent*) {
+void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
     painter.fillRect(QRect(QPoint(), size()), Qt::white);
     painter.setPen(Qt::black);

@@ -4,8 +4,7 @@
 #include "model.h"
 #include <QPainter>
 
-class FigurePainter : public FigureVisitor
-{
+class FigurePainter : public FigureVisitor {
 public:
     FigurePainter(QPainter &painter) : painter(painter) {}
     virtual ~FigurePainter() {}
@@ -17,14 +16,14 @@ public:
     virtual void accept(figures::Ellipse &fig) {
         QRect rect(scale(fig.getBoundingBox().leftDown),
                    scale(fig.getBoundingBox().rightUp)
-                   );
+                  );
         painter.drawEllipse(rect);
     }
 
     virtual void accept(figures::Rectangle &fig) {
         QRect rect(scale(fig.getBoundingBox().leftDown),
                    scale(fig.getBoundingBox().rightUp)
-                   );
+                  );
         painter.drawRect(rect);
     }
 

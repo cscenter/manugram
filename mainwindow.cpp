@@ -9,23 +9,22 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     modelWidget(nullptr)
+
 {
     ui->setupUi(this);
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::on_actionOpen_triggered()
-{
+void MainWindow::on_actionOpen_triggered() {
     QString filename = QFileDialog::getOpenFileName(
-                this,
-                "Select file with a model",
-                QDir::currentPath(),
-                "Models (*.model)"
-                );
+                           this,
+                           "Select file with a model",
+                           QDir::currentPath(),
+                           "Models (*.model)"
+                       );
     if (filename == "") {
         return;
     }
@@ -50,14 +49,13 @@ void MainWindow::on_actionOpen_triggered()
     ui->actionSaveAs->setEnabled(true);
 }
 
-void MainWindow::on_actionSaveAs_triggered()
-{
+void MainWindow::on_actionSaveAs_triggered() {
     QString filename = QFileDialog::getSaveFileName(
-                this,
-                "Select file to save in",
-                QDir::currentPath(),
-                "Models (*.model)"
-                );
+                           this,
+                           "Select file to save in",
+                           QDir::currentPath(),
+                           "Models (*.model)"
+                       );
     if (filename == "") {
         return;
     }

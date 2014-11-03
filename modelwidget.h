@@ -5,8 +5,7 @@
 #include "model.h"
 
 namespace Ui {
-class ModelWidget : public QWidget
-{
+class ModelWidget : public QWidget {
     Q_OBJECT
 public:
     explicit ModelWidget(QWidget *parent = 0);
