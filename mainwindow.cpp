@@ -39,12 +39,12 @@ void MainWindow::on_actionOpen_triggered() {
     }
 
     if (this->modelWidget) {
-        ui->wrapperLayout->removeWidget(this->modelWidget);
+        ui->wrapperFrame->layout()->removeWidget(this->modelWidget);
         delete this->modelWidget;
     }
 
     this->modelWidget = modelWidget.release();
-    ui->wrapperLayout->addWidget(this->modelWidget);
+    ui->wrapperFrame->layout()->addWidget(this->modelWidget);
 
     ui->actionSaveAs->setEnabled(true);
 }
