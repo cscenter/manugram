@@ -84,9 +84,6 @@
    </property>
   </action>
   <action name="actionSaveAs">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>&amp;Save as</string>
    </property>

@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 {
     ui->setupUi(this);
+    setModelWidget(new Ui::ModelWidget());
 }
 
 MainWindow::~MainWindow() {
@@ -30,7 +31,6 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
 
     this->modelWidget = newWidget;
     ui->wrapperFrame->layout()->addWidget(this->modelWidget);
-    ui->actionSaveAs->setEnabled(true);
 }
 
 void MainWindow::on_actionOpen_triggered() {
