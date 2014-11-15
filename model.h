@@ -10,6 +10,8 @@
 #include <memory>
 #include <stdexcept>
 #include <list>
+#include <cmath>
+#include <cassert>
 
 struct Point {
     double x, y;
@@ -17,12 +19,18 @@ struct Point {
     Point() : x(0), y(0) {}
     Point(double _x, double _y) : x(_x), y(_y) {}
     Point operator+(const Point &b) const { return {x + b.x, y + b.y }; }
+    Point operator-(const Point &b) const { return {x - b.x, y - b.y }; }
     Point &operator+=(const Point &b) { x += b.x; y += b.y; return *this; }
+    double lengthSquared() const { return x * x + y * y; }
+    double length() const { return sqrt(lengthSquared()); }
 
     std::string str() const {
         std::stringstream res;
         res << "(" << x << ", " << y << ")";
         return res.str();
+    }
+    static double dotProduct(const Point &a, const Point &b) {
+        return a.x * b.x + a.y * b.y;
     }
 };
 
@@ -39,6 +47,7 @@ public:
     virtual void translate(const Point &diff) = 0;
     virtual std::string str() const = 0;
     virtual void visit(FigureVisitor &) = 0;
+    virtual double getDistanceToBorder(const Point &p) = 0;
 };
 typedef std::shared_ptr<Figure> PFigure;
 
@@ -79,8 +88,34 @@ public:
     }
     Point getA() const { return a; }
     Point getB() const { return b; }
+
+    double getDistanceToBorder(const Point &p) override {
+        double res = std::min((p - a).length(), (p - b).length());
+        // Please note that here we do not care about floatint-point error,
+        // as if 'start' falls near 'a' or 'b', we've already calculated it
+        if (   Point::dotProduct(p - a, b - a) >= 0
+            && Point::dotProduct(p - b, a - b) >= 0) {
+            res = std::min(res, getDistanceToLine(p));
+        }
+        return res;
+    }
+
 private:
     Point a, b;
+
+    double getDistanceToLine(const Point &p) {
+        // Coefficients of A*x + B*y + C = 0
+        double A = b.y - a.y;
+        double B = a.x - b.x;
+        double C = -A * a.x - B * a.y;
+
+        // normalization of the equation
+        double D = sqrt(A * A + B * B);
+        if (fabs(D) < 1e-8) return HUGE_VAL; // degenerate case
+
+        A /= D; B /= D; C /= D;
+        return fabs(A * p.x + B * p.y + C);
+    }
 };
 
 class BoundedFigure : public Figure {
@@ -106,6 +141,9 @@ public:
         res << "ellipse(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
         return res.str();
     }
+    double getDistanceToBorder(const Point &p) override {
+        assert(!"getDistanceToBorder for Ellipse is not implemented yet");
+    }
 };
 class Rectangle : public BoundedFigure {
 public:
@@ -115,6 +153,9 @@ public:
         std::stringstream res;
         res << "rectangle(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
         return res.str();
+    }
+    double getDistanceToBorder(const Point &p) override {
+        assert(!"getDistanceToBorder for Rectangle is not implemented yet");
     }
 };
 } // namespace figures
