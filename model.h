@@ -134,7 +134,7 @@ public:
         box.leftDown += diff;
         box.rightUp += diff;
     }
-private:
+protected:
     BoundingBox box;
 };
 
@@ -161,7 +161,24 @@ public:
         return res.str();
     }
     double getDistanceToBorder(const Point &p) override {
-        assert(!"getDistanceToBorder for Rectangle is not implemented yet");
+        bool inX = box.leftDown.x <= p.x && p.x <= box.rightUp.x;
+        bool inY = box.leftDown.y <= p.y && p.y <= box.rightUp.y;
+        double res = HUGE_VAL;
+        if (inX) { // Point lies in a vertical bar bounded by Left and Right
+            res = std::min(res, fabs(p.y - box.leftDown.y));
+            res = std::min(res, fabs(p.y - box.rightUp.y));
+        }
+        if (inY) { // Point lies in a horizontal bar
+            res = std::min(res, fabs(p.x - box.leftDown.x));
+            res = std::min(res, fabs(p.x - box.rightUp.x));
+        }
+        if (!inX && !inY) {
+            res = std::min(res, (p - box.leftDown).length());
+            res = std::min(res, (p - box.rightUp).length());
+            res = std::min(res, (p - box.leftUp()).length());
+            res = std::min(res, (p - box.rightDown()).length());
+        }
+        return res;
     }
 };
 } // namespace figures
