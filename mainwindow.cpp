@@ -31,6 +31,7 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
 
     this->modelWidget = newWidget;
     ui->wrapperFrame->layout()->addWidget(this->modelWidget);
+    ui->actionSaveAs->setEnabled(true);
 }
 
 void MainWindow::on_actionOpen_triggered() {
