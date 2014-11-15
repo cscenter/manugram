@@ -147,8 +147,9 @@ public:
         res << "ellipse(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
         return res.str();
     }
-    double getDistanceToBorder(const Point &p) override {
+    double getDistanceToBorder(const Point &) override {
         assert(!"getDistanceToBorder for Ellipse is not implemented yet");
+        return 0;
     }
 };
 class Rectangle : public BoundedFigure {
