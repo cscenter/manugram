@@ -36,6 +36,12 @@ struct Point {
 
 struct BoundingBox {
     Point leftDown, rightUp;
+    Point rightDown() const {
+        return Point(rightUp.x, leftDown.y);
+    }
+    Point leftUp() const {
+        return Point(leftDown.x, rightUp.y);
+    }
 };
 
 class FigureVisitor;
