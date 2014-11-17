@@ -58,7 +58,7 @@ void recognize(const Track &track, Model &model) {
     using namespace figures;
     if (!isClosed(track))  {
         PFigure figure = make_shared<Segment>(track[0], track[track.size() - 1]);
-        if (fitsToTrack(track, figure)) model.addFigure(figure);
+        if (fitsToTrack(track, figure)) { model.addFigure(figure); }
     } else {
         model.addFigure(make_shared<Rectangle>(getBoundingBox(track)));
     }

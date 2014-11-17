@@ -99,8 +99,8 @@ public:
         double res = std::min((p - a).length(), (p - b).length());
         // Please note that here we do not care about floatint-point error,
         // as if 'start' falls near 'a' or 'b', we've already calculated it
-        if (   Point::dotProduct(p - a, b - a) >= 0
-            && Point::dotProduct(p - b, a - b) >= 0) {
+        if (Point::dotProduct(p - a, b - a) >= 0
+                && Point::dotProduct(p - b, a - b) >= 0) {
             res = std::min(res, getDistanceToLine(p));
         }
         return res;
@@ -117,7 +117,7 @@ private:
 
         // normalization of the equation
         double D = sqrt(A * A + B * B);
-        if (fabs(D) < 1e-8) return HUGE_VAL; // degenerate case
+        if (fabs(D) < 1e-8) { return HUGE_VAL; } // degenerate case
 
         A /= D; B /= D; C /= D;
         return fabs(A * p.x + B * p.y + C);
