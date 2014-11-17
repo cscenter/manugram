@@ -63,6 +63,7 @@ class BoundedFigure;
 class Ellipse;
 class Rectangle;
 }
+
 class FigureVisitor {
 public:
     virtual ~FigureVisitor() {}
@@ -70,12 +71,16 @@ public:
     virtual void accept(figures::Ellipse &) = 0;
     virtual void accept(figures::Rectangle &) = 0;
 };
+
 namespace figures {
 class Segment : public Figure {
 public:
     Segment(const Point &_a, const Point &_b) : a(_a), b(_b) {}
     void visit(FigureVisitor &v) override { v.accept(*this); }
     ~Segment() override {}
+
+    Point getA() const { return a; }
+    Point getB() const { return b; }
 
     BoundingBox getBoundingBox() const override {
         return {
@@ -84,16 +89,14 @@ public:
         };
     }
     void translate(const Point &diff) override {
-        a = a + diff;
-        b = b + diff;
+        a += diff;
+        b += diff;
     }
     std::string str() const override {
         std::stringstream res;
         res << "segment(" << a.str() << "--" << b.str() << ")";
         return res.str();
     }
-    Point getA() const { return a; }
-    Point getB() const { return b; }
 
     double getDistanceToBorder(const Point &p) override;
 
