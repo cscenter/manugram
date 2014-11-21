@@ -32,14 +32,12 @@ double getClosedCircumference(const Track &track) {
 }
 
 bool isClosed(const Track &track) {
-    return getCircumference(track) / getClosedCircumference(track) >= 0.8;
+    return (track[0] - track[track.size() - 1]).length() <= 10;
 }
 
 bool fitsToTrack(const Track &track, const PFigure &figure) {
-    double length = getCircumference(track);
-
-    // Point should fall nearer than 1/10 of circumference of the figure
-    double maxDistance = length * 0.1;
+    // Point should fall nearer than 10 pixels
+    double maxDistance = 10;
 
     int goodCount = 0;
     for (Point p : track.points) {
@@ -56,10 +54,13 @@ void recognize(const Track &track, Model &model) {
     if (getClosedCircumference(track) < 10) { return; }
 
     using namespace figures;
+    PFigure figure;
     if (!isClosed(track))  {
-        PFigure figure = make_shared<Segment>(track[0], track[track.size() - 1]);
-        if (fitsToTrack(track, figure)) { model.addFigure(figure); }
+        figure = make_shared<Segment>(track[0], track[track.size() - 1]);
     } else {
-        model.addFigure(make_shared<Rectangle>(getBoundingBox(track)));
+        figure = make_shared<Rectangle>(getBoundingBox(track));
+    }
+    if (figure && fitsToTrack(track, figure)) {
+        model.addFigure(figure);
     }
 }
