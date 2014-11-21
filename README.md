@@ -3,11 +3,15 @@ manugram
 
 Computer Science Center, fall 2014, practice
 
-== Building ==
+Building
+========
+
 Developed for Qt5, may work under Qt4. Just run qmake (standard `CONFIG+=debug` and `CONFIG+=release` work)
 followed by make and you'll get an executable.
 
-== Testing ==
+Testing
+=======
+
 Tests are located in `tests.cpp` and are built in the same project. Just add `CONFIG+=tests`
 (you may want it with `CONFIG+=debug` too) and run qmake followed by make.
 
