@@ -14,11 +14,19 @@ TARGET = Manugram
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
+SOURCES += \
         mainwindow.cpp \
         model.cpp \
     modelwidget.cpp \
     recognition.cpp
+
+CONFIG(tests) {
+    QT += testlib
+    CONFIG += testlib
+    SOURCES += tests.cpp
+} else {
+    SOURCES += main.cpp
+}
 
 HEADERS  += mainwindow.h \
             model.h \

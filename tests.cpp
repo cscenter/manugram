@@ -20,4 +20,5 @@ private slots:
     }
 };
 
-//QTEST_MAIN(TestFiguresDistances)
+QTEST_MAIN(TestFiguresDistances)
+#include "tests.moc"
