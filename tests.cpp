@@ -42,6 +42,21 @@ private slots:
         QVERIFY(fabs(r.getApproximateDistanceToBorder(Point(16, 5)) - sqrt(5)) < EPS);
         QVERIFY(fabs(r.getApproximateDistanceToBorder(Point(16, 0)) - sqrt(5)) < EPS);
     }
+    void testDistanceToEllipseBorder() {
+        const double EPS = 1e-8;
+        Ellipse e({ Point(11, 1), Point(17, 5) });
+        QVERIFY(e.getApproximateDistanceToBorder(Point(11, 1)) <= sqrt(9 + 4) + EPS);
+        QVERIFY(e.getApproximateDistanceToBorder(Point(11, 3)) <= EPS);
+        QVERIFY(e.getApproximateDistanceToBorder(Point(17, 3)) <= EPS);
+        QVERIFY(e.getApproximateDistanceToBorder(Point(14, 1)) <= EPS);
+        QVERIFY(e.getApproximateDistanceToBorder(Point(14, 5)) <= EPS);
+        QVERIFY(e.getApproximateDistanceToBorder(Point(10, 3)) >= 1 - EPS);
+        QVERIFY(e.getApproximateDistanceToBorder(Point(14, 0)) >= 1 - EPS);
+        QVERIFY(fabs(e.getApproximateDistanceToBorder(Point(14, 3)) - 2) < EPS);
+
+        Ellipse e2({ Point(11, 1), Point(15, 7) });
+        QVERIFY(fabs(e2.getApproximateDistanceToBorder(Point(13, 4)) - 2) < EPS);
+    }
 };
 
 QTEST_MAIN(TestFiguresDistances)

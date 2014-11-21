@@ -1,5 +1,6 @@
 #include "model.h"
 #include <string>
+#include <algorithm>
 
 double figures::Segment::getApproximateDistanceToBorder(const Point &p) {
     double res = std::min((p - a).length(), (p - b).length());
@@ -45,6 +46,19 @@ double figures::Rectangle::getApproximateDistanceToBorder(const Point &p) {
         res = std::min(res, (p - box.rightDown()).length());
     }
     return res;
+}
+
+double figures::Ellipse::getApproximateDistanceToBorder(const Point &_p) {
+    Point p = _p - box.center();
+    if (p.length() < 1e-7) { return std::min(box.width(), box.height()) / 2; }
+    double a = box.width() / 2;
+    double b = box.height() / 2;
+    Point near = p;
+    near.x /= a; near.y /= b;
+    double d = near.length();
+    near.x /= d; near.y /= d;
+    near.x *= a; near.y *= b;
+    return (p - near).length();
 }
 
 std::istream &operator>>(std::istream &in, Model &model) {
