@@ -1,6 +1,7 @@
 #include "model.h"
 #include <memory>
 #include <algorithm>
+#include <vector>
 
 using std::min;
 using std::max;
@@ -37,15 +38,17 @@ bool isClosed(const Track &track) {
 
 bool fitsToTrack(const Track &track, const PFigure &figure) {
     // Point should fall nearer than 10 pixels
+    BoundingBox box = getBoundingBox(track);
     double maxDistance = 10;
+    maxDistance = std::min(maxDistance, std::min(box.width(), box.height()) * 0.2);
 
     int goodCount = 0;
     for (Point p : track.points) {
         goodCount += figure->getApproximateDistanceToBorder(p) <= maxDistance;
     }
 
-    // At least 90% of points fall nearer than 'maxDistance'
-    return goodCount * 100 / track.size() >= 90;
+    // At least 95% of points fall nearer than 'maxDistance'
+    return goodCount * 100 / track.size() >= 95;
 }
 
 void recognize(const Track &track, Model &model) {
@@ -65,13 +68,16 @@ void recognize(const Track &track, Model &model) {
     if (getClosedCircumference(track) < 10) { return; }
 
     using namespace figures;
-    PFigure figure;
+    std::vector<PFigure> candidates;
     if (!isClosed(track))  {
-        figure = make_shared<Segment>(track[0], track[track.size() - 1]);
+        candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
     } else {
-        figure = make_shared<Rectangle>(getBoundingBox(track));
+        candidates.push_back(make_shared<Ellipse>(getBoundingBox(track)));
+        candidates.push_back(make_shared<Rectangle>(getBoundingBox(track)));
     }
-    if (figure && fitsToTrack(track, figure)) {
-        model.addFigure(figure);
-    }
+    for (PFigure figure : candidates)
+        if (fitsToTrack(track, figure)) {
+            model.addFigure(figure);
+            break;
+        }
 }
