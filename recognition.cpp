@@ -51,6 +51,17 @@ bool fitsToTrack(const Track &track, const PFigure &figure) {
 void recognize(const Track &track, Model &model) {
     if (track.empty()) { return; }
 
+    // Moving
+    for (PFigure figure : model) {
+        if (figure->getDistanceToBorder(track[0]) < 10) { // grabbed
+            figure->translate(track[track.size() - 1] - track[0]);
+            return;
+        }
+    }
+
+    // Drawing new figures
+
+    // Ignore very small tracks
     if (getClosedCircumference(track) < 10) { return; }
 
     using namespace figures;
