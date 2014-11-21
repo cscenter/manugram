@@ -1,7 +1,7 @@
 #include "model.h"
 #include <string>
 
-double figures::Segment::getDistanceToBorder(const Point &p) {
+double figures::Segment::getApproximateDistanceToBorder(const Point &p) {
     double res = std::min((p - a).length(), (p - b).length());
     // Please note that here we do not care about floatint-point error,
     // as if 'start' falls near 'a' or 'b', we've already calculated it
@@ -26,7 +26,7 @@ double figures::Segment::getDistanceToLine(const Point &p) {
     return fabs(A * p.x + B * p.y + C);
 }
 
-double figures::Rectangle::getDistanceToBorder(const Point &p) {
+double figures::Rectangle::getApproximateDistanceToBorder(const Point &p) {
     bool inX = box.leftDown.x <= p.x && p.x <= box.rightUp.x;
     bool inY = box.leftDown.y <= p.y && p.y <= box.rightUp.y;
     double res = HUGE_VAL;

@@ -41,7 +41,7 @@ bool fitsToTrack(const Track &track, const PFigure &figure) {
 
     int goodCount = 0;
     for (Point p : track.points) {
-        goodCount += figure->getDistanceToBorder(p) <= maxDistance;
+        goodCount += figure->getApproximateDistanceToBorder(p) <= maxDistance;
     }
 
     // At least 90% of points fall nearer than 'maxDistance'
@@ -53,7 +53,7 @@ void recognize(const Track &track, Model &model) {
 
     // Moving
     for (PFigure figure : model) {
-        if (figure->getDistanceToBorder(track[0]) < 10) { // grabbed
+        if (figure->getApproximateDistanceToBorder(track[0]) < 10) { // grabbed
             figure->translate(track[track.size() - 1] - track[0]);
             return;
         }

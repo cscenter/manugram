@@ -51,7 +51,7 @@ public:
     virtual void translate(const Point &diff) = 0;
     virtual std::string str() const = 0;
     virtual void visit(FigureVisitor &) = 0;
-    virtual double getDistanceToBorder(const Point &p) = 0;
+    virtual double getApproximateDistanceToBorder(const Point &p) = 0;
 };
 typedef std::shared_ptr<Figure> PFigure;
 
@@ -96,7 +96,7 @@ public:
         return res.str();
     }
 
-    double getDistanceToBorder(const Point &p) override;
+    double getApproximateDistanceToBorder(const Point &p) override;
 
 private:
     Point a, b;
@@ -127,8 +127,8 @@ public:
         res << "ellipse(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
         return res.str();
     }
-    double getDistanceToBorder(const Point &) override {
-        assert(!"getDistanceToBorder for Ellipse is not implemented yet");
+    double getApproximateDistanceToBorder(const Point &) override {
+        assert(!"getApproximateDistanceToBorder for Ellipse is not implemented yet");
         return 0;
     }
 };
@@ -141,7 +141,7 @@ public:
         res << "rectangle(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
         return res.str();
     }
-    double getDistanceToBorder(const Point &p) override;
+    double getApproximateDistanceToBorder(const Point &p) override;
 };
 } // namespace figures
 
