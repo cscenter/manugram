@@ -20,6 +20,7 @@ struct Point {
     Point(double _x, double _y) : x(_x), y(_y) {}
     Point operator+(const Point &b) const { return {x + b.x, y + b.y }; }
     Point operator-(const Point &b) const { return {x - b.x, y - b.y }; }
+    Point operator*(const double &b) const { return {x * b, y * b}; }
     Point &operator+=(const Point &b) { x += b.x; y += b.y; return *this; }
     double lengthSquared() const { return x * x + y * y; }
     double length() const { return sqrt(lengthSquared()); }
@@ -38,6 +39,7 @@ struct BoundingBox {
     Point leftDown, rightUp;
     Point rightDown() const { return Point(rightUp.x, leftDown.y); }
     Point leftUp() const    { return Point(leftDown.x, rightUp.y); }
+    Point center()  const { return (leftDown + rightUp) * 0.5; }
     double width () const { return rightUp.x - leftDown.x; }
     double height() const { return rightUp.y - leftDown.y; }
 };
