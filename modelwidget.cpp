@@ -21,7 +21,9 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
         fig->visit(fpainter);
     }
 
-    painter.setPen(Qt::red);
+    QPen pen(QColor(255, 0, 0, 64));
+    pen.setWidth(3);
+    painter.setPen(pen);
     for (size_t i = 0; i + 1 < lastTrack.size(); i++) {
         painter.drawLine(fpainter.scale(lastTrack[i]), fpainter.scale(lastTrack[i + 1]));
     }
