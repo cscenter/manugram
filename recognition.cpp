@@ -51,15 +51,24 @@ bool fitsToTrack(const Track &track, const PFigure &figure) {
     return goodCount * 100 / track.size() >= 95;
 }
 
+using namespace figures;
+
+bool recognizeMove(const Track &track, Model &model) {
+    for (PFigure figure : model) {
+        if (figure->getApproximateDistanceToBorder(track[0]) < 10) { // grabbed
+            figure->translate(track[track.size() - 1] - track[0]);
+            return true;
+        }
+    }
+    return false;
+}
+
 void recognize(const Track &track, Model &model) {
     if (track.empty()) { return; }
 
     // Moving
-    for (PFigure figure : model) {
-        if (figure->getApproximateDistanceToBorder(track[0]) < 10) { // grabbed
-            figure->translate(track[track.size() - 1] - track[0]);
-            return;
-        }
+    if (recognizeMove(track, model)) {
+        return;
     }
 
     // Drawing new figures
@@ -67,7 +76,6 @@ void recognize(const Track &track, Model &model) {
     // Ignore very small tracks
     if (getClosedCircumference(track) < 10) { return; }
 
-    using namespace figures;
     std::vector<PFigure> candidates;
     if (!isClosed(track))  {
         candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
