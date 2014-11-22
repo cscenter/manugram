@@ -60,6 +60,7 @@ typedef std::shared_ptr<Figure> PFigure;
 
 namespace figures {
 class Segment;
+class SegmentConnection;
 class BoundedFigure;
 class Ellipse;
 class Rectangle;
@@ -70,6 +71,7 @@ class FigureVisitor {
 public:
     virtual ~FigureVisitor() {}
     virtual void accept(figures::Segment &) = 0;
+    virtual void accept(figures::SegmentConnection &) = 0;
     virtual void accept(figures::Ellipse &) = 0;
     virtual void accept(figures::Rectangle &) = 0;
 };
@@ -128,6 +130,7 @@ public:
             : figA(_figA), figB(_figB) {
         recalculate();
     }
+    void visit(FigureVisitor &v) override { v.accept(*this); }
     void recalculate() override {
         a = figA->getBoundingBox().center();
         b = figB->getBoundingBox().center();
