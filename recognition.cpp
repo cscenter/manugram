@@ -80,6 +80,21 @@ bool recognizeGrabs(const Track &track, Model &model) {
     return false;
 }
 
+void squareBoundedFigure(PBoundedFigure figure) {
+    BoundingBox box = figure->getBoundingBox();
+    double siz1 = box.width();
+    double siz2 = box.height();
+    if (siz1 > siz2) {
+        std::swap(siz1, siz2);
+    }
+    std::cout << "bounded size=" << siz1 << ";" << siz2 << "; k=" << (siz1 / siz2) << "\n";
+    if (siz1 /siz2 < 0.8) return;
+
+    double siz = (siz1 + siz2) / 2;
+    box.rightUp = box.leftDown + Point(siz, siz);
+    figure->setBoundingBox(box);
+}
+
 void recognize(const Track &track, Model &model) {
     if (track.empty()) { return; }
 
@@ -110,6 +125,10 @@ void recognize(const Track &track, Model &model) {
     int id = max_element(fits.begin(), fits.end()) - fits.begin();
     std::cout << "max_fit = " << fits[id] << "; id = " << id << "\n";
     if (fits[id] >= 0.85) { // we allow 5% of points to fall out of our track
+        auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(candidates[id]);
+        if (boundedFigure) {
+            squareBoundedFigure(boundedFigure);
+        }
         model.addFigure(candidates[id]);
     }
 }
