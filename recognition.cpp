@@ -37,7 +37,7 @@ bool isClosed(const Track &track) {
     return (track[0] - track[track.size() - 1]).length() <= 10;
 }
 
-bool fitsToTrack(const Track &track, const PFigure &figure) {
+double fitsToTrack(const Track &track, const PFigure &figure) {
     // Point should fall nearer than 10 pixels
     BoundingBox box = getBoundingBox(track);
     double maxDistance = 10;
@@ -48,8 +48,7 @@ bool fitsToTrack(const Track &track, const PFigure &figure) {
         goodCount += figure->getApproximateDistanceToBorder(p) <= maxDistance;
     }
 
-    // At least 100% of points fall nearer than 'maxDistance'
-    return goodCount * 100 / track.size() >= 100;
+    return goodCount * 1.0 / track.size();
 }
 
 using namespace figures;
@@ -101,9 +100,16 @@ void recognize(const Track &track, Model &model) {
         candidates.push_back(make_shared<Ellipse>(getBoundingBox(track)));
         candidates.push_back(make_shared<Rectangle>(getBoundingBox(track)));
     }
-    for (PFigure figure : candidates)
-        if (fitsToTrack(track, figure)) {
-            model.addFigure(figure);
-            break;
-        }
+
+    if (candidates.empty()) { return; }
+
+    std::vector<double> fits;
+    for (PFigure figure : candidates) {
+        fits.push_back(fitsToTrack(track, figure));
+    }
+    int id = max_element(fits.begin(), fits.end()) - fits.begin();
+    std::cout << "max_fit = " << fits[id] << "; id = " << id << "\n";
+    if (fits[id] >= 0.85) { // we allow 5% of points to fall out of our track
+        model.addFigure(candidates[id]);
+    }
 }
