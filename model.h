@@ -54,6 +54,7 @@ public:
     virtual std::string str() const = 0;
     virtual void visit(FigureVisitor &) = 0;
     virtual double getApproximateDistanceToBorder(const Point &p) = 0;
+    virtual void recalculate() {}
 };
 typedef std::shared_ptr<Figure> PFigure;
 
@@ -62,6 +63,7 @@ class Segment;
 class BoundedFigure;
 class Ellipse;
 class Rectangle;
+typedef std::shared_ptr<BoundedFigure> PBoundedFigure;
 }
 
 class FigureVisitor {
@@ -100,9 +102,10 @@ public:
 
     double getApproximateDistanceToBorder(const Point &p) override;
 
-private:
-    Point a, b;
+protected:
+    Segment() {}
 
+    Point a, b;
     double getDistanceToLine(const Point &p);
 };
 
@@ -118,6 +121,20 @@ public:
     }
 protected:
     BoundingBox box;
+};
+
+class SegmentConnection : public Segment {
+public:
+    SegmentConnection(const PBoundedFigure &_figA, const PBoundedFigure &_figB)
+            : figA(_figA), figB(_figB) {
+        recalculate();
+    }
+    void recalculate() override {
+        a = figA->getBoundingBox().center();
+        b = figB->getBoundingBox().center();
+    }
+protected:
+    std::shared_ptr<BoundedFigure> figA, figB;
 };
 
 class Ellipse : public BoundedFigure {
@@ -163,6 +180,11 @@ public:
     }
     size_t size() const {
         return _figures.size();
+    }
+    void recalculate() {
+        for (PFigure fig : *this) {
+            fig->recalculate();
+        }
     }
 
 private:
