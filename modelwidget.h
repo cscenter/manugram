@@ -2,6 +2,7 @@
 #define MODELWIDGET_H
 
 #include <QWidget>
+#include <list>
 #include "model.h"
 
 namespace Ui {
@@ -19,6 +20,7 @@ protected:
 
 private:
     Track lastTrack;
+    std::list<Track> visibleTracks;
 
 signals:
 
