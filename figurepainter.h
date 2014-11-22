@@ -13,7 +13,7 @@ public:
         painter.drawLine(scale(segm.getA()), scale(segm.getB()));
     }
     virtual void accept(figures::SegmentConnection &segm) {
-        accept(static_cast<figures::Segment&>(segm));
+        accept(static_cast<figures::Segment &>(segm));
     }
 
     virtual void accept(figures::Ellipse &fig) {

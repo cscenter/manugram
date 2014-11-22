@@ -130,7 +130,7 @@ protected:
 class SegmentConnection : public Segment {
 public:
     SegmentConnection(const PBoundedFigure &_figA, const PBoundedFigure &_figB)
-            : figA(_figA), figB(_figB) {
+        : figA(_figA), figB(_figB) {
         recalculate();
     }
     void visit(FigureVisitor &v) override { v.accept(*this); }

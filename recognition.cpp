@@ -88,7 +88,7 @@ void squareBoundedFigure(PBoundedFigure figure) {
         std::swap(siz1, siz2);
     }
     std::cout << "bounded size=" << siz1 << ";" << siz2 << "; k=" << (siz1 / siz2) << "\n";
-    if (siz1 /siz2 < 0.8) return;
+    if (siz1 / siz2 < 0.8) { return; }
 
     double siz = (siz1 + siz2) / 2;
     box.rightUp = box.leftDown + Point(siz, siz);
