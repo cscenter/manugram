@@ -30,7 +30,7 @@ public:
         painter.drawRect(rect);
     }
 
-    QPoint scale(Point p) {
+    QPoint scale(const Point &p) {
         return QPoint(p.x, p.y);
     }
 
