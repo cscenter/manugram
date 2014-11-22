@@ -48,8 +48,8 @@ bool fitsToTrack(const Track &track, const PFigure &figure) {
         goodCount += figure->getApproximateDistanceToBorder(p) <= maxDistance;
     }
 
-    // At least 95% of points fall nearer than 'maxDistance'
-    return goodCount * 100 / track.size() >= 95;
+    // At least 100% of points fall nearer than 'maxDistance'
+    return goodCount * 100 / track.size() >= 100;
 }
 
 using namespace figures;
