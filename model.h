@@ -79,7 +79,6 @@ class Segment : public Figure {
 public:
     Segment(const Point &_a, const Point &_b) : a(_a), b(_b) {}
     void visit(FigureVisitor &v) override { v.accept(*this); }
-    ~Segment() override {}
 
     Point getA() const { return a; }
     Point getB() const { return b; }

@@ -99,7 +99,6 @@ std::istream &operator>>(std::istream &in, Model &model) {
 class FigurePrinter : public FigureVisitor {
 public:
     FigurePrinter(std::ostream &out) : out(out) {}
-    virtual ~FigurePrinter() {}
 
     virtual void accept(figures::Segment &segm) {
         out << "segment ";
