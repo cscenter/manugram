@@ -54,9 +54,11 @@ bool fitsToTrack(const Track &track, const PFigure &figure) {
 using namespace figures;
 
 bool recognizeMove(const Track &track, Model &model) {
+    Point start = track[0];
+    Point end = track[track.size() - 1];
     for (PFigure figure : model) {
-        if (figure->getApproximateDistanceToBorder(track[0]) < 10) { // grabbed
-            figure->translate(track[track.size() - 1] - track[0]);
+        if (figure->getApproximateDistanceToBorder(start) < 10) { // grabbed
+            figure->translate(end - start);
             return true;
         }
     }
