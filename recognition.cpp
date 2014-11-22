@@ -6,6 +6,7 @@
 using std::min;
 using std::max;
 using std::make_shared;
+using std::dynamic_pointer_cast;
 
 BoundingBox getBoundingBox(const Track &track) {
     BoundingBox res;
@@ -53,12 +54,27 @@ bool fitsToTrack(const Track &track, const PFigure &figure) {
 
 using namespace figures;
 
-bool recognizeMove(const Track &track, Model &model) {
+bool recognizeGrabs(const Track &track, Model &model) {
     Point start = track[0];
     Point end = track[track.size() - 1];
+
     for (PFigure figure : model) {
         if (figure->getApproximateDistanceToBorder(start) < 10) { // grabbed
+            // try connection first
+            auto figA = dynamic_pointer_cast<BoundedFigure>(figure);
+            if (figA) {
+                for (PFigure figure2 : model) {
+                    auto figB = dynamic_pointer_cast<BoundedFigure>(figure2);
+                    if (figB && figB->getApproximateDistanceToBorder(end) < 10) {
+                        model.addFigure(make_shared<SegmentConnection>(figA, figB));
+                        return true;
+                    }
+                }
+            }
+
+            // now we try translation
             figure->translate(end - start);
+            model.recalculate();
             return true;
         }
     }
@@ -68,8 +84,8 @@ bool recognizeMove(const Track &track, Model &model) {
 void recognize(const Track &track, Model &model) {
     if (track.empty()) { return; }
 
-    // Moving
-    if (recognizeMove(track, model)) {
+    // Moving and connecting
+    if (recognizeGrabs(track, model)) {
         return;
     }
 
