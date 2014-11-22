@@ -116,6 +116,9 @@ public:
     BoundingBox getBoundingBox() const override {
         return box;
     }
+    void setBoundingBox(BoundingBox &_box) {
+        box = _box;
+    }
     void translate(const Point &diff) override {
         box.leftDown += diff;
         box.rightUp += diff;
