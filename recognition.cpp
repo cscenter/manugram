@@ -53,13 +53,46 @@ double fitsToTrack(const Track &track, const PFigure &figure) {
 
 using namespace figures;
 
+bool isDeletionTrack(const Track &track) {
+    int cnt = 0;
+    std::cout << "new\n";
+    for (int i = 0; i < (int)track.size(); i++) {
+        int prevPoint = i - 1;
+        while (prevPoint >= 0 && (track[i] - track[prevPoint]).lengthSquared() < 25) {
+            prevPoint--;
+        }
+        int nextPoint = i + 1;
+        while (nextPoint < (int)track.size() && (track[i] - track[nextPoint]).lengthSquared() < 25) {
+            nextPoint++;
+        }
+        if (prevPoint >= 0 && nextPoint < (int)track.size()) {
+            Point vec1 = track[nextPoint] - track[i];
+            Point vec2 = track[prevPoint] - track[i];
+            double ang = acos(Point::dotProduct(vec1, vec2) / (vec1.length() * vec2.length()));
+            if (ang <= PI * 30 / 180){
+                cnt++;
+                i = nextPoint;
+            }
+        }
+    }
+    std::cout << "deletion cnt = " << cnt << "\n";
+    return cnt >= 3;
+}
+
 bool recognizeGrabs(const Track &track, Model &model) {
     Point start = track[0];
     Point end = track[track.size() - 1];
 
-    for (PFigure figure : model) {
+    for (auto it = model.begin(); it != model.end(); it++) {
+        PFigure figure = *it;
         if (figure->getApproximateDistanceToBorder(start) < 10) { // grabbed
-            // try connection first
+            // recognize deletion
+            if (isDeletionTrack(track)) {
+                model.removeFigure(it);
+                return true;
+            }
+
+            // try connection
             auto figA = dynamic_pointer_cast<BoundedFigure>(figure);
             if (figA) {
                 for (PFigure figure2 : model) {
