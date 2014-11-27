@@ -141,10 +141,7 @@ public:
         recalculate();
     }
     void visit(FigureVisitor &v) override { v.accept(*this); }
-    void recalculate() override {
-        a = figA->getBoundingBox().center();
-        b = figB->getBoundingBox().center();
-    }
+    void recalculate() override;
 protected:
     std::shared_ptr<BoundedFigure> figA, figB;
 };

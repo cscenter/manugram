@@ -61,6 +61,33 @@ double figures::Ellipse::getApproximateDistanceToBorder(const Point &_p) {
     return (p - near).length();
 }
 
+std::vector<Point> getMiddleBorderPoints(BoundingBox box) {
+    std::vector<Point> res;
+    res.push_back(Point(box.center().x, box.leftDown.y));
+    res.push_back(Point(box.center().x, box.rightUp.y));
+    res.push_back(Point(box.leftDown.x, box.center().y));
+    res.push_back(Point(box.rightUp.x, box.center().y));
+    return res;
+}
+
+void figures::SegmentConnection::recalculate() {
+    using std::vector;
+    using std::get;
+    vector<Point> as = getMiddleBorderPoints(figA->getBoundingBox());
+    vector<Point> bs = getMiddleBorderPoints(figB->getBoundingBox());
+    double minDistSquared = HUGE_VAL;
+    for (Point a : as) {
+        for (Point b : bs) {
+            double curDistSquared = (a - b).lengthSquared();
+            if (minDistSquared > curDistSquared) {
+                minDistSquared = curDistSquared;
+                this->a = a;
+                this->b = b;
+            }
+        }
+    }
+}
+
 std::istream &operator>>(std::istream &in, Model &model) {
     int count;
     if (!(in >> count)) {
