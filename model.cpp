@@ -1,6 +1,7 @@
 #include "model.h"
 #include <string>
 #include <algorithm>
+#include <map>
 
 double figures::Segment::getApproximateDistanceToBorder(const Point &p) {
     double res = std::min((p - a).length(), (p - b).length());
@@ -93,43 +94,68 @@ std::istream &operator>>(std::istream &in, Model &model) {
     if (!(in >> count)) {
         throw model_format_error("unable to read number of figures");
     }
+    std::vector<PFigure> figures;
     while (count -- > 0) {
         std::string type;
         if (!(in >> type)) {
             throw model_format_error("unable to read fngure type");
         }
-        if (type == "segment") {
-            double x1, y1, x2, y2;
+        if (type == "segment" || type == "segment_connection") {
+            std::shared_ptr<figures::Segment> segm;
+            if (type == "segment_connection") {
+                size_t aId, bId;
+                if (!(in >> aId >> bId)) {
+                    throw model_format_error("unable to read connection information");
+                }
+                aId--, bId--;
+                if (aId >= figures.size() || bId >= figures.size()) {
+                    throw model_format_error("invalid figures in connection");
+                }
+                auto figA = std::dynamic_pointer_cast<figures::BoundedFigure>(figures.at(aId));
+                auto figB = std::dynamic_pointer_cast<figures::BoundedFigure>(figures.at(bId));
+                if (!figA || !figB) {
+                    throw model_format_error("invalid reference in connection");
+                }
+                segm = std::make_shared<figures::SegmentConnection>(figA, figB);
+            } else {
+                double x1, y1, x2, y2;
+                if (!(in >> x1 >> y1 >> x2 >> y2)) {
+                    throw model_format_error("unable to read segment");
+                }
+                segm = std::make_shared<figures::Segment>(Point(x1, y1), Point(x2, y2));
+            }
             bool arrowA, arrowB;
-            if (!(in >> x1 >> y1 >> x2 >> y2 >> arrowA >> arrowB)) {
+            if (!(in >> arrowA >> arrowB)) {
                 throw model_format_error("unable to read segment");
             }
-            auto segm = std::make_shared<figures::Segment>(Point(x1, y1), Point(x2, y2));
             segm->setArrowedA(arrowA);
             segm->setArrowedB(arrowB);
-            model.addFigure(segm);
+            figures.push_back(segm);
         } else if (type == "rectangle") {
             double x1, y1, x2, y2;
             if (!(in >> x1 >> y1 >> x2 >> y2)) {
                 throw model_format_error("unable to read rectangle");
             }
-            model.addFigure(std::make_shared<figures::Rectangle>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
+            figures.push_back(std::make_shared<figures::Rectangle>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
         } else if (type == "ellipse") {
             double x1, y1, x2, y2;
             if (!(in >> x1 >> y1 >> x2 >> y2)) {
                 throw model_format_error("unable to read ellipse");
             }
-            model.addFigure(std::make_shared<figures::Ellipse>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
+            figures.push_back(std::make_shared<figures::Ellipse>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
         } else {
             throw model_format_error("unknown type: '" + type + "'");
         }
+    }
+    for (PFigure figure : figures) {
+        model.addFigure(figure);
     }
     return in;
 }
 
 class FigurePrinter : public FigureVisitor {
 public:
-    FigurePrinter(std::ostream &out) : out(out) {}
+    FigurePrinter(std::ostream &out, const std::map<PFigure, size_t> &ids) : out(out), ids(ids) {}
 
     virtual void accept(figures::Segment &segm) {
         out << "segment ";
@@ -139,7 +165,10 @@ public:
         out << " " << segm.getArrowedA() << " " << segm.getArrowedB() << "\n";
     }
     virtual void accept(figures::SegmentConnection &segm) {
-        accept(static_cast<figures::Segment &>(segm));
+        out << "segment_connection ";
+        out << ids.at(segm.getFigureA()) << " ";
+        out << ids.at(segm.getFigureB()) << " ";
+        out << " " << segm.getArrowedA() << " " << segm.getArrowedB() << "\n";
     }
 
     virtual void accept(figures::Ellipse &fig) {
@@ -156,6 +185,7 @@ public:
 
 private:
     std::ostream &out;
+    const std::map<PFigure, size_t> &ids;
     void printPoint(const Point &p) {
         out << p.x << " " << p.y;
     }
@@ -168,7 +198,14 @@ private:
 
 std::ostream &operator<<(std::ostream &out, Model &model) {
     out << model.size() << '\n';
-    FigurePrinter printer(out);
+
+    std::map<PFigure, size_t> ids;
+    for (PFigure figure : model) {
+        int id = ids.size() + 1;
+        ids[figure] = id;
+    }
+
+    FigurePrinter printer(out, ids);
     for (PFigure figure : model) {
         figure->visit(printer);
     }
