@@ -140,10 +140,12 @@ public:
         : figA(_figA), figB(_figB) {
         recalculate();
     }
+    PBoundedFigure getFigureA() { return figA; }
+    PBoundedFigure getFigureB() { return figB; }
     void visit(FigureVisitor &v) override { v.accept(*this); }
     void recalculate() override;
 protected:
-    std::shared_ptr<BoundedFigure> figA, figB;
+    PBoundedFigure figA, figB;
 };
 
 class Ellipse : public BoundedFigure {
