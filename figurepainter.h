@@ -45,7 +45,6 @@ private:
     QPainter &painter;
 
     void drawArrow(const Point &a, const Point &b) {
-        const double PI = atan(1.0) * 4;
         const double BRANCH_ANGLE = 25 * PI / 180.0;
         const int ARROW_LENGTH = 12;
         Point dir = b - a;

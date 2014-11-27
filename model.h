@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cassert>
 
+const double PI = atan(1.0) * 4;
 struct Point {
     double x, y;
 
