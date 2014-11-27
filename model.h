@@ -79,11 +79,15 @@ public:
 namespace figures {
 class Segment : public Figure {
 public:
-    Segment(const Point &_a, const Point &_b) : a(_a), b(_b) {}
+    Segment(const Point &_a, const Point &_b) : a(_a), b(_b), arrowedA(false), arrowedB(false) {}
     void visit(FigureVisitor &v) override { v.accept(*this); }
 
     Point getA() const { return a; }
     Point getB() const { return b; }
+    bool getArrowedA() const { return arrowedA; }
+    bool getArrowedB() const { return arrowedB; }
+    void setArrowedA(bool val) { arrowedA = val; }
+    void setArrowedB(bool val) { arrowedB = val; }
 
     BoundingBox getBoundingBox() const override {
         return {
@@ -97,16 +101,19 @@ public:
     }
     std::string str() const override {
         std::stringstream res;
-        res << "segment(" << a.str() << "--" << b.str() << ")";
+        res << "segment(" << a.str()
+            << (arrowedA ? "<" : "") <<  "--" << (arrowedB ? ">" : "")
+            << b.str() << ")";
         return res.str();
     }
 
     double getApproximateDistanceToBorder(const Point &p) override;
 
 protected:
-    Segment() {}
+    Segment() : arrowedA(false), arrowedB(false) {}
 
     Point a, b;
+    bool arrowedA, arrowedB;
     double getDistanceToLine(const Point &p);
 };
 
