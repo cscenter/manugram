@@ -95,8 +95,28 @@ void squareBoundedFigure(PBoundedFigure figure) {
     figure->setBoundingBox(box);
 }
 
+void recognizeClicks(const Point &click, Model &model) {
+    for (PFigure figure : model) {
+        std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(figure);
+        if (segm) {
+            if ((click - segm->getA()).length() < 10) {
+                segm->setArrowedA(!segm->getArrowedA());
+            }
+            if ((click - segm->getB()).length() < 10) {
+                segm->setArrowedB(!segm->getArrowedB());
+            }
+        }
+    }
+}
+
 void recognize(const Track &track, Model &model) {
     if (track.empty()) { return; }
+
+    // Very small tracks are clicks
+    if (getClosedCircumference(track) < 10) {
+        recognizeClicks(track[0], model);
+        return;
+    }
 
     // Moving and connecting
     if (recognizeGrabs(track, model)) {
@@ -104,10 +124,6 @@ void recognize(const Track &track, Model &model) {
     }
 
     // Drawing new figures
-
-    // Ignore very small tracks
-    if (getClosedCircumference(track) < 10) { return; }
-
     std::vector<PFigure> candidates;
     if (!isClosed(track))  {
         candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
