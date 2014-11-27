@@ -73,10 +73,14 @@ std::istream &operator>>(std::istream &in, Model &model) {
         }
         if (type == "segment") {
             double x1, y1, x2, y2;
-            if (!(in >> x1 >> y1 >> x2 >> y2)) {
+            bool arrowA, arrowB;
+            if (!(in >> x1 >> y1 >> x2 >> y2 >> arrowA >> arrowB)) {
                 throw model_format_error("unable to read segment");
             }
-            model.addFigure(std::make_shared<figures::Segment>(Point(x1, y1), Point(x2, y2)));
+            auto segm = std::make_shared<figures::Segment>(Point(x1, y1), Point(x2, y2));
+            segm->setArrowedA(arrowA);
+            segm->setArrowedB(arrowB);
+            model.addFigure(segm);
         } else if (type == "rectangle") {
             double x1, y1, x2, y2;
             if (!(in >> x1 >> y1 >> x2 >> y2)) {
@@ -105,7 +109,7 @@ public:
         printPoint(segm.getA());
         out << " ";
         printPoint(segm.getB());
-        out << "\n";
+        out << " " << segm.getArrowedA() << " " << segm.getArrowedB() << "\n";
     }
     virtual void accept(figures::SegmentConnection &segm) {
         accept(static_cast<figures::Segment &>(segm));
