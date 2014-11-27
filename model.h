@@ -45,7 +45,10 @@ struct BoundingBox {
     double height() const { return rightUp.y - leftDown.y; }
 };
 
+class Figure;
 class FigureVisitor;
+
+typedef std::shared_ptr<Figure> PFigure;
 
 class Figure {
 public:
@@ -56,8 +59,8 @@ public:
     virtual void visit(FigureVisitor &) = 0;
     virtual double getApproximateDistanceToBorder(const Point &p) = 0;
     virtual void recalculate() {}
+    virtual bool dependsOn(const PFigure &) { return false; }
 };
-typedef std::shared_ptr<Figure> PFigure;
 
 namespace figures {
 class Segment;
@@ -145,6 +148,10 @@ public:
     PBoundedFigure getFigureB() { return figB; }
     void visit(FigureVisitor &v) override { v.accept(*this); }
     void recalculate() override;
+    virtual bool dependsOn(const PFigure &other) {
+        return other == figA || other == figB;
+    }
+
 protected:
     PBoundedFigure figA, figB;
 };
@@ -188,7 +195,14 @@ public:
         return _figures.end();
     }
     void removeFigure(iterator it) {
+        PFigure old = *it;
         _figures.erase(it);
+        for (auto it2 = _figures.begin(); it2 != _figures.end(); it2++) {
+            if ((*it2)->dependsOn(old)) {
+                removeFigure(it2);
+                it2 = _figures.begin();
+            }
+        }
     }
     size_t size() const {
         return _figures.size();
