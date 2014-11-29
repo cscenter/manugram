@@ -173,7 +173,7 @@ void recognize(const Track &track, Model &model) {
     }
     int id = max_element(fits.begin(), fits.end()) - fits.begin();
     std::cout << "max_fit = " << fits[id] << "; id = " << id << "\n";
-    if (fits[id] >= 0.85) { // we allow some of points to fall out of our track
+    if (fits[id] >= 0.75) { // we allow some of points to fall out of our track
         auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(candidates[id]);
         if (boundedFigure) {
             squareBoundedFigure(boundedFigure);
