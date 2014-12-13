@@ -262,6 +262,7 @@ public:
 
 std::istream &operator>>(std::istream &in , Model &model);
 std::ostream &operator<<(std::ostream &out , Model &model);
+void exportModelToSvg(Model &m, std::ostream &out);
 
 struct Track {
     std::vector<Point> points;
