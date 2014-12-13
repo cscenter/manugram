@@ -153,6 +153,8 @@ public:
         : figA(_figA), figB(_figB) {
         recalculate();
     }
+    SegmentConnection(const SegmentConnection &other) = delete;
+    SegmentConnection& operator=(const SegmentConnection &other) = delete;
     PBoundedFigure getFigureA() { return figA; }
     PBoundedFigure getFigureB() { return figB; }
     void visit(FigureVisitor &v) override { v.accept(*this); }
