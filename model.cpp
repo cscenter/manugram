@@ -201,7 +201,7 @@ std::ostream &operator<<(std::ostream &out, Model &model) {
 
     std::map<PFigure, size_t> ids;
     for (PFigure figure : model) {
-        int id = ids.size() + 1;
+        size_t id = ids.size() + 1;
         ids[figure] = id;
     }
 
