@@ -9,7 +9,8 @@
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
-    QWidget(parent) {
+    QWidget(parent), trackIsCancelled(false) {
+    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
 void drawTrack(QPainter &painter, FigurePainter &fpainter, const Track &track) {
@@ -55,6 +56,7 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     lastTrack = Track();
+    trackIsCancelled = false;
     lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
     repaint();
 }
@@ -63,6 +65,9 @@ void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
     repaint();
 }
 void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
+    if (trackIsCancelled) {
+        return;
+    }
     lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
     recognize(lastTrack, commitedModel);
 
@@ -81,4 +86,11 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
 
     lastTrack = Track();
     repaint();
+}
+void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Escape) {
+        lastTrack = Track();
+        trackIsCancelled = true;
+        repaint();
+    }
 }

@@ -18,10 +18,12 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
     Model commitedModel;
 
 private:
     Track lastTrack;
+    bool trackIsCancelled;
     std::list<Track> visibleTracks;
 
 signals:
