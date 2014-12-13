@@ -13,6 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setModelWidget(new Ui::ModelWidget());
+    ui->actionUndo->setEnabled(modelWidget->canUndo());
+    connect(modelWidget, &Ui::ModelWidget::canUndoChanged, [this]() {
+        ui->actionUndo->setEnabled(modelWidget->canUndo());
+    });
 }
 
 MainWindow::~MainWindow() {
@@ -79,7 +83,5 @@ void MainWindow::on_actionSaveAs_triggered() {
 }
 
 void MainWindow::on_actionUndo_triggered() {
-    if (modelWidget->canUndo()) {
-        modelWidget->undo();
-    }
+    modelWidget->undo();
 }
