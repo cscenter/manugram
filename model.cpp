@@ -221,7 +221,9 @@ public:
         result = std::make_shared<figures::Segment>(fig);
     }
     virtual void accept(figures::SegmentConnection &fig) {
-        auto res = std::make_shared<figures::SegmentConnection>(fig.getFigureA(), fig.getFigureB());
+        auto newA = std::dynamic_pointer_cast<figures::BoundedFigure>(mapping.at(fig.getFigureA()));
+        auto newB = std::dynamic_pointer_cast<figures::BoundedFigure>(mapping.at(fig.getFigureB()));
+        auto res = std::make_shared<figures::SegmentConnection>(newA, newB);
         res->setArrowedA(fig.getArrowedA());
         res->setArrowedB(fig.getArrowedB());
         result = res;
