@@ -36,6 +36,8 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     for (PFigure fig : modelToDraw) {
         if (fig == modified) {
             painter.setPen(Qt::magenta);
+        } else if (fig == modelToDraw.selectedFigure) {
+            painter.setPen(Qt::blue);
         } else {
             painter.setPen(Qt::black);
         }

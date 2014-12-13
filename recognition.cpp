@@ -131,6 +131,11 @@ void squareBoundedFigure(PBoundedFigure figure) {
 
 PFigure recognizeClicks(const Point &click, Model &model) {
     for (PFigure figure : model) {
+        if (figure->getApproximateDistanceToBorder(click) > 10) {
+            continue;
+        }
+        model.selectedFigure = figure;
+
         std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(figure);
         if (segm) {
             if ((click - segm->getA()).length() < 10) {
