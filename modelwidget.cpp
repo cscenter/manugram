@@ -32,12 +32,17 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
     FigurePainter fpainter(painter);
     Model modelToDraw = commitedModel;
-    recognize(lastTrack, modelToDraw);
+    PFigure modified = recognize(lastTrack, modelToDraw);
     for (PFigure fig : modelToDraw) {
+        if (fig == modified) {
+            painter.setPen(Qt::magenta);
+        } else {
+            painter.setPen(Qt::black);
+        }
         fig->visit(fpainter);
     }
 
-    QPen pen(QColor(255, 0, 0, 64));
+    QPen pen(QColor(255, 0, 0, 16));
     pen.setWidth(3);
     painter.setPen(pen);
     drawTrack(painter, fpainter, lastTrack);
