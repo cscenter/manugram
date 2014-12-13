@@ -64,11 +64,16 @@ void MainWindow::on_actionSaveAs_triggered() {
                            this,
                            "Select file to save in",
                            QDir::currentPath(),
-                           "Models (*.model)"
+                           "Models (*.model);;SVG (*.svg)"
                        );
     if (filename == "") {
         return;
     }
+    Model &model = this->modelWidget->getModel();
     std::ofstream file(filename.toStdString());
-    file << this->modelWidget->getModel();
+    if (filename.toLower().endsWith(".svg")) {
+        exportModelToSvg(model, file);
+    } else {
+        file << model;
+    }
 }
