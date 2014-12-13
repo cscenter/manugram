@@ -31,6 +31,7 @@ private:
     std::list<Track> visibleTracks;
 
 signals:
+    void canUndoChanged();
 
 public slots:
 };

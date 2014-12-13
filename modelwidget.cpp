@@ -22,6 +22,7 @@ void drawTrack(QPainter &painter, FigurePainter &fpainter, const Track &track) {
 void Ui::ModelWidget::setModel(Model model) {
     commitedModel = std::move(model);
     previousModels.clear();
+    emit canUndoChanged();
 }
 Model &Ui::ModelWidget::getModel() {
     return commitedModel;
@@ -37,6 +38,9 @@ void Ui::ModelWidget::undo() {
     }
     commitedModel = std::move(previousModels.back());
     previousModels.pop_back();
+    if (!canUndo()) {
+        emit canUndoChanged();
+    }
     repaint();
 }
 
@@ -101,6 +105,9 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     timer->start();
 
     lastTrack = Track();
+    if (previousModels.size() == 1) {
+        emit canUndoChanged();
+    }
     repaint();
 }
 void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
