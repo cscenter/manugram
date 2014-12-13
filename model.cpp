@@ -265,15 +265,10 @@ PFigure clone(PFigure figure, const std::map<PFigure, PFigure> &othersMapping) {
 }
 
 void exportModelToSvg(Model &m, std::ostream &out) {
-    out << R"(<?xml version="1.0" encoding="UTF-8" standalone="no"?>)" "\n"
-           R"(<svg version="1.1")" "\n"
-           R"(    baseProfile="full"  xmlns="http://www.w3.org/2000/svg")" "\n"
-           R"(    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events")" "\n"
-           R"(    fill="none" stroke="black" stroke-width="1">)" "\n";
-
     FigureSvgPainter painter(out);
+    painter.printHeader();
     for (PFigure figure : m) {
         figure->visit(painter);
     }
-    out << "</svg>\n";
+    painter.printFooter();
 }

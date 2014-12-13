@@ -64,6 +64,17 @@ class FigureSvgPainter : public FigureVisitor {
 public:
     FigureSvgPainter(std::ostream &out) : out(out) {}
 
+    void printHeader() {
+        out << R"(<?xml version="1.0" encoding="UTF-8" standalone="no"?>)" "\n"
+               R"(<svg version="1.1")" "\n"
+               R"(    baseProfile="full"  xmlns="http://www.w3.org/2000/svg")" "\n"
+               R"(    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events")" "\n"
+               R"(    fill="none" stroke="black" stroke-width="1">)" "\n";
+    }
+    void printFooter() {
+        out << "</svg>\n";
+    }
+
     virtual void accept(figures::Segment &segm) {
         Point a = segm.getA();
         Point b = segm.getB();
