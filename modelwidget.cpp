@@ -18,13 +18,20 @@ void drawTrack(QPainter &painter, FigurePainter &fpainter, const Track &track) {
     }
 }
 
+void Ui::ModelWidget::setModel(Model model) {
+    commitedModel = std::move(model);
+}
+Model& Ui::ModelWidget::getModel() {
+    return commitedModel;
+}
+
 void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
     painter.fillRect(QRect(QPoint(), size()), Qt::white);
     painter.setPen(Qt::black);
 
     FigurePainter fpainter(painter);
-    for (PFigure fig : model) {
+    for (PFigure fig : commitedModel) {
         fig->visit(fpainter);
     }
 
@@ -48,7 +55,7 @@ void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
-    recognize(lastTrack, model);
+    recognize(lastTrack, commitedModel);
 
     visibleTracks.push_back(lastTrack);
     auto iterator = --visibleTracks.end();

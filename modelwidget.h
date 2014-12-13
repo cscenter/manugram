@@ -10,13 +10,15 @@ class ModelWidget : public QWidget {
     Q_OBJECT
 public:
     explicit ModelWidget(QWidget *parent = 0);
-    Model model;
+    void setModel(Model model);
+    Model& getModel();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    Model commitedModel;
 
 private:
     Track lastTrack;

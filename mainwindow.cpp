@@ -48,7 +48,9 @@ void MainWindow::on_actionOpen_triggered() {
     std::unique_ptr<Ui::ModelWidget> modelWidget(new Ui::ModelWidget());
     std::ifstream file(filename.toStdString());
     try {
-        file >> modelWidget->model;
+        Model model;
+        file >> model;
+        modelWidget->setModel(std::move(model));
     } catch (model_format_error &e) {
         QMessageBox::critical(this, "Error while opening model", e.what());
         return;
@@ -68,5 +70,5 @@ void MainWindow::on_actionSaveAs_triggered() {
         return;
     }
     std::ofstream file(filename.toStdString());
-    file << this->modelWidget->model;
+    file << this->modelWidget->getModel();
 }
