@@ -178,7 +178,7 @@ PFigure recognize(const Track &track, Model &model) {
     for (PFigure figure : candidates) {
         fits.push_back(fitsToTrack(track, figure));
     }
-    int id = max_element(fits.begin(), fits.end()) - fits.begin();
+    size_t id = max_element(fits.begin(), fits.end()) - fits.begin();
     std::cout << "max_fit = " << fits[id] << "; id = " << id << "\n";
     if (fits[id] >= 0.75) { // we allow some of points to fall out of our track
         auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(candidates[id]);

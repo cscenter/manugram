@@ -248,9 +248,10 @@ public:
         }
     }
 
-    PFigure selectedFigure;
 private:
     std::list<PFigure> _figures;
+public:
+    PFigure selectedFigure;
 };
 
 class model_format_error : std::runtime_error {
