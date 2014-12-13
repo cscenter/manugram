@@ -77,3 +77,9 @@ void MainWindow::on_actionSaveAs_triggered() {
         file << model;
     }
 }
+
+void MainWindow::on_actionUndo_triggered() {
+    if (modelWidget->canUndo()) {
+        modelWidget->undo();
+    }
+}
