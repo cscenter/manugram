@@ -11,7 +11,7 @@ class ModelWidget : public QWidget {
 public:
     explicit ModelWidget(QWidget *parent = 0);
     void setModel(Model model);
-    Model& getModel();
+    Model &getModel();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

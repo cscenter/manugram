@@ -22,7 +22,7 @@ void drawTrack(QPainter &painter, FigurePainter &fpainter, const Track &track) {
 void Ui::ModelWidget::setModel(Model model) {
     commitedModel = std::move(model);
 }
-Model& Ui::ModelWidget::getModel() {
+Model &Ui::ModelWidget::getModel() {
     return commitedModel;
 }
 

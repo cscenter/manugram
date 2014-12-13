@@ -154,7 +154,7 @@ public:
         recalculate();
     }
     SegmentConnection(const SegmentConnection &other) = delete;
-    SegmentConnection& operator=(const SegmentConnection &other) = delete;
+    SegmentConnection &operator=(const SegmentConnection &other) = delete;
     PBoundedFigure getFigureA() { return figA; }
     PBoundedFigure getFigureB() { return figB; }
     void visit(FigureVisitor &v) override { v.accept(*this); }
@@ -204,7 +204,7 @@ public:
         }
     }
     Model(Model &&other) : _figures(std::move(other._figures)), selectedFigure(std::move(other.selectedFigure)) {}
-    Model& operator=(Model other) {
+    Model &operator=(Model other) {
         swap(other);
         return *this;
     }

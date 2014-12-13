@@ -69,7 +69,7 @@ bool isDeletionTrack(const Track &track) {
             Point vec1 = track[nextPoint] - track[i];
             Point vec2 = track[prevPoint] - track[i];
             double ang = acos(Point::dotProduct(vec1, vec2) / (vec1.length() * vec2.length()));
-            if (ang <= PI * 30 / 180){
+            if (ang <= PI * 30 / 180) {
                 cnt++;
                 i = nextPoint;
             }
