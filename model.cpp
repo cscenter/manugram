@@ -95,6 +95,7 @@ std::istream &operator>>(std::istream &in, Model &model) {
         throw model_format_error("unable to read number of figures");
     }
     std::vector<PFigure> figures;
+    size_t selected_id = 0;
     while (count -- > 0) {
         std::string type;
         if (!(in >> type)) {
@@ -143,12 +144,22 @@ std::istream &operator>>(std::istream &in, Model &model) {
                 throw model_format_error("unable to read ellipse");
             }
             figures.push_back(std::make_shared<figures::Ellipse>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
+        } else if (type == "selected=") {
+            if (selected_id != 0) {
+                throw model_format_error("two figures are selected");
+            }
+            if (!(in >> selected_id)) {
+                throw model_format_error("unable to read selected figure id");
+            }
         } else {
             throw model_format_error("unknown type: '" + type + "'");
         }
     }
     for (PFigure figure : figures) {
         model.addFigure(figure);
+    }
+    if (selected_id != 0) {
+        model.selectedFigure = figures.at(selected_id - 1);
     }
     return in;
 }
@@ -197,7 +208,7 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &out, Model &model) {
-    out << model.size() << '\n';
+    out << (model.size() + !!model.selectedFigure) << '\n';
 
     std::map<PFigure, size_t> ids;
     for (PFigure figure : model) {
@@ -208,6 +219,10 @@ std::ostream &operator<<(std::ostream &out, Model &model) {
     FigurePrinter printer(out, ids);
     for (PFigure figure : model) {
         figure->visit(printer);
+    }
+
+    if (model.selectedFigure) {
+        out << "selected= " << ids.at(model.selectedFigure) << "\n";
     }
     return out;
 }

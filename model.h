@@ -199,8 +199,11 @@ public:
         for (PFigure figure : other._figures) {
             mapping.insert(std::make_pair(figure, *addFigure(clone(figure, mapping))));
         }
+        if (other.selectedFigure) {
+            selectedFigure = mapping.at(other.selectedFigure);
+        }
     }
-    Model(Model &&other) : _figures(std::move(other._figures)) {}
+    Model(Model &&other) : _figures(std::move(other._figures)), selectedFigure(std::move(other.selectedFigure)) {}
     Model& operator=(Model other) {
         swap(other);
         return *this;
@@ -208,6 +211,7 @@ public:
 
     void swap(Model &other) {
         _figures.swap(other._figures);
+        std::swap(selectedFigure, other.selectedFigure);
     }
 
     typedef std::list<PFigure>::iterator iterator;
@@ -231,6 +235,9 @@ public:
                 it2 = _figures.begin();
             }
         }
+        if (old == selectedFigure) {
+            selectedFigure.reset();
+        }
     }
     size_t size() const {
         return _figures.size();
@@ -241,6 +248,7 @@ public:
         }
     }
 
+    PFigure selectedFigure;
 private:
     std::list<PFigure> _figures;
 };
