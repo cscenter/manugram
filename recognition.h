@@ -3,6 +3,7 @@
 
 #include "model.h"
 
-void recognize(const Track &track, Model &model);
+// Returns pointer to the figure modified
+PFigure recognize(const Track &track, Model &model);
 
 #endif // RECOGNITION_H

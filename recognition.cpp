@@ -79,7 +79,7 @@ bool isDeletionTrack(const Track &track) {
     return cnt >= 3;
 }
 
-bool recognizeGrabs(const Track &track, Model &model) {
+PFigure recognizeGrabs(const Track &track, Model &model) {
     Point start = track[0];
     Point end = track[track.size() - 1];
 
@@ -89,7 +89,7 @@ bool recognizeGrabs(const Track &track, Model &model) {
             // recognize deletion
             if (isDeletionTrack(track)) {
                 model.removeFigure(it);
-                return true;
+                return figure;
             }
 
             // try connection
@@ -98,8 +98,9 @@ bool recognizeGrabs(const Track &track, Model &model) {
                 for (PFigure figure2 : model) {
                     auto figB = dynamic_pointer_cast<BoundedFigure>(figure2);
                     if (figB && figB->getApproximateDistanceToBorder(end) < 10) {
-                        model.addFigure(make_shared<SegmentConnection>(figA, figB));
-                        return true;
+                        auto result = make_shared<SegmentConnection>(figA, figB);
+                        model.addFigure(result);
+                        return result;
                     }
                 }
             }
@@ -107,10 +108,10 @@ bool recognizeGrabs(const Track &track, Model &model) {
             // now we try translation
             figure->translate(end - start);
             model.recalculate();
-            return true;
+            return figure;
         }
     }
-    return false;
+    return nullptr;
 }
 
 void squareBoundedFigure(PBoundedFigure figure) {
@@ -128,7 +129,7 @@ void squareBoundedFigure(PBoundedFigure figure) {
     figure->setBoundingBox(box);
 }
 
-void recognizeClicks(const Point &click, Model &model) {
+PFigure recognizeClicks(const Point &click, Model &model) {
     for (PFigure figure : model) {
         std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(figure);
         if (segm) {
@@ -138,22 +139,23 @@ void recognizeClicks(const Point &click, Model &model) {
             if ((click - segm->getB()).length() < 10) {
                 segm->setArrowedB(!segm->getArrowedB());
             }
+            return segm;
         }
     }
+    return nullptr;
 }
 
-void recognize(const Track &track, Model &model) {
-    if (track.empty()) { return; }
+PFigure recognize(const Track &track, Model &model) {
+    if (track.empty()) { return nullptr; }
 
     // Very small tracks are clicks
     if (getClosedCircumference(track) < 10) {
-        recognizeClicks(track[0], model);
-        return;
+        return recognizeClicks(track[0], model);
     }
 
     // Moving and connecting
-    if (recognizeGrabs(track, model)) {
-        return;
+    if (PFigure result = recognizeGrabs(track, model)) {
+        return result;
     }
 
     // Drawing new figures
@@ -165,7 +167,7 @@ void recognize(const Track &track, Model &model) {
         candidates.push_back(make_shared<Rectangle>(getBoundingBox(track)));
     }
 
-    if (candidates.empty()) { return; }
+    if (candidates.empty()) { return nullptr; }
 
     std::vector<double> fits;
     for (PFigure figure : candidates) {
@@ -179,5 +181,7 @@ void recognize(const Track &track, Model &model) {
             squareBoundedFigure(boundedFigure);
         }
         model.addFigure(candidates[id]);
+        return candidates[id];
     }
+    return nullptr;
 }
