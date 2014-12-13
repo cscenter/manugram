@@ -72,6 +72,12 @@ class Rectangle;
 typedef std::shared_ptr<BoundedFigure> PBoundedFigure;
 }
 
+class visitor_implementation_not_found : std::logic_error {
+public:
+    visitor_implementation_not_found() : std::logic_error("Visitor implementation not found") {}
+    virtual const char *what() const throw() { return std::logic_error::what(); }
+};
+
 class FigureVisitor {
 public:
     virtual ~FigureVisitor() {}
@@ -79,6 +85,7 @@ public:
     virtual void accept(figures::SegmentConnection &) = 0;
     virtual void accept(figures::Ellipse &) = 0;
     virtual void accept(figures::Rectangle &) = 0;
+    virtual void accept(figures::BoundedFigure &) { throw visitor_implementation_not_found(); }
 };
 
 namespace figures {
