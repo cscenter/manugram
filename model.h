@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 #include <stdexcept>
 #include <list>
 #include <cmath>
@@ -182,6 +183,17 @@ public:
 
 class Model {
 public:
+    Model() {}
+    Model(Model &&other) : _figures(std::move(other._figures)) {}
+    Model& operator=(Model other) {
+        swap(other);
+        return *this;
+    }
+
+    void swap(Model &other) {
+        _figures.swap(other._figures);
+    }
+
     typedef std::list<PFigure>::iterator iterator;
 
     iterator addFigure(PFigure a) {
@@ -214,6 +226,7 @@ public:
     }
 
 private:
+    Model(const Model &other) = delete;
     std::list<PFigure> _figures;
 };
 
