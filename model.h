@@ -260,7 +260,7 @@ public:
 };
 
 std::istream &operator>>(std::istream &in , Model &model);
-std::ostream &operator<<(std::ostream &in , Model &model);
+std::ostream &operator<<(std::ostream &out , Model &model);
 
 struct Track {
     std::vector<Point> points;
