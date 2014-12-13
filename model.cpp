@@ -211,3 +211,37 @@ std::ostream &operator<<(std::ostream &out, Model &model) {
     }
     return out;
 }
+
+class CloningVisitor : public FigureVisitor {
+public:
+    CloningVisitor(const std::map<PFigure, PFigure> &mapping) : mapping(mapping) {}
+    PFigure getResult() { return result; }
+
+    virtual void accept(figures::Segment &fig) override {
+        result = std::make_shared<figures::Segment>(fig);
+    }
+    virtual void accept(figures::SegmentConnection &fig) {
+        auto res = std::make_shared<figures::SegmentConnection>(fig.getFigureA(), fig.getFigureB());
+        res->setArrowedA(fig.getArrowedA());
+        res->setArrowedB(fig.getArrowedB());
+        result = res;
+    }
+
+    virtual void accept(figures::Ellipse &fig) {
+        result = std::make_shared<figures::Ellipse>(fig);
+    }
+
+    virtual void accept(figures::Rectangle &fig) {
+        result = std::make_shared<figures::Rectangle>(fig);
+    }
+
+private:
+    const std::map<PFigure, PFigure> &mapping;
+    PFigure result;
+};
+
+PFigure clone(PFigure figure, const std::map<PFigure, PFigure> &othersMapping) {
+    CloningVisitor visitor(othersMapping);
+    figure->visit(visitor);
+    return visitor.getResult();
+}

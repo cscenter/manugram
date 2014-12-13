@@ -62,6 +62,7 @@ public:
     virtual void recalculate() {}
     virtual bool dependsOn(const PFigure &) { return false; }
 };
+PFigure clone(PFigure figure, const std::map<PFigure, PFigure> &othersMapping);
 
 namespace figures {
 class Segment;
@@ -191,6 +192,12 @@ public:
 class Model {
 public:
     Model() {}
+    Model(const Model &other) {
+        std::map<PFigure, PFigure> mapping;
+        for (PFigure figure : other._figures) {
+            mapping.insert(std::make_pair(figure, *addFigure(clone(figure, mapping))));
+        }
+    }
     Model(Model &&other) : _figures(std::move(other._figures)) {}
     Model& operator=(Model other) {
         swap(other);
@@ -233,7 +240,6 @@ public:
     }
 
 private:
-    Model(const Model &other) = delete;
     std::list<PFigure> _figures;
 };
 
