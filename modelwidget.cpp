@@ -31,7 +31,9 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     painter.setPen(Qt::black);
 
     FigurePainter fpainter(painter);
-    for (PFigure fig : commitedModel) {
+    Model modelToDraw = commitedModel;
+    recognize(lastTrack, modelToDraw);
+    for (PFigure fig : modelToDraw) {
         fig->visit(fpainter);
     }
 
