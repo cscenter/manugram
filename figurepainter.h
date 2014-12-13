@@ -70,6 +70,12 @@ public:
                R"(    baseProfile="full"  xmlns="http://www.w3.org/2000/svg")" "\n"
                R"(    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events")" "\n"
                R"(    fill="none" stroke="black" stroke-width="1">)" "\n";
+        out << R"(<marker id="markerArrow" markerWidth="12" markerHeight="24" refX="12" refY="12" orient="auto">)" "\n"
+               R"(    <path d="M12,12 L1.1243065555602004410893681189482,6.9285808591116067657562581242272 M12,12 L1.1243065555602004410893681189482,17.071419140888393234243741875773"/>)" "\n"
+               R"(</marker>)" "\n";
+        out << R"(<marker id="markerReverseArrow" markerWidth="12" markerHeight="24" refX="0" refY="12" orient="auto">)" "\n"
+               R"(    <path d="M0,12 L10.875693444439799558910631881052,6.9285808591116067657562581242272 M0,12 L10.875693444439799558910631881052,17.071419140888393234243741875773"/>)" "\n"
+               R"(</marker>)" "\n";
     }
     void printFooter() {
         out << "</svg>\n";
@@ -78,14 +84,14 @@ public:
     virtual void accept(figures::Segment &segm) {
         Point a = segm.getA();
         Point b = segm.getB();
-        out << "<line x1=\"" << a.x << "\" y1=\"" << a.y << "\" x2=\"" << b.x << "\" y2=\"" << b.y << "\" style=\"";
+        out << "<line x1=\"" << a.x << "\" y1=\"" << a.y << "\" x2=\"" << b.x << "\" y2=\"" << b.y << "\"";
         if (segm.getArrowedA()) {
-            out << "marked-start: url(#markerArrow);";
+            out << " marker-start=\"url(#markerReverseArrow)\"";
         }
         if (segm.getArrowedB()) {
-            out << "marked-end: url(#markerArrow);";
+            out << " marker-end=\"url(#markerArrow)\"";
         }
-        out << "\"/>\n";
+        out << "/>\n";
     }
     virtual void accept(figures::SegmentConnection &segm) {
         accept((figures::Segment&)segm);
