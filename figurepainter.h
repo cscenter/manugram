@@ -24,21 +24,21 @@ public:
     }
 
     virtual void accept(figures::Ellipse &fig) {
-        QRect rect(scale(fig.getBoundingBox().leftDown),
+        QRectF rect(scale(fig.getBoundingBox().leftDown),
                    scale(fig.getBoundingBox().rightUp)
                   );
         painter.drawEllipse(rect);
     }
 
     virtual void accept(figures::Rectangle &fig) {
-        QRect rect(scale(fig.getBoundingBox().leftDown),
+        QRectF rect(scale(fig.getBoundingBox().leftDown),
                    scale(fig.getBoundingBox().rightUp)
                   );
         painter.drawRect(rect);
     }
 
-    QPoint scale(const Point &p) {
-        return QPoint(p.x, p.y);
+    QPointF scale(const Point &p) {
+        return QPointF(p.x, p.y);
     }
 
 private:
@@ -49,10 +49,10 @@ private:
         const int ARROW_LENGTH = 12;
         Point dir = b - a;
         double ang = atan2(dir.y, dir.x);
-        QPoint start = scale(a);
+        QPointF start = scale(a);
         for (int k = -1; k <= 1; k += 2) {
             double curAng = ang + BRANCH_ANGLE * k;
-            QPoint end = start;
+            QPointF end = start;
             end.setX(end.x() + cos(curAng) * ARROW_LENGTH);
             end.setY(end.y() + sin(curAng) * ARROW_LENGTH);
             painter.drawLine(start, end);
