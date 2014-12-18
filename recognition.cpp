@@ -96,6 +96,9 @@ PFigure recognizeGrabs(const Track &track, Model &model) {
             auto figA = dynamic_pointer_cast<BoundedFigure>(figure);
             if (figA) {
                 for (PFigure figure2 : model) {
+                    if (figure == figure2) {
+                        continue;
+                    }
                     auto figB = dynamic_pointer_cast<BoundedFigure>(figure2);
                     if (figB && figB->getApproximateDistanceToBorder(end) < 10) {
                         auto result = make_shared<SegmentConnection>(figA, figB);
