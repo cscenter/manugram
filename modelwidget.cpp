@@ -89,7 +89,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     }
     lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
     previousModels.push_back(commitedModel);
-    recognize(lastTrack, commitedModel);
+    bool somethingChanged = !!recognize(lastTrack, commitedModel);
 
     visibleTracks.push_back(lastTrack);
     auto iterator = --visibleTracks.end();
@@ -105,7 +105,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     timer->start();
 
     lastTrack = Track();
-    if (previousModels.size() == 1) {
+    if (somethingChanged) {
         emit canUndoChanged();
     }
     repaint();
