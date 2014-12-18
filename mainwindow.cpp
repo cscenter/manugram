@@ -13,10 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setModelWidget(new Ui::ModelWidget());
-    ui->actionUndo->setEnabled(modelWidget->canUndo());
-    connect(modelWidget, &Ui::ModelWidget::canUndoChanged, [this]() {
-        ui->actionUndo->setEnabled(modelWidget->canUndo());
-    });
 }
 
 MainWindow::~MainWindow() {
@@ -36,6 +32,10 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
     this->modelWidget = newWidget;
     ui->wrapperFrame->layout()->addWidget(this->modelWidget);
     ui->actionSaveAs->setEnabled(true);
+    ui->actionUndo->setEnabled(modelWidget->canUndo());
+    connect(modelWidget, &Ui::ModelWidget::canUndoChanged, [this]() {
+        ui->actionUndo->setEnabled(modelWidget->canUndo());
+    });
 }
 
 void MainWindow::on_actionOpen_triggered() {
