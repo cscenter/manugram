@@ -2,6 +2,7 @@
 #include "modelwidget.h"
 #include "figurepainter.h"
 #include "recognition.h"
+#include "layouting.h"
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDebug>
@@ -150,7 +151,11 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     }
     lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
     Model previousModel = commitedModel;
-    bool somethingChanged = !!recognize(lastTrack, commitedModel);
+    PFigure modifiedFigure = recognize(lastTrack, commitedModel);
+    if (_gridStep > 0 && modifiedFigure) {
+        GridAlignLayouter layouter(_gridStep);
+        layouter.updateLayout(commitedModel, modifiedFigure);
+    }
 
     visibleTracks.push_back(lastTrack);
     auto iterator = --visibleTracks.end();
@@ -166,7 +171,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     timer->start();
 
     lastTrack = Track();
-    if (somethingChanged) {
+    if (modifiedFigure) {
         previousModels.push_back(previousModel);
         redoModels.clear();
         emit canUndoChanged();
