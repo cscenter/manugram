@@ -22,7 +22,9 @@ void drawTrack(QPainter &painter, FigurePainter &fpainter, const Track &track) {
 void Ui::ModelWidget::setModel(Model model) {
     commitedModel = std::move(model);
     previousModels.clear();
+    redoModels.clear();
     emit canUndoChanged();
+    emit canRedoChanged();
 }
 Model &Ui::ModelWidget::getModel() {
     return commitedModel;
@@ -36,14 +38,33 @@ void Ui::ModelWidget::undo() {
     if (!canUndo()) {
         throw std::runtime_error("Cannot undo");
     }
+    redoModels.push_front(std::move(commitedModel));
     commitedModel = std::move(previousModels.back());
     previousModels.pop_back();
     if (!canUndo()) {
         emit canUndoChanged();
     }
+    emit canRedoChanged();
     repaint();
 }
 
+bool Ui::ModelWidget::canRedo() {
+    return !redoModels.empty();
+}
+
+void Ui::ModelWidget::redo() {
+    if (!canRedo()) {
+        throw std::runtime_error("Cannot redo");
+    }
+    previousModels.push_back(std::move(commitedModel));
+    commitedModel = std::move(redoModels.front());
+    redoModels.pop_front();
+    if (!canRedo()) {
+        canRedoChanged();
+    }
+    canUndoChanged();
+    repaint();
+}
 
 void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
@@ -88,7 +109,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
         return;
     }
     lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
-    previousModels.push_back(commitedModel); // if nothing is changed, we will pop it back
+    Model previousModel = commitedModel;
     bool somethingChanged = !!recognize(lastTrack, commitedModel);
 
     visibleTracks.push_back(lastTrack);
@@ -106,9 +127,10 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
 
     lastTrack = Track();
     if (somethingChanged) {
+        previousModels.push_back(previousModel);
+        redoModels.clear();
         emit canUndoChanged();
-    } else {
-        previousModels.pop_back();
+        emit canRedoChanged();
     }
     repaint();
 }

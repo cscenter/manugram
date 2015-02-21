@@ -16,6 +16,9 @@ public:
     bool canUndo();
     void undo();
 
+    bool canRedo();
+    void redo();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -24,6 +27,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     Model commitedModel;
     std::list<Model> previousModels;
+    std::list<Model> redoModels;
 
 private:
     Track lastTrack;
@@ -32,6 +36,7 @@ private:
 
 signals:
     void canUndoChanged();
+    void canRedoChanged();
 
 public slots:
 };
