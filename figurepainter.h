@@ -40,6 +40,9 @@ public:
     QPointF scale(const Point &p) {
         return QPointF(p.x, p.y);
     }
+    Point unscale(const QPointF &p) {
+        return Point(p.x(), p.y());
+    }
 
 private:
     QPainter &painter;
