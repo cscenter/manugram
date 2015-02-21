@@ -156,6 +156,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     if (_gridStep > 0 && modifiedFigure) {
         GridAlignLayouter layouter(_gridStep);
         layouter.updateLayout(commitedModel, modifiedFigure);
+        commitedModel.recalculate();
     }
 
     visibleTracks.push_back(lastTrack);
