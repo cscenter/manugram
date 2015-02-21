@@ -27,6 +27,7 @@ private slots:
     void on_actionNew_triggered();
     void on_actionUndo_triggered();
     void on_actionRedo_triggered();
+    void on_actionShowGrid_triggered();
 };
 
 #endif // MAINWINDOW_H

@@ -40,6 +40,7 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
     connect(modelWidget, &Ui::ModelWidget::canRedoChanged, [this]() {
         ui->actionRedo->setEnabled(modelWidget->canRedo());
     });
+    modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? 30 : 0);
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -92,4 +93,8 @@ void MainWindow::on_actionUndo_triggered() {
 
 void MainWindow::on_actionRedo_triggered() {
     modelWidget->redo();
+}
+
+void MainWindow::on_actionShowGrid_triggered() {
+    modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? 30 : 0);
 }
