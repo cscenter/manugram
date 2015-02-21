@@ -26,6 +26,7 @@ private slots:
     void on_actionSaveAs_triggered();
     void on_actionNew_triggered();
     void on_actionUndo_triggered();
+    void on_actionRedo_triggered();
 };
 
 #endif // MAINWINDOW_H

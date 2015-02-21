@@ -36,6 +36,10 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
     connect(modelWidget, &Ui::ModelWidget::canUndoChanged, [this]() {
         ui->actionUndo->setEnabled(modelWidget->canUndo());
     });
+    ui->actionRedo->setEnabled(modelWidget->canRedo());
+    connect(modelWidget, &Ui::ModelWidget::canRedoChanged, [this]() {
+        ui->actionRedo->setEnabled(modelWidget->canRedo());
+    });
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -84,4 +88,8 @@ void MainWindow::on_actionSaveAs_triggered() {
 
 void MainWindow::on_actionUndo_triggered() {
     modelWidget->undo();
+}
+
+void MainWindow::on_actionRedo_triggered() {
+    modelWidget->redo();
 }
