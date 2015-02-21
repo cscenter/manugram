@@ -19,6 +19,9 @@ public:
     bool canRedo();
     void redo();
 
+    int gridStep();
+    void setGridStep(int newGridStep);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -33,6 +36,7 @@ private:
     Track lastTrack;
     bool trackIsCancelled;
     std::list<Track> visibleTracks;
+    int _gridStep;
 
 signals:
     void canUndoChanged();

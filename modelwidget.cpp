@@ -9,7 +9,7 @@
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
-    QWidget(parent), trackIsCancelled(false) {
+    QWidget(parent), trackIsCancelled(false), _gridStep(0) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
@@ -17,6 +17,17 @@ void drawTrack(QPainter &painter, FigurePainter &fpainter, const Track &track) {
     for (size_t i = 0; i + 1 < track.size(); i++) {
         painter.drawLine(fpainter.scale(track[i]), fpainter.scale(track[i + 1]));
     }
+}
+
+int Ui::ModelWidget::gridStep() {
+    return _gridStep;
+}
+
+void Ui::ModelWidget::setGridStep(int newGridStep) {
+    if (newGridStep < 0) {
+        throw std::runtime_error("Grid step should be >= 0");
+    }
+    _gridStep = newGridStep;
 }
 
 void Ui::ModelWidget::setModel(Model model) {
@@ -66,12 +77,41 @@ void Ui::ModelWidget::redo() {
     repaint();
 }
 
+double roundUpToMultiple(double x, double multiple) {
+    return ceil(x / multiple) * multiple;
+}
+
 void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
     painter.fillRect(QRect(QPoint(), size()), Qt::white);
+
     painter.setPen(Qt::black);
 
     FigurePainter fpainter(painter);
+    if (gridStep() > 0) {
+        int step = gridStep();
+        // Calculating visible area
+        Point p1 = fpainter.unscale(QPointF(0, 0));
+        Point p2 = fpainter.unscale(QPointF(width(), height()));
+        if (p1.x > p2.x) { std::swap(p1.x, p2.x); }
+        if (p1.y > p2.y) { std::swap(p1.y, p2.y); }
+
+        // Finding starting point for the grid
+        p1.x = roundUpToMultiple(p1.x, step);
+        p1.y = roundUpToMultiple(p1.y, step);
+
+        // Drawing
+        QPen pen(QColor(192, 192, 192, 255));
+        pen.setStyle(Qt::DashLine);
+        painter.setPen(pen);
+        for (int x = p1.x; x <= p2.x; x += step) {
+            painter.drawLine(fpainter.scale(Point(x, p1.y)), fpainter.scale(Point(x, p2.y)));
+        }
+        for (int y = p1.y; y <= p2.y; y += step) {
+            painter.drawLine(fpainter.scale(Point(p1.x, y)), fpainter.scale(Point(p2.x, y)));
+        }
+    }
+
     Model modelToDraw = commitedModel;
     PFigure modified = recognize(lastTrack, modelToDraw);
     for (PFigure fig : modelToDraw) {
