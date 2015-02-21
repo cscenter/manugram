@@ -185,4 +185,19 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
         trackIsCancelled = true;
         repaint();
     }
+    if (event->key() == Qt::Key_Delete) {
+        if (commitedModel.selectedFigure) {
+            previousModels.push_back(commitedModel);
+            redoModels.clear();
+            for (auto it = commitedModel.begin(); it != commitedModel.end(); it++) {
+                if (*it == commitedModel.selectedFigure) {
+                    commitedModel.removeFigure(it);
+                    break;
+                }
+            }
+            emit canUndoChanged();
+            emit canRedoChanged();
+            repaint();
+        }
+    }
 }
