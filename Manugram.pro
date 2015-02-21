@@ -18,7 +18,8 @@ SOURCES += \
         mainwindow.cpp \
         model.cpp \
     modelwidget.cpp \
-    recognition.cpp
+    recognition.cpp \
+    layouting.cpp
 
 CONFIG(tests) {
     QT += testlib
@@ -32,6 +33,7 @@ HEADERS  += mainwindow.h \
             model.h \
     modelwidget.h \
     figurepainter.h \
-    recognition.h
+    recognition.h \
+    layouting.h
 
 FORMS    += mainwindow.ui
