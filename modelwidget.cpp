@@ -113,7 +113,8 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
         }
     }
 
-    Model modelToDraw = commitedModel;
+    Model copiedModel;
+    Model &modelToDraw = lastTrack.empty() ? commitedModel : (copiedModel = commitedModel);
     PFigure modified = recognize(lastTrack, modelToDraw);
     for (PFigure fig : modelToDraw) {
         if (fig == modified) {
