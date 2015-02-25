@@ -98,3 +98,7 @@ void MainWindow::on_actionRedo_triggered() {
 void MainWindow::on_actionShowGrid_triggered() {
     modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? 30 : 0);
 }
+
+void MainWindow::on_actionExit_triggered() {
+    QApplication::exit();
+}
