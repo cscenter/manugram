@@ -29,6 +29,7 @@ void Ui::ModelWidget::setGridStep(int newGridStep) {
         throw std::runtime_error("Grid step should be >= 0");
     }
     _gridStep = newGridStep;
+    repaint();
 }
 
 void Ui::ModelWidget::setModel(Model model) {
