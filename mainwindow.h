@@ -19,6 +19,7 @@ private:
     Ui::MainWindow *ui;
     Ui::ModelWidget *modelWidget;
     QString currentFileName;
+    int defaultGridStep = 30;
 
     void setModelWidget(Ui::ModelWidget *widget);
 
