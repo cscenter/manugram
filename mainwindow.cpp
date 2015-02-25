@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "model.h"
+#include "figurepainter.h"
 #include <fstream>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -80,12 +81,48 @@ void MainWindow::on_actionSave_triggered() {
     file << model;
 }
 
+void exportModelToPng(Model &model, const QString &filename) {
+    Point minPoint(INFINITY, INFINITY);
+    Point maxPoint(-INFINITY, -INFINITY);
+    for (const PFigure &fig : model) {
+        BoundingBox box = fig->getBoundingBox();
+        minPoint.x = std::min(minPoint.x, box.leftDown.x);
+        minPoint.y = std::min(minPoint.y, box.leftDown.y);
+        maxPoint.x = std::max(maxPoint.x, box.rightUp.x);
+        maxPoint.y = std::max(maxPoint.y, box.rightUp.y);
+    }
+    if (minPoint.x > maxPoint.x) {
+        minPoint = maxPoint = Point(0, 0);
+    }
+    {
+        double w = maxPoint.x - minPoint.x;
+        double h = maxPoint.y - minPoint.y;
+        minPoint.x -= w * 0.05;
+        minPoint.y -= w * 0.05;
+        maxPoint.x += h * 0.05;
+        maxPoint.y += h * 0.05;
+    }
+
+    QImage img(maxPoint.x - minPoint.x, maxPoint.y - minPoint.y, QImage::Format_ARGB32);
+    QPainter painter(&img);
+    painter.fillRect(QRect(QPoint(), img.size()), Qt::white);
+    painter.setPen(Qt::black);
+    FigurePainter fpainter(painter, minPoint);
+    for (PFigure fig : model) {
+        fig->visit(fpainter);
+    }
+    painter.end();
+    if (!img.save(filename)) {
+        throw std::runtime_error("Unable to save to PNG file");
+    }
+}
+
 void MainWindow::on_actionSaveAs_triggered() {
     QString filename = QFileDialog::getSaveFileName(
                            this,
                            "Select file to save in",
                            QDir::currentPath(),
-                           "Models (*.model);;SVG (*.svg)"
+                           "Models (*.model);;SVG (*.svg);;PNG (*.png)"
                        );
     if (filename == "") {
         return;
@@ -94,6 +131,9 @@ void MainWindow::on_actionSaveAs_triggered() {
     std::ofstream file(filename.toStdString());
     if (filename.toLower().endsWith(".svg")) {
         exportModelToSvg(model, file);
+    } else if (filename.toLower().endsWith(".png")) {
+        file.close();
+        exportModelToPng(model, filename);
     } else {
         file << model;
         currentFileName = filename;
