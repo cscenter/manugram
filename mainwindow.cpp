@@ -70,6 +70,16 @@ void MainWindow::on_actionOpen_triggered() {
     currentFileName = filename;
 }
 
+void MainWindow::on_actionSave_triggered() {
+    if (currentFileName == QString()) {
+        ui->actionSaveAs->trigger();
+        return;
+    }
+    Model &model = this->modelWidget->getModel();
+    std::ofstream file(currentFileName.toStdString());
+    file << model;
+}
+
 void MainWindow::on_actionSaveAs_triggered() {
     QString filename = QFileDialog::getSaveFileName(
                            this,
