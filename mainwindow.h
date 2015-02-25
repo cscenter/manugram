@@ -18,6 +18,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Ui::ModelWidget *modelWidget;
+    QString currentFileName;
 
     void setModelWidget(Ui::ModelWidget *widget);
 

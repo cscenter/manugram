@@ -21,6 +21,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::on_actionNew_triggered() {
     setModelWidget(new Ui::ModelWidget());
+    currentFileName = QString();
 }
 
 void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
@@ -66,6 +67,7 @@ void MainWindow::on_actionOpen_triggered() {
     }
 
     setModelWidget(modelWidget.release());
+    currentFileName = filename;
 }
 
 void MainWindow::on_actionSaveAs_triggered() {
@@ -84,6 +86,7 @@ void MainWindow::on_actionSaveAs_triggered() {
         exportModelToSvg(model, file);
     } else {
         file << model;
+        currentFileName = filename;
     }
 }
 
