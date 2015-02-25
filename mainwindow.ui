@@ -63,6 +63,7 @@
     <addaction name="separator"/>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionExit"/>
    </widget>
@@ -99,18 +100,29 @@
     <string>Ctrl+O</string>
    </property>
   </action>
+  <action name="actionSave">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
   <action name="actionSaveAs">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>&amp;Save as</string>
+    <string>Save &amp;as</string>
    </property>
    <property name="toolTip">
     <string>Save as</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
   <action name="actionUndo">
