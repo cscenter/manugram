@@ -8,6 +8,7 @@
 class FigurePainter : public FigureVisitor {
 public:
     FigurePainter(QPainter &painter) : painter(painter) {}
+    FigurePainter(QPainter &painter, const Point &zeroPoint) : painter(painter), zeroPoint(zeroPoint) {}
     virtual ~FigurePainter() {}
 
     virtual void accept(figures::Segment &segm) {
@@ -38,14 +39,15 @@ public:
     }
 
     QPointF scale(const Point &p) {
-        return QPointF(p.x, p.y);
+        return QPointF(p.x - zeroPoint.x, p.y - zeroPoint.y);
     }
     Point unscale(const QPointF &p) {
-        return Point(p.x(), p.y());
+        return Point(p.x() + zeroPoint.x, p.y() + zeroPoint.y);
     }
 
 private:
     QPainter &painter;
+    Point zeroPoint;
 
     void drawArrow(const Point &a, const Point &b) {
         const double BRANCH_ANGLE = 25 * PI / 180.0;
