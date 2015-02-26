@@ -33,8 +33,23 @@ double getClosedCircumference(const Track &track) {
     return res;
 }
 
-bool isClosed(const Track &track) {
-    return (track[0] - track[track.size() - 1]).length() <= 10;
+bool cutToClosed(Track &track) {
+    auto &points = track.points;
+    auto it = points.begin();
+    while (it != points.end() && (points[0] - *it).length() <= 10) {
+        it++;
+    }
+    while (it != points.end() && (points[0] - *it).length() > 10) {
+        it++;
+    }
+    if (it == points.end()) {
+        return false;
+    }
+    while (it != points.end() && (points[0] - *it).length() <= 10) {
+        it++;
+    }
+    points.erase(it, points.end());
+    return true;
 }
 
 double fitsToTrack(const Track &track, const PFigure &figure) {
@@ -153,7 +168,10 @@ PFigure recognizeClicks(const Point &click, Model &model) {
     return nullptr;
 }
 
-PFigure recognize(const Track &track, Model &model) {
+PFigure recognize(const Track &_track, Model &model) {
+    // this is to preserve the API (const Track&) and make future optimizations possible
+    // i.e. avoid copying if it's not necessary
+    Track track = _track;
     if (track.empty()) { return nullptr; }
 
     // Very small tracks are clicks
@@ -168,7 +186,7 @@ PFigure recognize(const Track &track, Model &model) {
 
     // Drawing new figures
     std::vector<PFigure> candidates;
-    if (!isClosed(track))  {
+    if (!cutToClosed(track))  {
         candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
     } else {
         candidates.push_back(make_shared<Ellipse>(getBoundingBox(track)));
