@@ -24,3 +24,10 @@ _For MinGW users_: Please take a look at [this](http://stackoverflow.com/questio
   question on StackOverflow. In short: if your build directory contains spaces and you get gcc's error
   like `<part-of-your-directory-here>: No such file or directory`, locate a file named `testlib_defines.prf`
   in your Qt installation directory and replace triple backslashes by one backslash.
+
+Similar products
+================
+* <a href="http://sketchometry.org">Sketchometry</a>, <a href="http://habrahabr.ru/post/239259/">article</a> in Russian
+* SMART Board software: the 'smart pen' tool (not sure about English name of the tool)
+
+
