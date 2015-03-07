@@ -96,7 +96,7 @@ public:
     virtual void accept(figures::Rectangle &figure) override {
         BoundingBox rect = figure.getBoundingBox();
         _result = rect.center();
-        if (rect.width() < EPS|| rect.height() < EPS) {
+        if (rect.width() < EPS || rect.height() < EPS) {
             return;
         }
         Point direction = b - rect.center();

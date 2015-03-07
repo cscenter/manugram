@@ -12,7 +12,7 @@ void GridAlignLayouter::alignPoint(Point &p) {
 }
 
 void GridAlignLayouter::updateLayout(Model &, PFigure changed) {
-    if (!changed){
+    if (!changed) {
         return;
     }
     if (auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(changed)) {
