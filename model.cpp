@@ -63,31 +63,68 @@ double figures::Ellipse::getApproximateDistanceToBorder(const Point &_p) {
     return (p - near).length();
 }
 
-std::vector<Point> getMiddleBorderPoints(BoundingBox box) {
-    std::vector<Point> res;
-    res.push_back(Point(box.center().x, box.leftDown.y));
-    res.push_back(Point(box.center().x, box.rightUp.y));
-    res.push_back(Point(box.leftDown.x, box.center().y));
-    res.push_back(Point(box.rightUp.x, box.center().y));
-    return res;
-}
+/*
+ * Consider a segment from figure's center to point b
+ * Intersection point of this segment with figure is returned,
+ * If there is no such one or figure is degenerate, center is returned instead
+ */
+class CutSegmentFromCenterVisitor : FigureVisitor {
+    static constexpr double EPS = 1e-8;
+    Point b;
+    Point _result;
+    CutSegmentFromCenterVisitor(const Point &_b) : b(_b) {}
+public:
+    Point result() { return _result; }
+    virtual void accept(figures::Ellipse &figure) override {
+        BoundingBox ellipse = figure.getBoundingBox();
+        _result = ellipse.center();
+        if (ellipse.width() < EPS || ellipse.height() < EPS) {
+            return;
+        }
+        Point direction = b - ellipse.center();
+        double aspectRatio = ellipse.width() / ellipse.height();
+        direction.x /= aspectRatio;
+        double r = ellipse.height() / 2;
+        if (direction.length() < r - EPS) {
+            return;
+        }
+        direction = direction * (r / direction.length());
+        direction.x *= aspectRatio;
+        _result = ellipse.center() + direction;
+    }
+
+    virtual void accept(figures::Rectangle &figure) override {
+        BoundingBox rect = figure.getBoundingBox();
+        _result = rect.center();
+        if (rect.width() < EPS|| rect.height() < EPS) {
+            return;
+        }
+        Point direction = b - rect.center();
+        double aspectRatio = rect.width() / rect.height();
+        direction.x /= aspectRatio;
+        double r = rect.height() / 2;
+        double compressRatio = std::min(r / fabs(direction.x), r / fabs(direction.y));
+        if (compressRatio > 1 - EPS) {
+            return;
+        }
+        direction = direction * compressRatio;
+        direction.x *= aspectRatio;
+        _result = rect.center() + direction;
+    }
+    virtual void accept(figures::Segment &) override { throw visitor_implementation_not_found(); }
+    virtual void accept(figures::SegmentConnection &) override { throw visitor_implementation_not_found(); }
+    static Point apply(PFigure figure, Point b) {
+        CutSegmentFromCenterVisitor visitor(b);
+        figure->visit(visitor);
+        return visitor.result();
+    }
+};
 
 void figures::SegmentConnection::recalculate() {
-    using std::vector;
-    using std::get;
-    vector<Point> as = getMiddleBorderPoints(figA->getBoundingBox());
-    vector<Point> bs = getMiddleBorderPoints(figB->getBoundingBox());
-    double minDistSquared = HUGE_VAL;
-    for (Point a : as) {
-        for (Point b : bs) {
-            double curDistSquared = (a - b).lengthSquared();
-            if (minDistSquared > curDistSquared) {
-                minDistSquared = curDistSquared;
-                this->a = a;
-                this->b = b;
-            }
-        }
-    }
+    Point centerA = figA->getBoundingBox().center();
+    Point centerB = figB->getBoundingBox().center();
+    this->a = CutSegmentFromCenterVisitor::apply(figA, centerB);
+    this->b = CutSegmentFromCenterVisitor::apply(figB, centerA);
 }
 
 std::istream &operator>>(std::istream &in, Model &model) {
