@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "model.h"
+#include <QString>
 class model_format_error : std::runtime_error {
 public:
     model_format_error(const std::string &message) : std::runtime_error("Invalid model format: " + message) {}
@@ -12,5 +13,6 @@ public:
 std::istream &operator>>(std::istream &in , Model &model);
 std::ostream &operator<<(std::ostream &out , Model &model);
 void exportModelToSvg(Model &m, std::ostream &out);
+void exportModelToPng(Model &model, const QString &filename);
 
 #endif // MODEL_IO_H
