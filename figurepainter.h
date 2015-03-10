@@ -7,8 +7,13 @@
 
 class FigurePainter : public FigureVisitor {
 public:
-    FigurePainter(QPainter &painter) : painter(painter) {}
-    FigurePainter(QPainter &painter, const Point &zeroPoint) : painter(painter), zeroPoint(zeroPoint) {}
+    FigurePainter(
+        QPainter &painter,
+        const Point &zeroPoint = Point()
+    )
+        : painter(painter)
+        , zeroPoint(zeroPoint)
+    {}
     virtual ~FigurePainter() {}
 
     virtual void accept(figures::Segment &segm) {
