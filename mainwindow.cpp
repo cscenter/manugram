@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "model.h"
+#include "model_io.h"
 #include "figurepainter.h"
 #include <fstream>
 #include <QFileDialog>
