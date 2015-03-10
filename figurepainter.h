@@ -9,10 +9,12 @@ class FigurePainter : public FigureVisitor {
 public:
     FigurePainter(
         QPainter &painter,
-        const Point &zeroPoint = Point()
+        const Point &zeroPoint = Point(),
+        const double scaleFactor = 1.0
     )
         : painter(painter)
         , zeroPoint(zeroPoint)
+        , scaleFactor(scaleFactor)
     {}
     virtual ~FigurePainter() {}
 
@@ -44,15 +46,16 @@ public:
     }
 
     QPointF scale(const Point &p) {
-        return QPointF(p.x - zeroPoint.x, p.y - zeroPoint.y);
+        return QPointF((p.x - zeroPoint.x) * scaleFactor, (p.y - zeroPoint.y) * scaleFactor);
     }
     Point unscale(const QPointF &p) {
-        return Point(p.x() + zeroPoint.x, p.y() + zeroPoint.y);
+        return Point(p.x() / scaleFactor + zeroPoint.x, p.y() / scaleFactor + zeroPoint.y);
     }
 
 private:
     QPainter &painter;
     Point zeroPoint;
+    double scaleFactor;
 
     void drawArrow(const Point &a, const Point &b) {
         const double BRANCH_ANGLE = 25 * PI / 180.0;
