@@ -22,6 +22,9 @@ public:
     int gridStep();
     void setGridStep(int newGridStep);
 
+    double scaleFactor();
+    void setScaleFactor(double newScaleFactor);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -37,6 +40,7 @@ private:
     bool trackIsCancelled;
     std::list<Track> visibleTracks;
     int _gridStep;
+    double _scaleFactor;
 
 signals:
     void canUndoChanged();

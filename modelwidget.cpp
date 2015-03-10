@@ -10,7 +10,7 @@
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
-    QWidget(parent), trackIsCancelled(false), _gridStep(0) {
+    QWidget(parent), trackIsCancelled(false), _gridStep(0), _scaleFactor(1) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
@@ -29,6 +29,18 @@ void Ui::ModelWidget::setGridStep(int newGridStep) {
         throw std::runtime_error("Grid step should be >= 0");
     }
     _gridStep = newGridStep;
+    repaint();
+}
+
+double Ui::ModelWidget::scaleFactor() {
+    return _scaleFactor;
+}
+
+void Ui::ModelWidget::setScaleFactor(double newScaleFactor) {
+    if (!(newScaleFactor >= 0.01)) { // >= instead of < for NaNs
+        throw std::runtime_error("Scale factor should be >= 0.01");
+    }
+    _scaleFactor = newScaleFactor;
     repaint();
 }
 
@@ -89,7 +101,7 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
     painter.setPen(Qt::black);
 
-    FigurePainter fpainter(painter);
+    FigurePainter fpainter(painter, Point(), _scaleFactor);
     if (gridStep() > 0) {
         int step = gridStep();
         // Calculating visible area
