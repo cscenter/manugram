@@ -13,6 +13,6 @@ public:
 std::istream &operator>>(std::istream &in , Model &model);
 std::ostream &operator<<(std::ostream &out , Model &model);
 void exportModelToSvg(Model &m, std::ostream &out);
-void exportModelToPng(Model &model, const QString &filename);
+void exportModelToImageFile(Model &model, const QString &filename);
 
 #endif // MODEL_IO_H

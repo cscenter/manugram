@@ -149,7 +149,7 @@ void exportModelToSvg(Model &m, std::ostream &out) {
     painter.printFooter();
 }
 
-void exportModelToPng(Model &model, const QString &filename) {
+void exportModelToImageFile(Model &model, const QString &filename) {
     Point minPoint(INFINITY, INFINITY);
     Point maxPoint(-INFINITY, -INFINITY);
     for (const PFigure &fig : model) {

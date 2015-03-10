@@ -99,7 +99,7 @@ void MainWindow::on_actionSaveAs_triggered() {
         exportModelToSvg(model, file);
     } else if (filename.toLower().endsWith(".png")) {
         file.close();
-        exportModelToPng(model, filename);
+        exportModelToImageFile(model, filename);
     } else {
         file << model;
         currentFileName = filename;
