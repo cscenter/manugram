@@ -65,12 +65,6 @@ public:
         painter.drawRect(rect);
     }
 
-    QPointF scale(const Point &p) {
-        return scaler(p);
-    }
-    Point unscale(const QPointF &p) {
-        return scaler(p);
-    }
 private:
     QPainter &painter;
     Scaler scaler;

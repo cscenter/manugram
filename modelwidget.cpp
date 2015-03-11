@@ -14,9 +14,9 @@ Ui::ModelWidget::ModelWidget(QWidget *parent) :
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
-void drawTrack(QPainter &painter, FigurePainter &fpainter, const Track &track) {
+void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
     for (size_t i = 0; i + 1 < track.size(); i++) {
-        painter.drawLine(fpainter.scale(track[i]), fpainter.scale(track[i + 1]));
+        painter.drawLine(scaler(track[i]), scaler(track[i + 1]));
     }
 }
 
@@ -102,12 +102,13 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
     painter.setPen(Qt::black);
 
-    FigurePainter fpainter(painter, Scaler(Point(), _scaleFactor));
+    Scaler scaler(Point(), _scaleFactor);
+    FigurePainter fpainter(painter, scaler);
     if (gridStep() > 0) {
         int step = gridStep();
         // Calculating visible area
-        Point p1 = fpainter.unscale(QPointF(0, 0));
-        Point p2 = fpainter.unscale(QPointF(width(), height()));
+        Point p1 = scaler(QPointF(0, 0));
+        Point p2 = scaler(QPointF(width(), height()));
         if (p1.x > p2.x) { std::swap(p1.x, p2.x); }
         if (p1.y > p2.y) { std::swap(p1.y, p2.y); }
 
@@ -120,10 +121,10 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
         pen.setStyle(Qt::DashLine);
         painter.setPen(pen);
         for (int x = p1.x; x <= p2.x; x += step) {
-            painter.drawLine(fpainter.scale(Point(x, p1.y)), fpainter.scale(Point(x, p2.y)));
+            painter.drawLine(scaler(Point(x, p1.y)), scaler(Point(x, p2.y)));
         }
         for (int y = p1.y; y <= p2.y; y += step) {
-            painter.drawLine(fpainter.scale(Point(p1.x, y)), fpainter.scale(Point(p2.x, y)));
+            painter.drawLine(scaler(Point(p1.x, y)), scaler(Point(p2.x, y)));
         }
     }
 
@@ -144,9 +145,9 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     QPen pen(QColor(255, 0, 0, 16));
     pen.setWidth(3);
     painter.setPen(pen);
-    drawTrack(painter, fpainter, lastTrack);
+    drawTrack(painter, scaler, lastTrack);
     for (const Track &track : visibleTracks) {
-        drawTrack(painter, fpainter, track);
+        drawTrack(painter, scaler, track);
     }
 }
 
