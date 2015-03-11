@@ -156,6 +156,7 @@ void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
         mouseAction = MouseAction::ViewpointMove;
         viewpointMoveStart = event->pos();
         viewpointMoveOldScaler = scaler;
+        setCursor(Qt::ClosedHandCursor);
     } else {
         mouseAction = MouseAction::TrackActive;
         lastTrack.points.push_back(scaler(event->pos()));
@@ -179,6 +180,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     }
     if (mouseAction == MouseAction::ViewpointMove) {
         mouseAction = MouseAction::None;
+        setCursor(Qt::ArrowCursor);
         scaler = viewpointMoveOldScaler;
         scaler.zeroPoint = scaler.zeroPoint + scaler(viewpointMoveStart) - scaler(event->pos());
         repaint();
