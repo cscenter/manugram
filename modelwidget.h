@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <list>
 #include "model.h"
+#include "figurepainter.h"
 
 namespace Ui {
 class ModelWidget : public QWidget {
@@ -40,7 +41,7 @@ private:
     bool trackIsCancelled;
     std::list<Track> visibleTracks;
     int _gridStep;
-    double _scaleFactor;
+    Scaler scaler;
 
 signals:
     void canUndoChanged();
