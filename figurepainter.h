@@ -5,21 +5,41 @@
 #include <QPainter>
 #include <cmath>
 
+class Scaler {
+public:
+    Scaler(
+        const Point &zeroPoint = Point(),
+        const double scaleFactor = 1.0
+    )
+        : zeroPoint(zeroPoint)
+        , scaleFactor(scaleFactor)
+    {}
+
+    QPointF operator()(const Point &p) {
+        return QPointF((p.x - zeroPoint.x) * scaleFactor, (p.y - zeroPoint.y) * scaleFactor);
+    }
+    Point operator()(const QPointF &p) {
+        return Point(p.x() / scaleFactor + zeroPoint.x, p.y() / scaleFactor + zeroPoint.y);
+    }
+
+private:
+    Point zeroPoint;
+    double scaleFactor;
+};
+
 class FigurePainter : public FigureVisitor {
 public:
     FigurePainter(
         QPainter &painter,
-        const Point &zeroPoint = Point(),
-        const double scaleFactor = 1.0
+        const Scaler &scaler = Scaler()
     )
         : painter(painter)
-        , zeroPoint(zeroPoint)
-        , scaleFactor(scaleFactor)
+        , scaler(scaler)
     {}
     virtual ~FigurePainter() {}
 
     virtual void accept(figures::Segment &segm) {
-        painter.drawLine(scale(segm.getA()), scale(segm.getB()));
+        painter.drawLine(scaler(segm.getA()), scaler(segm.getB()));
         if (segm.getArrowedA()) {
             drawArrow(segm.getA(), segm.getB());
         }
@@ -32,37 +52,35 @@ public:
     }
 
     virtual void accept(figures::Ellipse &fig) {
-        QRectF rect(scale(fig.getBoundingBox().leftDown),
-                    scale(fig.getBoundingBox().rightUp)
+        QRectF rect(scaler(fig.getBoundingBox().leftDown),
+                    scaler(fig.getBoundingBox().rightUp)
                    );
         painter.drawEllipse(rect);
     }
 
     virtual void accept(figures::Rectangle &fig) {
-        QRectF rect(scale(fig.getBoundingBox().leftDown),
-                    scale(fig.getBoundingBox().rightUp)
+        QRectF rect(scaler(fig.getBoundingBox().leftDown),
+                    scaler(fig.getBoundingBox().rightUp)
                    );
         painter.drawRect(rect);
     }
 
     QPointF scale(const Point &p) {
-        return QPointF((p.x - zeroPoint.x) * scaleFactor, (p.y - zeroPoint.y) * scaleFactor);
+        return scaler(p);
     }
     Point unscale(const QPointF &p) {
-        return Point(p.x() / scaleFactor + zeroPoint.x, p.y() / scaleFactor + zeroPoint.y);
+        return scaler(p);
     }
-
 private:
     QPainter &painter;
-    Point zeroPoint;
-    double scaleFactor;
+    Scaler scaler;
 
     void drawArrow(const Point &a, const Point &b) {
         const double BRANCH_ANGLE = 25 * PI / 180.0;
         const int ARROW_LENGTH = 12;
         Point dir = b - a;
         double ang = atan2(dir.y, dir.x);
-        QPointF start = scale(a);
+        QPointF start = scaler(a);
         for (int k = -1; k <= 1; k += 2) {
             double curAng = ang + BRANCH_ANGLE * k;
             QPointF end = start;

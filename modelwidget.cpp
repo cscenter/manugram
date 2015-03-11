@@ -102,7 +102,7 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
     painter.setPen(Qt::black);
 
-    FigurePainter fpainter(painter, Point(), _scaleFactor);
+    FigurePainter fpainter(painter, Scaler(Point(), _scaleFactor));
     if (gridStep() > 0) {
         int step = gridStep();
         // Calculating visible area
