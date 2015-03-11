@@ -37,8 +37,13 @@ protected:
     std::list<Model> redoModels;
 
 private:
+    enum MouseAction {
+        None,
+        TrackActive,
+    };
+
     Track lastTrack;
-    bool trackIsCancelled;
+    MouseAction mouseAction;
     std::list<Track> visibleTracks;
     int _gridStep;
     Scaler scaler;

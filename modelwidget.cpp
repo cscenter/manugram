@@ -10,7 +10,7 @@
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
-    QWidget(parent), trackIsCancelled(false), _gridStep(0) {
+    QWidget(parent), mouseAction(MouseAction::None), _gridStep(0) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
@@ -152,7 +152,7 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     lastTrack = Track();
-    trackIsCancelled = false;
+    mouseAction = MouseAction::TrackActive;
     lastTrack.points.push_back(scaler(event->pos()));
     repaint();
 }
@@ -161,9 +161,11 @@ void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
     repaint();
 }
 void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
-    if (trackIsCancelled) {
+    if (mouseAction == MouseAction::None) {
         return;
     }
+    assert(mouseAction == MouseAction::TrackActive);
+    mouseAction = MouseAction::None;
     lastTrack.points.push_back(scaler(event->pos()));
     Model previousModel = commitedModel;
     PFigure modifiedFigure = recognize(lastTrack, commitedModel);
@@ -196,9 +198,9 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     repaint();
 }
 void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_Escape) {
+    if (event->key() == Qt::Key_Escape && mouseAction == MouseAction::TrackActive) {
         lastTrack = Track();
-        trackIsCancelled = true;
+        mouseAction = MouseAction::None;
         repaint();
     }
     if (event->key() == Qt::Key_Delete) {
