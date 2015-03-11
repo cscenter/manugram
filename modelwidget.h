@@ -45,6 +45,8 @@ private:
 
     Track lastTrack;
     MouseAction mouseAction;
+    QPoint viewpointMoveStart;
+    Scaler viewpointMoveOldScaler;
     std::list<Track> visibleTracks;
     int _gridStep;
     Scaler scaler;

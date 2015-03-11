@@ -154,6 +154,8 @@ void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     lastTrack = Track();
     if (event->modifiers().testFlag(Qt::ShiftModifier)) {
         mouseAction = MouseAction::ViewpointMove;
+        viewpointMoveStart = event->pos();
+        viewpointMoveOldScaler = scaler;
     } else {
         mouseAction = MouseAction::TrackActive;
         lastTrack.points.push_back(scaler(event->pos()));
@@ -161,6 +163,11 @@ void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     repaint();
 }
 void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
+    if (mouseAction == MouseAction::ViewpointMove) {
+        scaler = viewpointMoveOldScaler;
+        scaler.zeroPoint = scaler.zeroPoint + scaler(viewpointMoveStart) - scaler(event->pos());
+        repaint();
+    }
     if (mouseAction == MouseAction::TrackActive) {
         lastTrack.points.push_back(scaler(event->pos()));
         repaint();
@@ -172,6 +179,8 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     }
     if (mouseAction == MouseAction::ViewpointMove) {
         mouseAction = MouseAction::None;
+        scaler = viewpointMoveOldScaler;
+        scaler.zeroPoint = scaler.zeroPoint + scaler(viewpointMoveStart) - scaler(event->pos());
         repaint();
         return;
     }
