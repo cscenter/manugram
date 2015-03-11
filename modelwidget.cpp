@@ -41,6 +41,7 @@ void Ui::ModelWidget::setScaleFactor(double newScaleFactor) {
         throw std::runtime_error("Scale factor should be >= 0.01");
     }
     _scaleFactor = newScaleFactor;
+    emit scaleFactorChanged();
     repaint();
 }
 

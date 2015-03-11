@@ -45,6 +45,7 @@ private:
 signals:
     void canUndoChanged();
     void canRedoChanged();
+    void scaleFactorChanged();
 
 public slots:
 };
