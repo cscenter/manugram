@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QShortcut>
 #include "modelwidget.h"
 
 namespace Ui {
@@ -21,6 +22,9 @@ private:
     Ui::ModelWidget *modelWidget;
     QString currentFileName;
     int defaultGridStep = 30;
+
+    QShortcut redoExtraShortcut;
+    QShortcut zoomInExtraShortcut;
 
     void setModelWidget(Ui::ModelWidget *widget);
 

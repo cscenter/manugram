@@ -7,14 +7,18 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QShortcut>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    modelWidget(nullptr)
-
+    modelWidget(nullptr),
+    redoExtraShortcut(QKeySequence("Ctrl+Shift+Z"), this),
+    zoomInExtraShortcut(QKeySequence("Ctrl+="), this)
 {
     ui->setupUi(this);
+    connect(&redoExtraShortcut  , &QShortcut::activated, ui->actionRedo  , &QAction::trigger);
+    connect(&zoomInExtraShortcut, &QShortcut::activated, ui->actionZoomIn, &QAction::trigger);
     setModelWidget(new Ui::ModelWidget());
 }
 
@@ -110,10 +114,14 @@ void MainWindow::on_actionSaveAs_triggered() {
 }
 
 void MainWindow::on_actionUndo_triggered() {
+    // Extra check is added for symmetry with actionRedo
+    if (!modelWidget->canUndo()) { return; }
     modelWidget->undo();
 }
 
 void MainWindow::on_actionRedo_triggered() {
+    // Extra check is added because there is extra shortcut
+    if (!modelWidget->canRedo()) { return; }
     modelWidget->redo();
 }
 
