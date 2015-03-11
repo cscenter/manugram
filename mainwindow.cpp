@@ -121,6 +121,14 @@ void MainWindow::on_actionShowGrid_triggered() {
     modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? defaultGridStep : 0);
 }
 
+void MainWindow::on_actionZoomIn_triggered() {
+    modelWidget->setScaleFactor(modelWidget->scaleFactor() + SCALE_FACTOR_STEP);
+}
+
+void MainWindow::on_actionZoomOut_triggered() {
+    modelWidget->setScaleFactor(modelWidget->scaleFactor() - SCALE_FACTOR_STEP);
+}
+
 void MainWindow::on_actionExit_triggered() {
     QApplication::exit();
 }

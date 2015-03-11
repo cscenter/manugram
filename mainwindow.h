@@ -16,6 +16,7 @@ public:
     ~MainWindow();
 
 private:
+    static constexpr double SCALE_FACTOR_STEP = 0.1;
     Ui::MainWindow *ui;
     Ui::ModelWidget *modelWidget;
     QString currentFileName;
@@ -31,6 +32,8 @@ private slots:
     void on_actionUndo_triggered();
     void on_actionRedo_triggered();
     void on_actionShowGrid_triggered();
+    void on_actionZoomIn_triggered();
+    void on_actionZoomOut_triggered();
     void on_actionExit_triggered();
 };
 
