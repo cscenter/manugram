@@ -44,6 +44,9 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
     connect(modelWidget, &Ui::ModelWidget::canRedoChanged, [this]() {
         ui->actionRedo->setEnabled(modelWidget->canRedo());
     });
+    connect(modelWidget, &Ui::ModelWidget::scaleFactorChanged, [this]() {
+        ui->actionZoomOut->setEnabled(modelWidget->scaleFactor() > SCALE_FACTOR_STEP + 1e-8);
+    });
     modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? defaultGridStep : 0);
 }
 
