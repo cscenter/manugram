@@ -153,18 +153,18 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     lastTrack = Track();
     trackIsCancelled = false;
-    lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
+    lastTrack.points.push_back(scaler(event->pos()));
     repaint();
 }
 void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
-    lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
+    lastTrack.points.push_back(scaler(event->pos()));
     repaint();
 }
 void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     if (trackIsCancelled) {
         return;
     }
-    lastTrack.points.push_back(Point(event->pos().x(), event->pos().y()));
+    lastTrack.points.push_back(scaler(event->pos()));
     Model previousModel = commitedModel;
     PFigure modifiedFigure = recognize(lastTrack, commitedModel);
     if (_gridStep > 0 && modifiedFigure) {
