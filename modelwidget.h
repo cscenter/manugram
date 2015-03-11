@@ -40,6 +40,7 @@ private:
     enum MouseAction {
         None,
         TrackActive,
+        ViewpointMove
     };
 
     Track lastTrack;

@@ -152,16 +152,27 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     lastTrack = Track();
-    mouseAction = MouseAction::TrackActive;
-    lastTrack.points.push_back(scaler(event->pos()));
+    if (event->modifiers().testFlag(Qt::ShiftModifier)) {
+        mouseAction = MouseAction::ViewpointMove;
+    } else {
+        mouseAction = MouseAction::TrackActive;
+        lastTrack.points.push_back(scaler(event->pos()));
+    }
     repaint();
 }
 void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
-    lastTrack.points.push_back(scaler(event->pos()));
-    repaint();
+    if (mouseAction == MouseAction::TrackActive) {
+        lastTrack.points.push_back(scaler(event->pos()));
+        repaint();
+    }
 }
 void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     if (mouseAction == MouseAction::None) {
+        return;
+    }
+    if (mouseAction == MouseAction::ViewpointMove) {
+        mouseAction = MouseAction::None;
+        repaint();
         return;
     }
     assert(mouseAction == MouseAction::TrackActive);
