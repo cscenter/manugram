@@ -5,8 +5,7 @@
 #include <QPainter>
 #include <cmath>
 
-class Scaler {
-public:
+struct Scaler {
     Scaler(
         const Point &zeroPoint = Point(),
         const double scaleFactor = 1.0
@@ -22,7 +21,6 @@ public:
         return Point(p.x() / scaleFactor + zeroPoint.x, p.y() / scaleFactor + zeroPoint.y);
     }
 
-private:
     Point zeroPoint;
     double scaleFactor;
 };
