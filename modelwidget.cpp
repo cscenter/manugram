@@ -92,8 +92,8 @@ void Ui::ModelWidget::redo() {
     repaint();
 }
 
-double roundUpToMultiple(double x, double multiple) {
-    return ceil(x / multiple) * multiple;
+double roundDownToMultiple(double x, double multiple) {
+    return floor(x / multiple) * multiple;
 }
 
 void Ui::ModelWidget::paintEvent(QPaintEvent *) {
@@ -112,8 +112,8 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
         if (p1.y > p2.y) { std::swap(p1.y, p2.y); }
 
         // Finding starting point for the grid
-        p1.x = roundUpToMultiple(p1.x, step);
-        p1.y = roundUpToMultiple(p1.y, step);
+        p1.x = roundDownToMultiple(p1.x, step);
+        p1.y = roundDownToMultiple(p1.y, step);
 
         // Drawing
         QPen pen(QColor(192, 192, 192, 255));
