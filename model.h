@@ -143,8 +143,15 @@ public:
         box.leftDown += diff;
         box.rightUp += diff;
     }
+    std::string label() const {
+        return _label;
+    }
+    void setLabel(const std::string &newLabel) {
+        _label = newLabel;
+    }
 protected:
     BoundingBox box;
+    std::string _label;
 };
 
 class SegmentConnection : public Segment {
