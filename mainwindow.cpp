@@ -8,6 +8,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QShortcut>
+#include <QScreen>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -52,6 +53,9 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
         ui->actionZoomOut->setEnabled(modelWidget->scaleFactor() > SCALE_FACTOR_STEP + 1e-8);
     });
     modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? defaultGridStep : 0);
+
+    QScreen *screen = QApplication::screens().at(0);
+    modelWidget->setScaleFactor(screen->logicalDotsPerInch() / 100.0);
 }
 
 void MainWindow::on_actionOpen_triggered() {
