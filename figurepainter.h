@@ -69,7 +69,7 @@ private:
 
     void drawArrow(const Point &a, const Point &b) {
         const double BRANCH_ANGLE = 25 * PI / 180.0;
-        const int ARROW_LENGTH = 12;
+        const int ARROW_LENGTH = 12 * scaler.scaleFactor;
         Point dir = b - a;
         double ang = atan2(dir.y, dir.x);
         QPointF start = scaler(a);
