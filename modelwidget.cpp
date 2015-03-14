@@ -5,6 +5,7 @@
 #include "layouting.h"
 #include <QPainter>
 #include <QMouseEvent>
+#include <QInputDialog>
 #include <QDebug>
 #include <QTimer>
 #include <iostream>
@@ -242,6 +243,26 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
                     break;
                 }
             }
+            emit canUndoChanged();
+            emit canRedoChanged();
+            repaint();
+        }
+    }
+}
+
+void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+    figures::PBoundedFigure figure = std::dynamic_pointer_cast<figures::BoundedFigure>(commitedModel.selectedFigure);
+    if (figure && figure->getApproximateDistanceToBorder(scaler(event->pos())) < 10) {
+        bool ok;
+        QString newLabel = QInputDialog::getMultiLineText(this, "Figure label", "Specify new figure label",
+                                                 QString::fromStdString(figure->label()),
+                                                          &ok);
+        if (ok) {
+            previousModels.push_back(commitedModel);
+            redoModels.clear();
+
+            figure->setLabel(newLabel.toStdString());
+
             emit canUndoChanged();
             emit canRedoChanged();
             repaint();
