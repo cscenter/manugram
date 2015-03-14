@@ -54,6 +54,7 @@ public:
                     scaler(fig.getBoundingBox().rightUp)
                    );
         painter.drawEllipse(rect);
+        drawLabel(fig);
     }
 
     virtual void accept(figures::Rectangle &fig) {
@@ -61,6 +62,7 @@ public:
                     scaler(fig.getBoundingBox().rightUp)
                    );
         painter.drawRect(rect);
+        drawLabel(fig);
     }
 
 private:
@@ -80,6 +82,36 @@ private:
             end.setY(end.y() + sin(curAng) * ARROW_LENGTH);
             painter.drawLine(start, end);
         }
+    }
+
+    void drawLabel(const figures::BoundedFigure &figure) {
+        const std::string &label = figure.label();
+        if (label.empty()) { return; }
+
+        const double REQUIRED_GAP = 0.8;
+        const int BIG_SIZE = 1e6; // used in QFontMetrics call when there are no limits
+
+        QString text = QString::fromStdString(label);
+        BoundingBox box = figure.getBoundingBox();
+        // Here we have some mix-up with what's 'up' and what's 'down' (#48)
+        QPointF leftUp = scaler(box.leftDown);
+        QPointF rightDown = scaler(box.rightUp);
+
+        QFontMetrics metrics = painter.fontMetrics();
+        QPointF baseRectSize = rightDown - leftUp;
+        QRect baseRect(QPoint(), QPoint((int)baseRectSize.x(), (int)baseRectSize.y()));
+        QRectF rect = metrics.boundingRect(baseRect, Qt::AlignCenter, text);
+        if (rect.width() <= REQUIRED_GAP * baseRect.width() && rect.height() <= REQUIRED_GAP * baseRect.height()) {
+            rect.translate(leftUp);
+            painter.drawText(rect, Qt::AlignCenter, text);
+            return;
+        }
+
+        baseRect.setSize(QSize(BIG_SIZE, BIG_SIZE));
+        rect = metrics.boundingRect(baseRect, Qt::AlignHCenter, text);
+        rect.translate(QPointF(baseRectSize.x() / 2 - BIG_SIZE / 2, 0));
+        rect.translate(scaler(box.leftUp())); // another mix-up (#48)
+        painter.drawText(rect, Qt::AlignLeft, text);
     }
 };
 

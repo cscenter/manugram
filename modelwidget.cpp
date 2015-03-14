@@ -100,6 +100,10 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
     painter.fillRect(QRect(QPoint(), size()), Qt::white);
 
+    QFont font;
+    font.setPointSizeF(10 * scaler.scaleFactor);
+    painter.setFont(font);
+
     QPen pen(Qt::black);
     pen.setWidthF(scaler.scaleFactor);
     painter.setPen(pen);
