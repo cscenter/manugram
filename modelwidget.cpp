@@ -100,7 +100,9 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     QPainter painter(this);
     painter.fillRect(QRect(QPoint(), size()), Qt::white);
 
-    painter.setPen(Qt::black);
+    QPen pen(Qt::black);
+    pen.setWidthF(scaler.scaleFactor);
+    painter.setPen(pen);
 
     FigurePainter fpainter(painter, scaler);
     if (gridStep() > 0) {
@@ -132,17 +134,18 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     PFigure modified = recognize(lastTrack, modelToDraw);
     for (PFigure fig : modelToDraw) {
         if (fig == modified) {
-            painter.setPen(Qt::magenta);
+            pen.setColor(Qt::magenta);
         } else if (fig == modelToDraw.selectedFigure) {
-            painter.setPen(Qt::blue);
+            pen.setColor(Qt::blue);
         } else {
-            painter.setPen(Qt::black);
+            pen.setColor(Qt::black);
         }
+        painter.setPen(pen);
         fig->visit(fpainter);
     }
 
-    QPen pen(QColor(255, 0, 0, 16));
-    pen.setWidth(3);
+    pen.setColor(QColor(255, 0, 0, 16));
+    pen.setWidth(3 * scaler.scaleFactor);
     painter.setPen(pen);
     drawTrack(painter, scaler, lastTrack);
     for (const Track &track : visibleTracks) {
