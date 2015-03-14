@@ -176,14 +176,16 @@ void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
         scaler = viewpointMoveOldScaler;
         scaler.zeroPoint = scaler.zeroPoint + scaler(viewpointMoveStart) - scaler(event->pos());
         repaint();
-    }
-    if (mouseAction == MouseAction::TrackActive) {
+    } else if (mouseAction == MouseAction::TrackActive) {
         lastTrack.points.push_back(scaler(event->pos()));
         repaint();
+    } else {
+        event->ignore();
     }
 }
 void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     if (mouseAction == MouseAction::None) {
+        event->ignore();
         return;
     }
     if (mouseAction == MouseAction::ViewpointMove) {
@@ -228,13 +230,16 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     repaint();
 }
 void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
+    event->ignore();
     if (event->key() == Qt::Key_Escape && mouseAction == MouseAction::TrackActive) {
+        event->accept();
         lastTrack = Track();
         mouseAction = MouseAction::None;
         repaint();
     }
     if (event->key() == Qt::Key_Delete) {
         if (commitedModel.selectedFigure) {
+            event->accept();
             previousModels.push_back(commitedModel);
             redoModels.clear();
             for (auto it = commitedModel.begin(); it != commitedModel.end(); it++) {
@@ -251,8 +256,10 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+    event->ignore();
     figures::PBoundedFigure figure = std::dynamic_pointer_cast<figures::BoundedFigure>(commitedModel.selectedFigure);
     if (figure && figure->getApproximateDistanceToBorder(scaler(event->pos())) < 10) {
+        event->accept();
         bool ok;
         QString newLabel = QInputDialog::getMultiLineText(this, "Figure label", "Specify new figure label",
                                                  QString::fromStdString(figure->label()),
