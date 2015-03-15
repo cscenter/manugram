@@ -140,7 +140,7 @@ public:
         auto res = std::make_shared<figures::SegmentConnection>(newA, newB);
         res->setArrowedA(fig.getArrowedA());
         res->setArrowedB(fig.getArrowedB());
-        res->setLabel(fig.getLabel());
+        res->setLabel(fig.label());
         result = res;
     }
 
