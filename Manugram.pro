@@ -39,3 +39,6 @@ HEADERS  += mainwindow.h \
     model_io.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resources.qrc

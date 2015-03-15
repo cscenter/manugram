@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/svg-data">
+        <file alias="footer.svg">resources/svg-data/footer.svg</file>
+        <file alias="header.svg">resources/svg-data/header.svg</file>
+    </qresource>
+</RCC>

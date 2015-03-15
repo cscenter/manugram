@@ -3,6 +3,7 @@
 
 #include "model.h"
 #include <QPainter>
+#include <QFile>
 #include <cmath>
 
 struct Scaler {
@@ -120,23 +121,14 @@ public:
     FigureSvgPainter(std::ostream &out) : out(out) {}
 
     void printHeader() {
-        out <<
-            R"(<?xml version="1.0" encoding="UTF - 8" standalone="no"?>)" "\n"
-            R"(<svg version="1.1")" "\n"
-            R"(    baseProfile="full"  xmlns="http://www.w3.org/2000/svg")" "\n"
-            R"(    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events")" "\n"
-            R"(    fill="none" stroke="black" stroke-width="1">)" "\n";
-        out <<
-            R"(<marker id="markerArrow" markerWidth="12" markerHeight="24" refX="12" refY="12" orient="auto">)" "\n"
-            R"(    <path d="M12, 12 L1.1243065555602004410893681189482, 6.9285808591116067657562581242272 M12, 12 L1.1243065555602004410893681189482, 17.071419140888393234243741875773"/>)" "\n"
-            R"(</marker>)" "\n";
-        out <<
-            R"(<marker id="markerReverseArrow" markerWidth="12" markerHeight="24" refX="0" refY="12" orient="auto">)" "\n"
-            R"(    <path d="M0, 12 L10.875693444439799558910631881052, 6.9285808591116067657562581242272 M0, 12 L10.875693444439799558910631881052, 17.071419140888393234243741875773"/>)" "\n"
-            R"(</marker>)" "\n";
+        QFile resource(":/svg-data/header.svg");
+        resource.open(QIODevice::ReadOnly);
+        out << resource.readAll().toStdString();
     }
     void printFooter() {
-        out << "</svg>\n";
+        QFile resource(":/svg-data/footer.svg");
+        resource.open(QIODevice::ReadOnly);
+        out << resource.readAll().toStdString();
     }
 
     virtual void accept(figures::Segment &segm) {
