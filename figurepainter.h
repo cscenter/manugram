@@ -94,19 +94,37 @@ private:
         QString text = QString::fromStdString(label);
         QPointF a = scaler(figure.getA());
         QPointF b = scaler(figure.getB());
+        if (a.x() > b.x()) {
+            std::swap(a, b);
+        }
         QPointF direction = b - a;
 
         painter.save();
-        painter.translate(a);
-        painter.rotate(atan2(direction.y(), direction.x()) * 180 / PI);
-
+        double angle = 0;
+        if (direction.manhattanLength() > 10) {
+            angle = atan2(direction.y(), direction.x()) * 180 / PI;
+        }
+        const double MAX_ANGLE = 30;
         const int BIG_SIZE = 1e6; // used in QFontMetrics call when there are no limits
         int length = (int)QVector2D(direction).length();
-        painter.drawText(
-                    QRect(QPoint(-BIG_SIZE / 2, -BIG_SIZE), QPoint(BIG_SIZE / 2 + length, 0)),
-                    Qt::AlignBottom | Qt::AlignHCenter,
-                    text
-                    );
+
+        if (fabs(angle) <= MAX_ANGLE) {
+            painter.translate(a);
+            painter.rotate(angle);
+            painter.drawText(
+                        QRect(QPoint(-BIG_SIZE / 2, -BIG_SIZE), QPoint(BIG_SIZE / 2 + length, 0)),
+                        Qt::AlignBottom | Qt::AlignHCenter,
+                        text
+                        );
+        } else {
+            painter.translate((a + b) / 2);
+            painter.drawText(
+                        QRect(QPoint(10, -BIG_SIZE / 2), QPoint(10 + BIG_SIZE, BIG_SIZE / 2)),
+                        Qt::AlignLeft | Qt::AlignVCenter,
+                        text
+                        );
+        }
+
         painter.restore();
     }
 
