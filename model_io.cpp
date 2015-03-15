@@ -57,6 +57,23 @@ std::istream &operator>>(std::istream &in, Model &model) {
                 throw model_format_error("unable to read ellipse");
             }
             figures.push_back(std::make_shared<figures::Ellipse>(BoundingBox({Point(x1, y1), Point(x2, y2)})));
+        } else if (type == "label=") {
+            if (figures.empty()) {
+                throw model_format_error("Misplaced 'label='");
+            }
+            int len;
+            if (!(in >> len) || (len <= 0)) {
+                throw model_format_error("Unable to read label length");
+            }
+            char separator;
+            if (!in.read(&separator, 1) || separator != ' ') {
+                throw model_format_error("Unable to read label separator");
+            }
+            std::vector<char> label(len);
+            if (!in.read(&label[0], len)) {
+                throw model_format_error("Unable to read label data");
+            }
+            figures.back()->setLabel(std::string(label.begin(), label.end()));
         } else if (type == "selected=") {
             if (selected_id != 0) {
                 throw model_format_error("two figures are selected");
@@ -87,24 +104,28 @@ public:
         out << " ";
         printPoint(segm.getB());
         out << " " << segm.getArrowedA() << " " << segm.getArrowedB() << "\n";
+        printLabel(segm);
     }
     virtual void accept(figures::SegmentConnection &segm) {
         out << "segment_connection ";
         out << ids.at(segm.getFigureA()) << " ";
         out << ids.at(segm.getFigureB()) << " ";
         out << " " << segm.getArrowedA() << " " << segm.getArrowedB() << "\n";
+        printLabel(segm);
     }
 
     virtual void accept(figures::Ellipse &fig) {
         out << "ellipse ";
         printBoundingBox(fig.getBoundingBox());
         out << "\n";
+        printLabel(fig);
     }
 
     virtual void accept(figures::Rectangle &fig) {
         out << "rectangle ";
         printBoundingBox(fig.getBoundingBox());
         out << "\n";
+        printLabel(fig);
     }
 
 private:
@@ -118,10 +139,20 @@ private:
         out << " ";
         printPoint(box.rightDown);
     }
+    void printLabel(const Figure &figure) {
+        if (figure.label().empty()) { return; }
+        out << "  label= " << figure.label().size() << " " << figure.label() << "\n";
+    }
 };
 
 std::ostream &operator<<(std::ostream &out, Model &model) {
-    out << (model.size() + !!model.selectedFigure) << '\n';
+    size_t operations = 0;
+    operations += model.size();
+    operations += !!model.selectedFigure;
+    for (PFigure figure : model) {
+        operations += !figure->label().empty();
+    }
+    out << operations << '\n';
 
     std::map<PFigure, size_t> ids;
     for (PFigure figure : model) {
