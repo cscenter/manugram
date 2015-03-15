@@ -30,4 +30,6 @@ Similar products
 * <a href="http://sketchometry.org">Sketchometry</a>, <a href="http://habrahabr.ru/post/239259/">article</a> in Russian
 * SMART Board software: the 'smart pen' tool (not sure about English name of the tool)
 
-
+Used resources
+==============
+Icon from http://www.icons4android.com/icon/1120 was used, edited on http://romannurik.github.io/AndroidAssetStudio/icons-launcher.html
