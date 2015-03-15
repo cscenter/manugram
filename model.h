@@ -65,6 +65,14 @@ public:
     virtual double getApproximateDistanceToBorder(const Point &p) = 0;
     virtual void recalculate() {}
     virtual bool dependsOn(const PFigure &) { return false; }
+    std::string label() const {
+        return _label;
+    }
+    void setLabel(const std::string &newLabel) {
+        _label = newLabel;
+    }
+protected:
+    std::string _label;
 };
 PFigure clone(PFigure figure, const std::map<PFigure, PFigure> &othersMapping);
 
@@ -147,15 +155,8 @@ public:
         box.leftUp += diff;
         box.rightDown += diff;
     }
-    std::string label() const {
-        return _label;
-    }
-    void setLabel(const std::string &newLabel) {
-        _label = newLabel;
-    }
 protected:
     BoundingBox box;
-    std::string _label;
 };
 
 class SegmentConnection : public Segment {
