@@ -4,6 +4,7 @@
 #include "model.h"
 #include <QPainter>
 #include <QFile>
+#include <QVector2D>
 #include <cmath>
 
 struct Scaler {
@@ -45,6 +46,7 @@ public:
         if (segm.getArrowedB()) {
             drawArrow(segm.getB(), segm.getA());
         }
+        drawLabel(segm);
     }
     virtual void accept(figures::SegmentConnection &segm) {
         accept(static_cast<figures::Segment &>(segm));
@@ -83,6 +85,29 @@ private:
             end.setY(end.y() + sin(curAng) * ARROW_LENGTH);
             painter.drawLine(start, end);
         }
+    }
+
+    void drawLabel(const figures::Segment &figure) {
+        const std::string &label = figure.label();
+        if (label.empty()) { return; }
+
+        QString text = QString::fromStdString(label);
+        QPointF a = scaler(figure.getA());
+        QPointF b = scaler(figure.getB());
+        QPointF direction = b - a;
+
+        painter.save();
+        painter.translate(a);
+        painter.rotate(atan2(direction.y(), direction.x()) * 180 / PI);
+
+        const int BIG_SIZE = 1e6; // used in QFontMetrics call when there are no limits
+        int length = (int)QVector2D(direction).length();
+        painter.drawText(
+                    QRect(QPoint(-BIG_SIZE / 2, -BIG_SIZE), QPoint(BIG_SIZE / 2 + length, 0)),
+                    Qt::AlignBottom | Qt::AlignHCenter,
+                    text
+                    );
+        painter.restore();
     }
 
     void drawLabel(const figures::BoundedFigure &figure) {
