@@ -8,6 +8,15 @@ using std::max;
 using std::make_shared;
 using std::dynamic_pointer_cast;
 
+const int FIGURE_SELECT_GAP = 10;
+const int CLOSED_FIGURE_GAP = 10;
+const int TRACK_FIT_GAP = 10;
+const int DELETION_MOVE_MINIMAL_LENGTH = 5;
+const int DELETION_MOVE_MAX_ANGLE = 30;
+const int DELETION_MOVE_MIN_COUNT = 3;
+const double SQUARING_MIN_RATIO = 0.8;
+const double MIN_FIT_POINTS_AMOUNT = 0.75;
+
 BoundingBox getBoundingBox(const Track &track) {
     BoundingBox res;
     res.leftUp = res.rightDown = track[0];
@@ -36,16 +45,16 @@ double getClosedCircumference(const Track &track) {
 bool cutToClosed(Track &track) {
     auto &points = track.points;
     auto it = points.begin();
-    while (it != points.end() && (points[0] - *it).length() <= 10) {
+    while (it != points.end() && (points[0] - *it).length() <= CLOSED_FIGURE_GAP) {
         it++;
     }
-    while (it != points.end() && (points[0] - *it).length() > 10) {
+    while (it != points.end() && (points[0] - *it).length() > CLOSED_FIGURE_GAP) {
         it++;
     }
     if (it == points.end()) {
         return false;
     }
-    while (it != points.end() && (points[0] - *it).length() <= 10) {
+    while (it != points.end() && (points[0] - *it).length() <= CLOSED_FIGURE_GAP) {
         it++;
     }
     points.erase(it, points.end());
@@ -53,9 +62,8 @@ bool cutToClosed(Track &track) {
 }
 
 double fitsToTrack(const Track &track, const PFigure &figure) {
-    // Point should fall nearer than 10 pixels
     BoundingBox box = getBoundingBox(track);
-    double maxDistance = 10;
+    double maxDistance = TRACK_FIT_GAP;
     maxDistance = std::min(maxDistance, std::min(box.width(), box.height()) * 0.2);
 
     int goodCount = 0;
@@ -73,25 +81,25 @@ bool isDeletionTrack(const Track &track) {
     std::cout << "new\n";
     for (int i = 0; i < (int)track.size(); i++) {
         int prevPoint = i - 1;
-        while (prevPoint >= 0 && (track[i] - track[prevPoint]).lengthSquared() < 25) {
+        while (prevPoint >= 0 && (track[i] - track[prevPoint]).length() < DELETION_MOVE_MINIMAL_LENGTH) {
             prevPoint--;
         }
         int nextPoint = i + 1;
-        while (nextPoint < (int)track.size() && (track[i] - track[nextPoint]).lengthSquared() < 25) {
+        while (nextPoint < (int)track.size() && (track[i] - track[nextPoint]).length() < DELETION_MOVE_MINIMAL_LENGTH) {
             nextPoint++;
         }
         if (prevPoint >= 0 && nextPoint < (int)track.size()) {
             Point vec1 = track[nextPoint] - track[i];
             Point vec2 = track[prevPoint] - track[i];
             double ang = acos(Point::dotProduct(vec1, vec2) / (vec1.length() * vec2.length()));
-            if (ang <= PI * 30 / 180) {
+            if (ang <= PI * DELETION_MOVE_MAX_ANGLE / 180) {
                 cnt++;
                 i = nextPoint;
             }
         }
     }
     std::cout << "deletion cnt = " << cnt << "\n";
-    return cnt >= 3;
+    return cnt >= DELETION_MOVE_MIN_COUNT;
 }
 
 PFigure recognizeGrabs(const Track &track, Model &model) {
@@ -100,7 +108,7 @@ PFigure recognizeGrabs(const Track &track, Model &model) {
 
     for (auto it = model.begin(); it != model.end(); it++) {
         PFigure figure = *it;
-        if (figure->getApproximateDistanceToBorder(start) < 10) { // grabbed
+        if (figure->getApproximateDistanceToBorder(start) <= FIGURE_SELECT_GAP) { // grabbed
             // recognize deletion
             if (isDeletionTrack(track)) {
                 model.removeFigure(it);
@@ -115,7 +123,7 @@ PFigure recognizeGrabs(const Track &track, Model &model) {
                         continue;
                     }
                     auto figB = dynamic_pointer_cast<BoundedFigure>(figure2);
-                    if (figB && figB->getApproximateDistanceToBorder(end) < 10) {
+                    if (figB && figB->getApproximateDistanceToBorder(end) <= FIGURE_SELECT_GAP) {
                         auto result = make_shared<SegmentConnection>(figA, figB);
                         model.addFigure(result);
                         return result;
@@ -140,7 +148,7 @@ void squareBoundedFigure(PBoundedFigure figure) {
         std::swap(siz1, siz2);
     }
     std::cout << "bounded size=" << siz1 << ";" << siz2 << "; k=" << (siz1 / siz2) << "\n";
-    if (siz1 / siz2 < 0.8) { return; }
+    if (siz1 / siz2 < SQUARING_MIN_RATIO) { return; }
 
     double siz = (siz1 + siz2) / 2;
     box.rightDown = box.leftUp + Point(siz, siz);
@@ -149,17 +157,17 @@ void squareBoundedFigure(PBoundedFigure figure) {
 
 PFigure recognizeClicks(const Point &click, Model &model) {
     for (PFigure figure : model) {
-        if (figure->getApproximateDistanceToBorder(click) > 10) {
+        if (figure->getApproximateDistanceToBorder(click) > FIGURE_SELECT_GAP) {
             continue;
         }
         model.selectedFigure = figure;
 
         std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(figure);
         if (segm) {
-            if ((click - segm->getA()).length() < 10) {
+            if ((click - segm->getA()).length() <= FIGURE_SELECT_GAP) {
                 segm->setArrowedA(!segm->getArrowedA());
             }
-            if ((click - segm->getB()).length() < 10) {
+            if ((click - segm->getB()).length() <= FIGURE_SELECT_GAP) {
                 segm->setArrowedB(!segm->getArrowedB());
             }
             return segm;
@@ -175,7 +183,7 @@ PFigure recognize(const Track &_track, Model &model) {
     if (track.empty()) { return nullptr; }
 
     // Very small tracks are clicks
-    if (getClosedCircumference(track) < 10) {
+    if (getClosedCircumference(track) <= CLOSED_FIGURE_GAP) {
         return recognizeClicks(track[0], model);
     }
 
@@ -201,7 +209,7 @@ PFigure recognize(const Track &_track, Model &model) {
     }
     size_t id = max_element(fits.begin(), fits.end()) - fits.begin();
     std::cout << "max_fit = " << fits[id] << "; id = " << id << "\n";
-    if (fits[id] >= 0.75) { // we allow some of points to fall out of our track
+    if (fits[id] >= MIN_FIT_POINTS_AMOUNT) { // we allow some of points to fall out of our track
         auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(candidates[id]);
         if (boundedFigure) {
             squareBoundedFigure(boundedFigure);
