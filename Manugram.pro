@@ -20,7 +20,8 @@ SOURCES += \
     modelwidget.cpp \
     recognition.cpp \
     layouting.cpp \
-    model_io.cpp
+    model_io.cpp \
+    figurepainter.cpp
 
 CONFIG(tests) {
     QT += testlib
