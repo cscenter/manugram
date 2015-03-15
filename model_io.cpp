@@ -114,9 +114,9 @@ private:
         out << p.x << " " << p.y;
     }
     void printBoundingBox(const BoundingBox &box) {
-        printPoint(box.leftDown);
+        printPoint(box.leftUp);
         out << " ";
-        printPoint(box.rightUp);
+        printPoint(box.rightDown);
     }
 };
 
@@ -154,10 +154,10 @@ void exportModelToImageFile(Model &model, const QString &filename) {
     Point maxPoint(-INFINITY, -INFINITY);
     for (const PFigure &fig : model) {
         BoundingBox box = fig->getBoundingBox();
-        minPoint.x = std::min(minPoint.x, box.leftDown.x);
-        minPoint.y = std::min(minPoint.y, box.leftDown.y);
-        maxPoint.x = std::max(maxPoint.x, box.rightUp.x);
-        maxPoint.y = std::max(maxPoint.y, box.rightUp.y);
+        minPoint.x = std::min(minPoint.x, box.leftUp.x);
+        minPoint.y = std::min(minPoint.y, box.leftUp.y);
+        maxPoint.x = std::max(maxPoint.x, box.rightDown.x);
+        maxPoint.y = std::max(maxPoint.y, box.rightDown.y);
     }
     if (minPoint.x > maxPoint.x) {
         minPoint = maxPoint = Point(0, 0);

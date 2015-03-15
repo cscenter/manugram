@@ -51,16 +51,16 @@ public:
     }
 
     virtual void accept(figures::Ellipse &fig) {
-        QRectF rect(scaler(fig.getBoundingBox().leftDown),
-                    scaler(fig.getBoundingBox().rightUp)
+        QRectF rect(scaler(fig.getBoundingBox().leftUp),
+                    scaler(fig.getBoundingBox().rightDown)
                    );
         painter.drawEllipse(rect);
         drawLabel(fig);
     }
 
     virtual void accept(figures::Rectangle &fig) {
-        QRectF rect(scaler(fig.getBoundingBox().leftDown),
-                    scaler(fig.getBoundingBox().rightUp)
+        QRectF rect(scaler(fig.getBoundingBox().leftUp),
+                    scaler(fig.getBoundingBox().rightDown)
                    );
         painter.drawRect(rect);
         drawLabel(fig);
@@ -94,9 +94,8 @@ private:
 
         QString text = QString::fromStdString(label);
         BoundingBox box = figure.getBoundingBox();
-        // Here we have some mix-up with what's 'up' and what's 'down' (#48)
-        QPointF leftUp = scaler(box.leftDown);
-        QPointF rightDown = scaler(box.rightUp);
+        QPointF leftUp = scaler(box.leftUp);
+        QPointF rightDown = scaler(box.rightDown);
 
         QFontMetrics metrics = painter.fontMetrics();
         QPointF baseRectSize = rightDown - leftUp;
@@ -111,7 +110,7 @@ private:
         baseRect.setSize(QSize(BIG_SIZE, BIG_SIZE));
         rect = metrics.boundingRect(baseRect, Qt::AlignHCenter, text);
         rect.translate(QPointF(baseRectSize.x() / 2 - BIG_SIZE / 2, 0));
-        rect.translate(scaler(box.leftUp())); // another mix-up (#48)
+        rect.translate(scaler(box.leftDown()));
         painter.drawText(rect, Qt::AlignLeft, text);
     }
 };
@@ -154,7 +153,7 @@ public:
 
     virtual void accept(figures::Rectangle &fig) {
         BoundingBox box = fig.getBoundingBox();
-        out << "<rect x=\"" << box.leftDown.x << "\" y=\"" << box.leftDown.y << "\" width=\"" << box.width() << "\" height=\"" << box.height() << "\" />\n";
+        out << "<rect x=\"" << box.leftUp.x << "\" y=\"" << box.leftUp.y << "\" width=\"" << box.width() << "\" height=\"" << box.height() << "\" />\n";
     }
 
 private:

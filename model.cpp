@@ -29,22 +29,22 @@ double figures::Segment::getDistanceToLine(const Point &p) {
 }
 
 double figures::Rectangle::getApproximateDistanceToBorder(const Point &p) {
-    bool inX = box.leftDown.x <= p.x && p.x <= box.rightUp.x;
-    bool inY = box.leftDown.y <= p.y && p.y <= box.rightUp.y;
+    bool inX = box.leftUp.x <= p.x && p.x <= box.rightDown.x;
+    bool inY = box.leftUp.y <= p.y && p.y <= box.rightDown.y;
     double res = HUGE_VAL;
     if (inX) { // Point lies in a vertical bar bounded by Left and Right
-        res = std::min(res, fabs(p.y - box.leftDown.y));
-        res = std::min(res, fabs(p.y - box.rightUp.y));
+        res = std::min(res, fabs(p.y - box.leftUp.y));
+        res = std::min(res, fabs(p.y - box.rightDown.y));
     }
     if (inY) { // Point lies in a horizontal bar
-        res = std::min(res, fabs(p.x - box.leftDown.x));
-        res = std::min(res, fabs(p.x - box.rightUp.x));
+        res = std::min(res, fabs(p.x - box.leftUp.x));
+        res = std::min(res, fabs(p.x - box.rightDown.x));
     }
     if (!inX && !inY) {
-        res = std::min(res, (p - box.leftDown).length());
-        res = std::min(res, (p - box.rightUp).length());
-        res = std::min(res, (p - box.leftUp()).length());
-        res = std::min(res, (p - box.rightDown()).length());
+        res = std::min(res, (p - box.leftUp).length());
+        res = std::min(res, (p - box.rightDown).length());
+        res = std::min(res, (p - box.leftDown()).length());
+        res = std::min(res, (p - box.rightUp()).length());
     }
     return res;
 }

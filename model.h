@@ -37,13 +37,17 @@ struct Point {
     }
 };
 
+/*
+ * OX axis goes from left to right
+ * OY axis goes from top to bottom (as on the screen)
+ */
 struct BoundingBox {
-    Point leftDown, rightUp;
-    Point rightDown() const { return Point(rightUp.x, leftDown.y); }
-    Point leftUp() const    { return Point(leftDown.x, rightUp.y); }
-    Point center()  const { return (leftDown + rightUp) * 0.5; }
-    double width () const { return rightUp.x - leftDown.x; }
-    double height() const { return rightUp.y - leftDown.y; }
+    Point leftUp, rightDown;
+    Point rightUp()  const { return Point(rightDown.x, leftUp.y); }
+    Point leftDown() const { return Point(leftUp.x, rightDown.y); }
+    Point center()   const { return (leftUp + rightDown) * 0.5; }
+    double width ()  const { return rightDown.x - leftUp.x; }
+    double height()  const { return rightDown.y - leftUp.y; }
 };
 
 class Figure;
@@ -140,8 +144,8 @@ public:
         box = _box;
     }
     void translate(const Point &diff) override {
-        box.leftDown += diff;
-        box.rightUp += diff;
+        box.leftUp += diff;
+        box.rightDown += diff;
     }
     std::string label() const {
         return _label;
@@ -180,7 +184,7 @@ public:
     void visit(FigureVisitor &v) override { v.accept(*this); }
     std::string str() const override {
         std::stringstream res;
-        res << "ellipse(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
+        res << "ellipse(" << getBoundingBox().leftUp.str() << "--" << getBoundingBox().rightDown.str() << ")";
         return res.str();
     }
     double getApproximateDistanceToBorder(const Point &) override;
@@ -191,7 +195,7 @@ public:
     void visit(FigureVisitor &v) override { v.accept(*this); }
     std::string str() const override {
         std::stringstream res;
-        res << "rectangle(" << getBoundingBox().leftDown.str() << "--" << getBoundingBox().rightUp.str() << ")";
+        res << "rectangle(" << getBoundingBox().leftUp.str() << "--" << getBoundingBox().rightDown.str() << ")";
         return res.str();
     }
     double getApproximateDistanceToBorder(const Point &p) override;

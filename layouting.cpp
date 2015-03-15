@@ -17,8 +17,8 @@ void GridAlignLayouter::updateLayout(Model &, PFigure changed) {
     }
     if (auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(changed)) {
         BoundingBox box = boundedFigure->getBoundingBox();
-        alignPoint(box.leftDown);
-        alignPoint(box.rightUp);
+        alignPoint(box.leftUp);
+        alignPoint(box.rightDown);
         boundedFigure->setBoundingBox(box);
     }
 }

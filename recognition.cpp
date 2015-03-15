@@ -10,12 +10,12 @@ using std::dynamic_pointer_cast;
 
 BoundingBox getBoundingBox(const Track &track) {
     BoundingBox res;
-    res.leftDown = res.rightUp = track[0];
+    res.leftUp = res.rightDown = track[0];
     for (Point p : track.points) {
-        res.leftDown.x = min(res.leftDown.x, p.x);
-        res.leftDown.y = min(res.leftDown.y, p.y);
-        res.rightUp.x = max(res.rightUp.x, p.x);
-        res.rightUp.y = max(res.rightUp.y, p.y);
+        res.leftUp.x = min(res.leftUp.x, p.x);
+        res.leftUp.y = min(res.leftUp.y, p.y);
+        res.rightDown.x = max(res.rightDown.x, p.x);
+        res.rightDown.y = max(res.rightDown.y, p.y);
     }
     return res;
 }
@@ -143,7 +143,7 @@ void squareBoundedFigure(PBoundedFigure figure) {
     if (siz1 / siz2 < 0.8) { return; }
 
     double siz = (siz1 + siz2) / 2;
-    box.rightUp = box.leftDown + Point(siz, siz);
+    box.rightDown = box.leftUp + Point(siz, siz);
     figure->setBoundingBox(box);
 }
 
