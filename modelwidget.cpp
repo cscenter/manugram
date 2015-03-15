@@ -257,7 +257,7 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
 
 void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
     event->ignore();
-    figures::PBoundedFigure figure = std::dynamic_pointer_cast<figures::BoundedFigure>(commitedModel.selectedFigure);
+    auto &figure = commitedModel.selectedFigure;
     if (figure && figure->getApproximateDistanceToBorder(scaler(event->pos())) < 10) {
         event->accept();
         bool ok;
