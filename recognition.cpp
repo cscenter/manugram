@@ -21,8 +21,8 @@ const double MIN_FIT_POINTS_AMOUNT = 0.75;
 void setRecognitionPreset(RecognitionPreset preset) {
     switch (preset) {
     case RecognitionPreset::Mouse:
-        FIGURE_SELECT_GAP = 20;
-        CLOSED_FIGURE_GAP = 20;
+        FIGURE_SELECT_GAP = 10;
+        CLOSED_FIGURE_GAP = 10;
         break;
     case RecognitionPreset::Touch:
         FIGURE_SELECT_GAP = 30;
