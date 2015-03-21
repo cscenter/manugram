@@ -33,3 +33,4 @@ Similar products
 Used resources
 ==============
 Icon from http://www.icons4android.com/icon/1120 was used, edited on http://romannurik.github.io/AndroidAssetStudio/icons-launcher.html
+Icon in ICO format (for Windows) converted by http://www.icoconverter.com

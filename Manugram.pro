@@ -44,6 +44,8 @@ FORMS    += mainwindow.ui
 RESOURCES += \
     resources.qrc
 
+RC_ICONS = resources/win-icon.ico
+
 DISTFILES += \
     android/AndroidManifest.xml \
     android/res/values/libs.xml \
