@@ -55,7 +55,7 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
     modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? defaultGridStep : 0);
 
     QScreen *screen = QApplication::screens().at(0);
-    modelWidget->setScaleFactor(screen->logicalDotsPerInch() / 100.0);
+    modelWidget->setScaleFactor(screen->logicalDotsPerInch() / 96.0);
 }
 
 void MainWindow::on_actionOpen_triggered() {
