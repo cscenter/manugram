@@ -190,6 +190,62 @@ PFigure recognizeClicks(const Point &click, Model &model) {
     return nullptr;
 }
 
+/*
+ * Consider a continuos polyline. This function returns its center of mass.
+ * Please note that this differs from center of mass of all points of track,
+ * we calculate weighted sum of segments' centers (weight == length of segment)
+ */
+Point getWeightedCenter(const Track &track) {
+    Point result;
+    double summaryLength = 0;
+    for (size_t i = 0; i < track.size(); i++) {
+        Point a = track[i];
+        Point b = track[(i + 1) % track.size()];
+        Point middle = (a + b) * 0.5;
+        double length = (b - a).length();
+        result += middle * length;
+        summaryLength += length;
+    }
+    result = result * (1.0 / summaryLength);
+    return result;
+}
+
+/*
+ * Calculates best rectangle which will fit the track
+ * For example, it considers that there may be some
+ * outliners (they happen near corners when drawing on touch devices)
+ * First, it calculate approximate center of the rectangle and then
+ * it calculates average 'width' and 'height' of the rectangle.
+ * Points which differ from the center no more than width/4 are
+ * considered 'horizontal segments' and vice-versa for vertical.
+ */
+BoundingBox getBestFitRectangle(const Track &track) {
+    BoundingBox total = getBoundingBox(track);
+    double maxDx = total.width() / 4;
+    double maxDy = total.height() / 4;
+    Point center = getWeightedCenter(track);
+
+    double sumDx = 0, sumDy = 0;
+    int countDx = 0, countDy = 0;
+    for (Point p : track.points) {
+        double dx = fabs(p.x - center.x);
+        double dy = fabs(p.y - center.y);
+        if (dx < maxDx && dy >= maxDy) {
+            sumDy += dy;
+            countDy++;
+        }
+        if (dy < maxDy && dx >= maxDx) {
+            sumDx += dx;
+            countDx++;
+        }
+    }
+    Point diff(
+        countDx ? sumDx / countDx : maxDx,
+        countDy ? sumDy / countDy : maxDy
+    );
+    return BoundingBox({ center - diff, center + diff });
+}
+
 PFigure recognize(const Track &_track, Model &model) {
     if (FIGURE_SELECT_GAP < 0 || CLOSED_FIGURE_GAP < 0) {
         throw std::logic_error("Recognition preset is not selected");
@@ -216,7 +272,7 @@ PFigure recognize(const Track &_track, Model &model) {
         candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
     } else {
         candidates.push_back(make_shared<Ellipse>(getBoundingBox(track)));
-        candidates.push_back(make_shared<Rectangle>(getBoundingBox(track)));
+        candidates.push_back(make_shared<Rectangle>(getBestFitRectangle(track)));
     }
 
     if (candidates.empty()) { return nullptr; }
