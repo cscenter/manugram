@@ -125,7 +125,7 @@
     <string>Save as</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+S</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionUndo">
