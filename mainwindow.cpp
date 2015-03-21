@@ -94,16 +94,29 @@ void MainWindow::on_actionSave_triggered() {
     file << model;
 }
 
+QString forceFileExtension(QString filename, QString selectedFilter) {
+    QString extension = selectedFilter.mid(selectedFilter.indexOf("(*.") + 3);
+    extension.chop(1); // chop trailing )
+    extension = ("." + extension).toLower();
+    if (!filename.endsWith(extension)) {
+        filename += extension;
+    }
+    return filename;
+}
+
 void MainWindow::on_actionSaveAs_triggered() {
+    QString selectedFilter;
     QString filename = QFileDialog::getSaveFileName(
                            this,
                            "Select file to save in",
                            QDir::currentPath(),
-                           "Models (*.model);;SVG (*.svg);;PNG (*.png)"
+                           "Models (*.model);;SVG (*.svg);;PNG (*.png)",
+                           &selectedFilter
                        );
     if (filename == "") {
         return;
     }
+    filename = forceFileExtension(filename, selectedFilter);
     Model &model = this->modelWidget->getModel();
     std::ofstream file(filename.toStdString());
     if (filename.toLower().endsWith(".svg")) {
