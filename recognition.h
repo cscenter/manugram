@@ -3,6 +3,13 @@
 
 #include "model.h"
 
+enum class RecognitionPreset {
+    Mouse,
+    Touch
+};
+
+void setRecognitionPreset(RecognitionPreset preset);
+
 // Returns pointer to the figure modified
 PFigure recognize(const Track &track, Model &model);
 

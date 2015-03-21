@@ -1,4 +1,5 @@
 #include "model.h"
+#include "recognition.h"
 #include <memory>
 #include <algorithm>
 #include <vector>
@@ -8,14 +9,27 @@ using std::max;
 using std::make_shared;
 using std::dynamic_pointer_cast;
 
-const int FIGURE_SELECT_GAP = 10;
-const int CLOSED_FIGURE_GAP = 10;
+int FIGURE_SELECT_GAP = -1;
+int CLOSED_FIGURE_GAP = -1;
 const int TRACK_FIT_GAP = 10;
 const int DELETION_MOVE_MINIMAL_LENGTH = 5;
 const int DELETION_MOVE_MAX_ANGLE = 30;
 const int DELETION_MOVE_MIN_COUNT = 3;
 const double SQUARING_MIN_RATIO = 0.8;
 const double MIN_FIT_POINTS_AMOUNT = 0.75;
+
+void setRecognitionPreset(RecognitionPreset preset) {
+    switch (preset) {
+    case RecognitionPreset::Mouse:
+        FIGURE_SELECT_GAP = 20;
+        CLOSED_FIGURE_GAP = 20;
+        break;
+    case RecognitionPreset::Touch:
+        FIGURE_SELECT_GAP = 30;
+        CLOSED_FIGURE_GAP = 50;
+        break;
+    };
+}
 
 BoundingBox getBoundingBox(const Track &track) {
     BoundingBox res;
@@ -177,6 +191,10 @@ PFigure recognizeClicks(const Point &click, Model &model) {
 }
 
 PFigure recognize(const Track &_track, Model &model) {
+    if (FIGURE_SELECT_GAP < 0 || CLOSED_FIGURE_GAP < 0) {
+        throw std::logic_error("Recognition preset is not selected");
+    }
+
     // this is to preserve the API (const Track&) and make future optimizations possible
     // i.e. avoid copying if it's not necessary
     Track track = _track;
