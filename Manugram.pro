@@ -49,4 +49,7 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/build.gradle
 
+android:DEFINES += DEFAULT_RECOGNITION_PRESET=Touch
+!android:DEFINES += DEFAULT_RECOGNITION_PRESET=Mouse
+
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
