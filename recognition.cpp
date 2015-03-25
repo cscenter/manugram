@@ -302,13 +302,13 @@ PFigure recognize(const Track &_track, Model &model) {
         return recognizeClicks(track[0], model);
     }
 
-    // Connecting interior-->interior
-    if (PFigure result = recognizeConnections(track, model)) {
+    // Moving and connecting
+    if (PFigure result = recognizeGrabs(track, model)) {
         return result;
     }
 
-    // Moving and connecting
-    if (PFigure result = recognizeGrabs(track, model)) {
+    // Connecting interior-->interior
+    if (PFigure result = recognizeConnections(track, model)) {
         return result;
     }
 
