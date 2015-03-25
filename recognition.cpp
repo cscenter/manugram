@@ -116,6 +116,30 @@ bool isDeletionTrack(const Track &track) {
     return cnt >= DELETION_MOVE_MIN_COUNT;
 }
 
+PFigure recognizeConnections(const Track &track, Model &model) {
+    Point start = track[0];
+    Point end = track[track.size() - 1];
+
+    for (auto it = model.begin(); it != model.end(); it++) {
+        PFigure figure = *it;
+        auto figA = dynamic_pointer_cast<BoundedFigure>(figure);
+        if (!figA) { continue; }
+        if (!figure->isInsideOrOnBorder(start)) { continue; }
+        for (PFigure figure2 : model) {
+            if (figure == figure2) {
+                continue;
+            }
+            auto figB = dynamic_pointer_cast<BoundedFigure>(figure2);
+            if (figB && figB->isInsideOrOnBorder(end)) {
+                auto result = make_shared<SegmentConnection>(figA, figB);
+                model.addFigure(result);
+                return result;
+            }
+        }
+    }
+    return nullptr;
+}
+
 PFigure recognizeGrabs(const Track &track, Model &model) {
     Point start = track[0];
     Point end = track[track.size() - 1];
@@ -259,6 +283,11 @@ PFigure recognize(const Track &_track, Model &model) {
     // Very small tracks are clicks
     if (getClosedCircumference(track) <= CLOSED_FIGURE_GAP) {
         return recognizeClicks(track[0], model);
+    }
+
+    // Connecting interior-->interior
+    if (PFigure result = recognizeConnections(track, model)) {
+        return result;
     }
 
     // Moving and connecting
