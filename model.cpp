@@ -13,6 +13,9 @@ double figures::Segment::getApproximateDistanceToBorder(const Point &p) {
     }
     return res;
 }
+bool figures::Segment::isInsideOrOnBorder(const Point &p) {
+    return getApproximateDistanceToBorder(p) < 1e-8;
+}
 
 double figures::Segment::getDistanceToLine(const Point &p) {
     // Coefficients of A*x + B*y + C = 0
@@ -26,6 +29,11 @@ double figures::Segment::getDistanceToLine(const Point &p) {
 
     A /= D; B /= D; C /= D;
     return fabs(A * p.x + B * p.y + C);
+}
+
+bool figures::Rectangle::isInsideOrOnBorder(const Point &p) {
+    return box.leftUp.x - 1e-8 <= p.x && p.x <= box.rightDown.x + 1e-8 &&
+           box.leftUp.y - 1e-8 <= p.y && p.y <= box.rightDown.y + 1e-8;
 }
 
 double figures::Rectangle::getApproximateDistanceToBorder(const Point &p) {
@@ -49,6 +57,14 @@ double figures::Rectangle::getApproximateDistanceToBorder(const Point &p) {
     return res;
 }
 
+bool figures::Ellipse::isInsideOrOnBorder(const Point &_p) {
+    Point p = _p - box.center();
+    double a = box.width() / 2;
+    double b = box.height() / 2;
+    p.x /= a;
+    p.y /= b;
+    return fabs(p.length()) <= 1 + 1e-8;
+}
 double figures::Ellipse::getApproximateDistanceToBorder(const Point &_p) {
     Point p = _p - box.center();
     if (p.length() < 1e-7) { return std::min(box.width(), box.height()) / 2; }

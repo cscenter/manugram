@@ -62,6 +62,7 @@ public:
     virtual void translate(const Point &diff) = 0;
     virtual std::string str() const = 0;
     virtual void visit(FigureVisitor &) = 0;
+    virtual bool isInsideOrOnBorder(const Point &p) = 0;
     virtual double getApproximateDistanceToBorder(const Point &p) = 0;
     virtual void recalculate() {}
     virtual bool dependsOn(const PFigure &) { return false; }
@@ -132,6 +133,7 @@ public:
         return res.str();
     }
 
+    bool isInsideOrOnBorder(const Point &p) override;
     double getApproximateDistanceToBorder(const Point &p) override;
 
 protected:
@@ -188,6 +190,7 @@ public:
         res << "ellipse(" << getBoundingBox().leftUp.str() << "--" << getBoundingBox().rightDown.str() << ")";
         return res.str();
     }
+    bool isInsideOrOnBorder(const Point &p) override;
     double getApproximateDistanceToBorder(const Point &) override;
 };
 class Rectangle : public BoundedFigure {
@@ -199,6 +202,7 @@ public:
         res << "rectangle(" << getBoundingBox().leftUp.str() << "--" << getBoundingBox().rightDown.str() << ")";
         return res.str();
     }
+    bool isInsideOrOnBorder(const Point &p) override;
     double getApproximateDistanceToBorder(const Point &p) override;
 };
 } // namespace figures
