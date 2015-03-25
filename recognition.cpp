@@ -193,12 +193,29 @@ void squareBoundedFigure(PBoundedFigure figure) {
     figure->setBoundingBox(box);
 }
 
+struct SelectionFit {
+    bool isSegment;
+    double distance;
+    PFigure figure;
+
+    SelectionFit() : isSegment(false), distance(HUGE_VAL), figure(nullptr) {}
+    bool operator<(const SelectionFit &other) const {
+        if (isSegment != other.isSegment) { return isSegment > other.isSegment; }
+        return distance < other.distance;
+    }
+};
 PFigure recognizeClicks(const Point &click, Model &model) {
+    SelectionFit bestFit;
     for (PFigure figure : model) {
-        if (figure->getApproximateDistanceToBorder(click) > FIGURE_SELECT_GAP) {
-            continue;
-        }
-        model.selectedFigure = figure;
+        SelectionFit currentFit;
+        currentFit.isSegment = !!dynamic_pointer_cast<Segment>(figure);
+        currentFit.distance = figure->getApproximateDistanceToBorder(click);
+        currentFit.figure = figure;
+        if (currentFit.distance >= FIGURE_SELECT_GAP) { continue; }
+        bestFit = min(bestFit, currentFit);
+    }
+    if (bestFit.figure) {
+        model.selectedFigure = bestFit.figure;
     }
 
     std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(model.selectedFigure);
