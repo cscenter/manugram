@@ -216,6 +216,12 @@ PFigure recognizeClicks(const Point &click, Model &model) {
     }
     if (bestFit.figure) {
         model.selectedFigure = bestFit.figure;
+    } else {
+        for (PFigure figure : model) {
+            if (figure->isInsideOrOnBorder(click)) {
+                model.selectedFigure = figure;
+            }
+        }
     }
 
     std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(model.selectedFigure);
