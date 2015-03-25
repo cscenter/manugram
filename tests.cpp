@@ -18,6 +18,18 @@ private slots:
         QVERIFY(fabs(s.getApproximateDistanceToBorder(Point(12, 2)) - 0) < EPS);
         QVERIFY(fabs(s.getApproximateDistanceToBorder(Point(14, 2)) - sqrt(2)) < EPS);
     }
+    void testInsideSegment() {
+        Segment s(Point(11, 4), Point(14, 1));
+        QVERIFY( s.isInsideOrOnBorder(Point(11, 4)));
+        QVERIFY(!s.isInsideOrOnBorder(Point(11, 4.001)));
+        QVERIFY(!s.isInsideOrOnBorder(Point(10.999, 4)));
+        QVERIFY( s.isInsideOrOnBorder(Point(14, 1)));
+        QVERIFY(!s.isInsideOrOnBorder(Point(13.999, 1)));
+        QVERIFY(!s.isInsideOrOnBorder(Point(14, 0.999)));
+        QVERIFY(!s.isInsideOrOnBorder(Point(13.999, 0.999)));
+        QVERIFY( s.isInsideOrOnBorder(Point(12, 3)));
+        QVERIFY( s.isInsideOrOnBorder(Point(13, 2)));
+    }
     void testDistanceToRectangleBorder() {
         const double EPS = 1e-8;
         Rectangle r({ Point(11, 1), Point(14, 4) });
@@ -41,6 +53,20 @@ private slots:
         QVERIFY(fabs(r.getApproximateDistanceToBorder(Point(10, 6)) - sqrt(5)) < EPS);
         QVERIFY(fabs(r.getApproximateDistanceToBorder(Point(16, 5)) - sqrt(5)) < EPS);
         QVERIFY(fabs(r.getApproximateDistanceToBorder(Point(16, 0)) - sqrt(5)) < EPS);
+    }
+    void testInsideEllipse() {
+        Ellipse e({ Point(11, 1), Point(17, 5) });
+        QVERIFY(!e.isInsideOrOnBorder(Point(11, 1)));
+        QVERIFY(!e.isInsideOrOnBorder(Point(11.5, 1.5)));
+        QVERIFY(!e.isInsideOrOnBorder(Point(17, 5)));
+        QVERIFY(!e.isInsideOrOnBorder(Point(11, 5)));
+        QVERIFY(e.isInsideOrOnBorder(Point(14, 5)));
+        QVERIFY(e.isInsideOrOnBorder(Point(14, 1)));
+        QVERIFY(e.isInsideOrOnBorder(Point(14, 3)));
+        QVERIFY(e.isInsideOrOnBorder(Point(15, 3.2)));
+        QVERIFY( e.isInsideOrOnBorder(Point(16.1, 4.4)));
+        QVERIFY(!e.isInsideOrOnBorder(Point(16.2, 4.4)));
+        QVERIFY(!e.isInsideOrOnBorder(Point(16.1, 4.5)));
     }
     void testDistanceToEllipseBorder() {
         const double EPS = 1e-8;
