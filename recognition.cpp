@@ -199,17 +199,17 @@ PFigure recognizeClicks(const Point &click, Model &model) {
             continue;
         }
         model.selectedFigure = figure;
+    }
 
-        std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(figure);
-        if (segm) {
-            if ((click - segm->getA()).length() <= FIGURE_SELECT_GAP) {
-                segm->setArrowedA(!segm->getArrowedA());
-            }
-            if ((click - segm->getB()).length() <= FIGURE_SELECT_GAP) {
-                segm->setArrowedB(!segm->getArrowedB());
-            }
-            return segm;
+    std::shared_ptr<Segment> segm = dynamic_pointer_cast<Segment>(model.selectedFigure);
+    if (segm) {
+        if ((click - segm->getA()).length() <= FIGURE_SELECT_GAP) {
+            segm->setArrowedA(!segm->getArrowedA());
         }
+        if ((click - segm->getB()).length() <= FIGURE_SELECT_GAP) {
+            segm->setArrowedB(!segm->getArrowedB());
+        }
+        return segm;
     }
     return nullptr;
 }
