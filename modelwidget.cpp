@@ -258,7 +258,7 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
 void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
     event->ignore();
     auto &figure = commitedModel.selectedFigure;
-    if (figure && figure->getApproximateDistanceToBorder(scaler(event->pos())) < 10) {
+    if (figure && figure->isInsideOrOnBorder(scaler(event->pos()))) {
         event->accept();
         bool ok;
         QString newLabel = QInputDialog::getMultiLineText(this, "Figure label", "Specify new figure label",
