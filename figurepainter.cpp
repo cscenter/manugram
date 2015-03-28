@@ -46,7 +46,7 @@ void FigurePainter::drawArrow(const Point &a, const Point &b) {
     }
 }
 
-void FigurePainter::drawLabel(figures::Segment &figure) {
+void FigurePainter::drawLabel(Figure &figure) {
     const std::string &label = figure.label();
     if (label.empty()) { return; }
 
@@ -57,15 +57,6 @@ void FigurePainter::drawLabel(figures::Segment &figure) {
     painter.rotate(position.rotation);
     painter.drawText(rect, Qt::AlignLeft | Qt::AlignTop, QString::fromStdString(label));
     painter.restore();
-}
-
-void FigurePainter::drawLabel(figures::BoundedFigure &figure) {
-    const std::string &label = figure.label();
-    if (label.empty()) { return; }
-
-    TextPosition position = getTextPosition(figure);
-    QRectF rect(scaler(position.leftUp), QSizeF(position.width * scaler.scaleFactor, position.height * scaler.scaleFactor));
-    painter.drawText(rect, Qt::AlignLeft | Qt::AlignTop, QString::fromStdString(label));
 }
 
 void FigureSvgPainter::printHeader() {
