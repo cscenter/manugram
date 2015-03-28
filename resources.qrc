@@ -3,4 +3,7 @@
         <file alias="footer.svg">resources/svg-data/footer.svg</file>
         <file alias="header.svg">resources/svg-data/header.svg</file>
     </qresource>
+    <qresource prefix="/">
+        <file alias="icon.ico">resources/win-icon.ico</file>
+    </qresource>
 </RCC>

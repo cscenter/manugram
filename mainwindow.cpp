@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&redoExtraShortcut  , &QShortcut::activated, ui->actionRedo  , &QAction::trigger);
     connect(&zoomInExtraShortcut, &QShortcut::activated, ui->actionZoomIn, &QAction::trigger);
     setModelWidget(new Ui::ModelWidget());
+    setWindowIcon(QIcon(":/icon.ico"));
 }
 
 MainWindow::~MainWindow() {
