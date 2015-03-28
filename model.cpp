@@ -31,6 +31,53 @@ double figures::Segment::getDistanceToLine(const Point &p) {
     return fabs(A * p.x + B * p.y + C);
 }
 
+BoundingBox figures::Curve::getBoundingBox() const {
+    BoundingBox result;
+    for (Point p : points) {
+        result.addPoint(p);
+    }
+    return result;
+}
+
+void figures::Curve::translate(const Point &diff) {
+    for (Point &p : points) {
+        p += diff;
+    }
+}
+
+std::string figures::Curve::str() const {
+    std::stringstream result;
+    result << "[";
+    bool firstPoint = false;
+    for (Point p : points) {
+        if (!firstPoint) {
+            result << "--";
+        }
+        firstPoint = false;
+        result << p.str();
+    }
+    result << "]";
+    return result.str();
+}
+
+bool figures::Curve::isInsideOrOnBorder(const Point &p) {
+    for (size_t i = 0; i + 1 < points.size(); i++) {
+        if (Segment(points[i], points[i + 1]).isInsideOrOnBorder(p)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+double figures::Curve::getApproximateDistanceToBorder(const Point &p) {
+    double result = INFINITY;
+    for (size_t i = 0; i + 1 < points.size(); i++) {
+        result = std::min(result, Segment(points[i], points[i + 1]).getApproximateDistanceToBorder(p));
+    }
+    return result;
+}
+
+
 bool figures::Rectangle::isInsideOrOnBorder(const Point &p) {
     return box.leftUp.x - 1e-8 <= p.x && p.x <= box.rightDown.x + 1e-8 &&
            box.leftUp.y - 1e-8 <= p.y && p.y <= box.rightDown.y + 1e-8;
@@ -126,6 +173,7 @@ public:
         direction.x *= aspectRatio;
         _result = rect.center() + direction;
     }
+    virtual void accept(figures::Curve &) { throw visitor_implementation_not_found(); }
     virtual void accept(figures::Segment &) override { throw visitor_implementation_not_found(); }
     virtual void accept(figures::SegmentConnection &) override { throw visitor_implementation_not_found(); }
     static Point apply(PFigure figure, Point b) {
@@ -158,6 +206,10 @@ public:
         res->setArrowedB(fig.getArrowedB());
         res->setLabel(fig.label());
         result = res;
+    }
+
+    virtual void accept(figures::Curve &fig) {
+        result = std::make_shared<figures::Curve>(fig);
     }
 
     virtual void accept(figures::Ellipse &fig) {

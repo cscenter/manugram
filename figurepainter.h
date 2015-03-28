@@ -46,6 +46,7 @@ public:
 
     virtual void accept(figures::Segment &segm) override;
     virtual void accept(figures::SegmentConnection &segm) override;
+    virtual void accept(figures::Curve &fig) override;
     virtual void accept(figures::Ellipse &fig) override;
     virtual void accept(figures::Rectangle &fig) override;
 
@@ -66,6 +67,7 @@ public:
 
     virtual void accept(figures::Segment &segm) override;
     virtual void accept(figures::SegmentConnection &segm) override;
+    virtual void accept(figures::Curve &fig) override;
     virtual void accept(figures::Ellipse &fig) override;
     virtual void accept(figures::Rectangle &fig) override;
 

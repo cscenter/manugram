@@ -46,6 +46,18 @@ std::istream &operator>>(std::istream &in, Model &model) {
             segm->setArrowedA(arrowA);
             segm->setArrowedB(arrowB);
             figures.push_back(segm);
+        } else if (type == "curve") {
+            size_t count;
+            if (!(in >> count)) {
+                throw model_format_error("unable to read number of curve's points");
+            }
+            std::vector<Point> points(count);
+            for (Point &p : points) {
+                if (!(in >> p.x >> p.y)) {
+                    throw model_format_error("unable to read curve point");
+                }
+            }
+            figures.push_back(std::make_shared<figures::Curve>(points));
         } else if (type == "rectangle") {
             double x1, y1, x2, y2;
             if (!(in >> x1 >> y1 >> x2 >> y2)) {
@@ -113,6 +125,16 @@ public:
         out << ids.at(segm.getFigureB()) << " ";
         out << " " << segm.getArrowedA() << " " << segm.getArrowedB() << "\n";
         printLabel(segm);
+    }
+
+    virtual void accept(figures::Curve &fig) {
+        out << "curve " << fig.points.size();
+        for (Point p : fig.points) {
+            out << " ";
+            printPoint(p);
+        }
+        out << "\n";
+        printLabel(fig);
     }
 
     virtual void accept(figures::Ellipse &fig) {

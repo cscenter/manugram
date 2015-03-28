@@ -77,6 +77,11 @@ public:
         result.width = rect.width();
         result.height = rect.height();
     }
+    virtual void accept(figures::Curve &fig) override {
+        figures::Segment segm(fig.points.at(0), fig.points.at(1));
+        segm.setLabel(fig.label());
+        accept(segm);
+    }
 
     virtual void accept(figures::SegmentConnection &segm) override {
         accept((figures::Segment&)segm);

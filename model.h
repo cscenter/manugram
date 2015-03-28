@@ -101,6 +101,7 @@ PFigure clone(PFigure figure, const std::map<PFigure, PFigure> &othersMapping);
 namespace figures {
 class Segment;
 class SegmentConnection;
+class Curve;
 class BoundedFigure;
 class Ellipse;
 class Rectangle;
@@ -118,6 +119,7 @@ public:
     virtual ~FigureVisitor() {}
     virtual void accept(figures::Segment &) = 0;
     virtual void accept(figures::SegmentConnection &) = 0;
+    virtual void accept(figures::Curve &) = 0;
     virtual void accept(figures::Ellipse &) = 0;
     virtual void accept(figures::Rectangle &) = 0;
     virtual void accept(figures::BoundedFigure &) { throw visitor_implementation_not_found(); }
@@ -160,6 +162,17 @@ protected:
     Point a, b;
     bool arrowedA, arrowedB;
     double getDistanceToLine(const Point &p);
+};
+class Curve : public Figure {
+public:
+    Curve(const std::vector<Point> _points) : points(_points) {}
+    virtual BoundingBox getBoundingBox() const override;
+    virtual void translate(const Point &diff) override;
+    virtual std::string str() const override;
+    virtual void visit(FigureVisitor &v) override { v.accept(*this); }
+    virtual bool isInsideOrOnBorder(const Point &p) override;
+    virtual double getApproximateDistanceToBorder(const Point &p) override;
+    std::vector<Point> points;
 };
 
 class BoundedFigure : public Figure {

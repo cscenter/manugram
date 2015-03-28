@@ -15,6 +15,13 @@ void FigurePainter::accept(figures::SegmentConnection &segm) {
     accept(static_cast<figures::Segment &>(segm));
 }
 
+void FigurePainter::accept(figures::Curve &fig) {
+    for (size_t i = 0; i + 1 < fig.points.size(); i++) {
+        painter.drawLine(scaler(fig.points[i]), scaler(fig.points[i + 1]));
+    }
+    drawLabel(fig);
+}
+
 void FigurePainter::accept(figures::Ellipse &fig) {
     QRectF rect(scaler(fig.getBoundingBox().leftUp),
                 scaler(fig.getBoundingBox().rightDown)
@@ -85,6 +92,15 @@ void FigureSvgPainter::accept(figures::Segment &segm) {
 }
 void FigureSvgPainter::accept(figures::SegmentConnection &segm) {
     accept((figures::Segment &)segm);
+}
+
+void FigureSvgPainter::accept(figures::Curve &fig) {
+    out << "<polyline points=\"";
+    for (Point p : fig.points) {
+        out << " " << p.x << "," << p.y;
+    }
+    out << "\"/>";
+    drawLabel(fig);
 }
 
 void FigureSvgPainter::accept(figures::Ellipse &fig) {
