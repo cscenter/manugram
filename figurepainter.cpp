@@ -1,4 +1,5 @@
 #include "figurepainter.h"
+#include "textpainter.h"
 
 void FigurePainter::accept(figures::Segment &segm) {
     painter.drawLine(scaler(segm.getA()), scaler(segm.getB()));
@@ -45,7 +46,7 @@ void FigurePainter::drawArrow(const Point &a, const Point &b) {
     }
 }
 
-void FigurePainter::drawLabel(const figures::Segment &figure) {
+void FigurePainter::drawLabel(figures::Segment &figure) {
     const std::string &label = figure.label();
     if (label.empty()) { return; }
 
@@ -86,33 +87,13 @@ void FigurePainter::drawLabel(const figures::Segment &figure) {
     painter.restore();
 }
 
-void FigurePainter::drawLabel(const figures::BoundedFigure &figure) {
+void FigurePainter::drawLabel(figures::BoundedFigure &figure) {
     const std::string &label = figure.label();
     if (label.empty()) { return; }
 
-    const double REQUIRED_GAP = 0.8;
-    const int BIG_SIZE = 1e6; // used in QFontMetrics call when there are no limits
-
-    QString text = QString::fromStdString(label);
-    BoundingBox box = figure.getBoundingBox();
-    QPointF leftUp = scaler(box.leftUp);
-    QPointF rightDown = scaler(box.rightDown);
-
-    QFontMetrics metrics = painter.fontMetrics();
-    QPointF baseRectSize = rightDown - leftUp;
-    QRect baseRect(QPoint(), QPoint((int)baseRectSize.x(), (int)baseRectSize.y()));
-    QRectF rect = metrics.boundingRect(baseRect, Qt::AlignCenter, text);
-    if (rect.width() <= REQUIRED_GAP * baseRect.width() && rect.height() <= REQUIRED_GAP * baseRect.height()) {
-        rect.translate(leftUp);
-        painter.drawText(rect, Qt::AlignCenter, text);
-        return;
-    }
-
-    baseRect.setSize(QSize(BIG_SIZE, BIG_SIZE));
-    rect = metrics.boundingRect(baseRect, Qt::AlignHCenter, text);
-    rect.translate(QPointF(baseRectSize.x() / 2 - BIG_SIZE / 2, 0));
-    rect.translate(scaler(box.leftDown()));
-    painter.drawText(rect, Qt::AlignLeft, text);
+    TextPosition position = getTextPosition(figure);
+    QRectF rect(scaler(position.leftUp), QSizeF(position.width * scaler.scaleFactor, position.height * scaler.scaleFactor));
+    painter.drawText(rect, Qt::AlignLeft | Qt::AlignTop, QString::fromStdString(label));
 }
 
 void FigureSvgPainter::printHeader() {

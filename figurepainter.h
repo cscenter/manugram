@@ -54,8 +54,8 @@ private:
     Scaler scaler;
 
     void drawArrow(const Point &a, const Point &b);
-    void drawLabel(const figures::Segment &figure);
-    void drawLabel(const figures::BoundedFigure &figure);
+    void drawLabel(figures::Segment &figure);
+    void drawLabel(figures::BoundedFigure &figure);
 };
 
 class FigureSvgPainter : public FigureVisitor {
