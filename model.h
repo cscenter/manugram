@@ -130,10 +130,7 @@ public:
     void setArrowedB(bool val) { arrowedB = val; }
 
     BoundingBox getBoundingBox() const override {
-        return {
-            Point(std::min(a.x, b.x), std::min(a.y, b.y)),
-            Point(std::max(a.x, b.x), std::max(a.y, b.y))
-        };
+        return { a, b };
     }
     void translate(const Point &diff) override {
         a += diff;
