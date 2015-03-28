@@ -15,9 +15,36 @@ void FigurePainter::accept(figures::SegmentConnection &segm) {
     accept(static_cast<figures::Segment &>(segm));
 }
 
+Point getControlPoint(Point a, Point b, Point c) {
+    Point side1 = a - b, side2 = c - b;
+    double needLength = side2.length() * 0.25;
+    side1 = side1 * (1.0 / side1.length());
+    side2 = side2 * (1.0 / side2.length());
+    Point perp = (side1 + side2) * 0.5;
+    perp = perp * (1.0 / perp.length());
+    if (Point::crossProduct(perp, side2) >= 0) {
+        perp.rotateBy(PI / 2);
+    } else {
+        perp.rotateBy(-PI / 2);
+    }
+    return b + perp * needLength;
+}
+
 void FigurePainter::accept(figures::Curve &fig) {
-    for (size_t i = 0; i + 1 < fig.points.size(); i++) {
-        painter.drawLine(scaler(fig.points[i]), scaler(fig.points[i + 1]));
+    if (fig.points.size() >= 2) {
+        painter.drawLine(scaler(fig.points[0]), scaler(fig.points[1]));
+        for (size_t i = 0; i + 3 < fig.points.size(); i++) {
+            Point a = fig.points[i];
+            Point b = fig.points[i + 1];
+            Point c = fig.points[i + 2];
+            Point d = fig.points[i + 3];
+
+            QPainterPath path;
+            path.moveTo(scaler(b));
+            path.cubicTo(scaler(getControlPoint(a, b, c)), scaler(getControlPoint(d, c, b)), scaler(c));
+            painter.drawPath(path);
+        }
+        painter.drawLine(scaler(fig.points[fig.points.size() - 2]), scaler(fig.points[fig.points.size() - 1]));
     }
     drawLabel(fig);
 }
