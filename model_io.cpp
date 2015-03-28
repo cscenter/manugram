@@ -182,45 +182,39 @@ void exportModelToSvg(Model &m, std::ostream &out) {
 }
 
 void exportModelToImageFile(Model &model, const QString &filename) {
-    Point minPoint(INFINITY, INFINITY);
-    Point maxPoint(-INFINITY, -INFINITY);
+    BoundingBox imageBox;
     for (const PFigure &fig : model) {
         BoundingBox box = fig->getBoundingBox();
-        minPoint.x = std::min(minPoint.x, box.leftUp.x);
-        minPoint.y = std::min(minPoint.y, box.leftUp.y);
-        maxPoint.x = std::max(maxPoint.x, box.rightDown.x);
-        maxPoint.y = std::max(maxPoint.y, box.rightDown.y);
+        imageBox.addPoint(box.leftUp);
+        imageBox.addPoint(box.rightDown);
         if (!fig->label().empty() && std::dynamic_pointer_cast<figures::BoundedFigure>(fig)) {
             TextPosition text = getTextPosition(*fig);
             Point corners[] = { text.leftUp, text.leftUp + Point(text.width, text.height) };
             for (Point corner : corners) {
-                minPoint.x = std::min(minPoint.x, corner.x);
-                minPoint.y = std::min(minPoint.y, corner.y);
-                maxPoint.x = std::max(maxPoint.x, corner.x);
-                maxPoint.y = std::max(maxPoint.y, corner.y);
+                imageBox.addPoint(corner);
             }
         }
     }
-    if (minPoint.x > maxPoint.x) {
-        minPoint = maxPoint = Point(0, 0);
+    if (imageBox.leftUp.x > imageBox.rightDown.x) {
+        imageBox = { Point(0, 0) };
     }
     {
-        double w = maxPoint.x - minPoint.x;
-        double h = maxPoint.y - minPoint.y;
-        minPoint.x -= w * 0.05;
-        minPoint.y -= w * 0.05;
-        maxPoint.x += h * 0.05;
-        maxPoint.y += h * 0.05;
+        double w = imageBox.width();
+        double h = imageBox.height();
+        imageBox.leftUp.x -= w * 0.05;
+        imageBox.leftUp.y -= w * 0.05;
+        imageBox.rightDown.x += h * 0.05;
+        imageBox.rightDown.y += h * 0.05;
     }
 
-    QImage img(maxPoint.x - minPoint.x, maxPoint.y - minPoint.y, QImage::Format_ARGB32);
+    QImage img(imageBox.width(), imageBox.height(), QImage::Format_ARGB32);
     QPainter painter(&img);
     QFont font;
     font.setPointSizeF(10);
     painter.setFont(font);
     painter.fillRect(QRect(QPoint(), img.size()), Qt::white);
     painter.setPen(Qt::black);
-    FigurePainter fpainter(painter, minPoint);
+    FigurePainter fpainter(painter, imageBox.leftUp);
     for (PFigure fig : model) {
         fig->visit(fpainter);
     }
