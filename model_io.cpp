@@ -215,6 +215,9 @@ void exportModelToImageFile(Model &model, const QString &filename) {
 
     QImage img(maxPoint.x - minPoint.x, maxPoint.y - minPoint.y, QImage::Format_ARGB32);
     QPainter painter(&img);
+    QFont font;
+    font.setPointSizeF(10);
+    painter.setFont(font);
     painter.fillRect(QRect(QPoint(), img.size()), Qt::white);
     painter.setPen(Qt::black);
     FigurePainter fpainter(painter, minPoint);
