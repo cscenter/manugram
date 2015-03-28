@@ -99,13 +99,27 @@ void FigureSvgPainter::accept(figures::Rectangle &fig) {
     drawLabel(fig);
 }
 
+std::vector<std::string> getLines(const std::string &data) {
+    std::vector<std::string> result;
+    std::stringstream s;
+    s << data;
+    std::string line;
+    while (getline(s, line)) {
+        result.push_back(line);
+    }
+    return result;
+}
+
 void FigureSvgPainter::drawLabel(Figure &figure) {
     const std::string &label = figure.label();
     if (label.empty()) { return; }
 
+    std::vector<std::string> lines = getLines(label);
+
     TextPosition position = getTextPosition(figure);
     Point offset(0, position.height);
     offset.rotateBy(position.rotation * PI / 180);
+
     Point leftDown = position.leftUp + offset;
 
     out << "<text x=\"" << leftDown.x << "\" y=\"" << leftDown.y << "\"";
@@ -113,6 +127,17 @@ void FigureSvgPainter::drawLabel(Figure &figure) {
         out << " transform=\"rotate(" << position.rotation << " " << leftDown.x << " " << leftDown.y << ")\"";
     }
     out << ">";
-    out << label;
+    if (lines.size() == 1) {
+        out << lines[0];
+    } else {
+        out << "\n";
+        // We ignore rotation here, because it's already performed in <text>
+        Point step(0, position.height / lines.size());
+        Point current = leftDown - step * lines.size();
+        for (auto line : lines)  {
+            current += step;
+            out << "<tspan x=\"" << current.x << "\" y=\"" << current.y << "\">" << line << "</tspan>\n";
+        }
+    }
     out << "</text>";
 }
