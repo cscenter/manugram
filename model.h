@@ -27,6 +27,13 @@ struct Point {
     double lengthSquared() const { return x * x + y * y; }
     double length() const { return sqrt(lengthSquared()); }
 
+    void rotateBy(double angle) {
+        double nx = x * cos(angle) - y * sin(angle);
+        double ny = x * sin(angle) + y * cos(angle);
+        x = nx;
+        y = ny;
+    }
+
     std::string str() const {
         std::stringstream res;
         res << "(" << x << ", " << y << ")";
