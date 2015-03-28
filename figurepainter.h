@@ -23,6 +23,12 @@ struct Scaler {
         return Point(p.x() / scaleFactor + zeroPoint.x, p.y() / scaleFactor + zeroPoint.y);
     }
 
+    void scaleWithFixedPoint(const Point &fixed, double factor) {
+        zeroPoint.x = (fixed.x * (factor - 1) + zeroPoint.x) / factor;
+        zeroPoint.y = (fixed.y * (factor - 1) + zeroPoint.y) / factor;
+        scaleFactor *= factor;
+    }
+
     Point zeroPoint;
     double scaleFactor;
 };
