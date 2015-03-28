@@ -1,5 +1,6 @@
 #include "model_io.h"
 #include "figurepainter.h"
+#include "textpainter.h"
 #include <QImage>
 
 std::istream &operator>>(std::istream &in, Model &model) {
@@ -189,6 +190,16 @@ void exportModelToImageFile(Model &model, const QString &filename) {
         minPoint.y = std::min(minPoint.y, box.leftUp.y);
         maxPoint.x = std::max(maxPoint.x, box.rightDown.x);
         maxPoint.y = std::max(maxPoint.y, box.rightDown.y);
+        if (!fig->label().empty() && std::dynamic_pointer_cast<figures::BoundedFigure>(fig)) {
+            TextPosition text = getTextPosition(*fig);
+            Point corners[] = { text.leftUp, text.leftUp + Point(text.width, text.height) };
+            for (Point corner : corners) {
+                minPoint.x = std::min(minPoint.x, corner.x);
+                minPoint.y = std::min(minPoint.y, corner.y);
+                maxPoint.x = std::max(maxPoint.x, corner.x);
+                maxPoint.y = std::max(maxPoint.y, corner.y);
+            }
+        }
     }
     if (minPoint.x > maxPoint.x) {
         minPoint = maxPoint = Point(0, 0);
