@@ -260,22 +260,28 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
 void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
     event->ignore();
     auto &figure = commitedModel.selectedFigure;
-    if (figure && figure->isInsideOrOnBorder(scaler(event->pos()))) {
-        event->accept();
-        bool ok;
-        QString newLabel = QInputDialog::getMultiLineText(this, "Figure label", "Specify new figure label",
-                                                 QString::fromStdString(figure->label()),
-                                                          &ok);
-        if (ok) {
-            previousModels.push_back(commitedModel);
-            redoModels.clear();
+    if (!figure) { return; }
 
-            figure->setLabel(newLabel.toStdString());
+    Point eventPos = scaler(event->pos());
+    bool hit = false;
+    hit |= figure->isInsideOrOnBorder(eventPos);
+    hit |= figure->getApproximateDistanceToBorder(eventPos) <= figureSelectGap();
+    if (!hit) { return; }
 
-            emit canUndoChanged();
-            emit canRedoChanged();
-            repaint();
-        }
+    event->accept();
+    bool ok;
+    QString newLabel = QInputDialog::getMultiLineText(this, "Figure label", "Specify new figure label",
+                                             QString::fromStdString(figure->label()),
+                                                      &ok);
+    if (ok) {
+        previousModels.push_back(commitedModel);
+        redoModels.clear();
+
+        figure->setLabel(newLabel.toStdString());
+
+        emit canUndoChanged();
+        emit canRedoChanged();
+        repaint();
     }
 }
 
