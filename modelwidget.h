@@ -33,6 +33,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    bool event(QEvent *event) override;
     Model commitedModel;
     std::list<Model> previousModels;
     std::list<Model> redoModels;

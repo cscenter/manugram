@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QInputDialog>
+#include <QGesture>
 #include <QDebug>
 #include <QTimer>
 #include <iostream>
@@ -13,6 +14,7 @@
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
     QWidget(parent), mouseAction(MouseAction::None), _gridStep(0) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+    grabGesture(Qt::PinchGesture);
 }
 
 void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
@@ -275,4 +277,25 @@ void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
             repaint();
         }
     }
+}
+
+bool Ui::ModelWidget::event(QEvent *event) {
+    if (event->type() == QEvent::Gesture) {
+        QGestureEvent *gevent = static_cast<QGestureEvent*>(event);
+        QPinchGesture *gesture = static_cast<QPinchGesture*>(gevent->gesture(Qt::PinchGesture));
+        if (gesture) {
+            gevent->accept(gesture);
+
+            lastTrack = Track();
+            mouseAction = MouseAction::None;
+
+            scaler.zeroPoint = scaler.zeroPoint + scaler(gesture->lastCenterPoint()) - scaler(gesture->centerPoint());
+            scaler.scaleWithFixedPoint(scaler(gesture->centerPoint()), gesture->scaleFactor());
+            emit scaleFactorChanged();
+            repaint();
+
+            return true;
+        }
+    }
+    return QWidget::event(event);
 }
