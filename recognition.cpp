@@ -31,6 +31,10 @@ void setRecognitionPreset(RecognitionPreset preset) {
     };
 }
 
+int figureSelectGap() {
+    return FIGURE_SELECT_GAP;
+}
+
 BoundingBox getBoundingBox(const Track &track) {
     BoundingBox res;
     res.leftUp = res.rightDown = track[0];

@@ -9,6 +9,7 @@ enum class RecognitionPreset {
 };
 
 void setRecognitionPreset(RecognitionPreset preset);
+int figureSelectGap();
 
 // Returns pointer to the figure modified
 PFigure recognize(const Track &track, Model &model);
