@@ -187,12 +187,17 @@ void exportModelToImageFile(Model &model, const QString &filename) {
         BoundingBox box = fig->getBoundingBox();
         imageBox.addPoint(box.leftUp);
         imageBox.addPoint(box.rightDown);
-        if (!fig->label().empty() && std::dynamic_pointer_cast<figures::BoundedFigure>(fig)) {
+        if (!fig->label().empty()) {
             TextPosition text = getTextPosition(*fig);
-            Point corners[] = { text.leftUp, text.leftUp + Point(text.width, text.height) };
-            for (Point corner : corners) {
-                imageBox.addPoint(corner);
-            }
+            Point width(text.width, 0);
+            Point height(0, text.height);
+            width.rotateBy(text.rotation * PI / 180);
+            height.rotateBy(text.rotation * PI / 180);
+            for (int dx = 0; dx < 2; dx++)
+                for (int dy = 0; dy < 2; dy++) {
+                    Point corner = text.leftUp + width * dx + height * dy;
+                    imageBox.addPoint(corner);
+                }
         }
     }
     if (imageBox.leftUp.x > imageBox.rightDown.x) {
