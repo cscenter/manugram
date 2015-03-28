@@ -297,6 +297,35 @@ BoundingBox getBestFitRectangle(const Track &track) {
     return BoundingBox({ center - diff, center + diff });
 }
 
+std::vector<Point> smoothCurve(std::vector<Point> current) {
+    assert(!current.empty());
+
+    Point start = current[0];
+    Point end = current.back();
+    if ((start - end).length() <= CLOSED_FIGURE_GAP) {
+        end = current.back() = start;
+    }
+    Segment segment(start, end);
+
+    std::pair<double, size_t> maxDistance(0, 0);
+    for (size_t i = 0; i < current.size(); i++) {
+        double d = segment.getApproximateDistanceToBorder(current[i]);
+        maxDistance = max(maxDistance, std::make_pair(d, i));
+    }
+
+    std::vector<Point> result;
+    if (maxDistance.first > TRACK_FIT_GAP) {
+        auto part1 = smoothCurve(std::vector<Point>(current.begin(), current.begin() + maxDistance.second + 1));
+        auto part2 = smoothCurve(std::vector<Point>(current.begin() + maxDistance.second, current.end()));
+        result.insert(result.end(), part1.begin(), part1.end());
+        result.insert(result.end(), part2.begin() + 1, part2.end());
+    } else {
+        result.push_back(start);
+        result.push_back(end);
+    }
+    return result;
+}
+
 PFigure recognize(const Track &_track, Model &model) {
     if (FIGURE_SELECT_GAP < 0 || CLOSED_FIGURE_GAP < 0) {
         throw std::logic_error("Recognition preset is not selected");
@@ -347,5 +376,8 @@ PFigure recognize(const Track &_track, Model &model) {
         model.addFigure(candidates[id]);
         return candidates[id];
     }
-    return nullptr;
+
+    auto result = make_shared<Curve>(smoothCurve(track.points));
+    model.addFigure(result);
+    return result;
 }
