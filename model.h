@@ -42,6 +42,9 @@ struct Point {
     static double dotProduct(const Point &a, const Point &b) {
         return a.x * b.x + a.y * b.y;
     }
+    static double crossProduct(const Point &a, const Point &b) {
+        return a.x * b.y - a.y * b.x;
+    }
 };
 
 /*
