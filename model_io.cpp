@@ -199,12 +199,12 @@ void exportModelToImageFile(Model &model, const QString &filename) {
         imageBox = { Point(0, 0) };
     }
     {
-        double w = imageBox.width();
-        double h = imageBox.height();
-        imageBox.leftUp.x -= w * 0.05;
-        imageBox.leftUp.y -= w * 0.05;
-        imageBox.rightDown.x += h * 0.05;
-        imageBox.rightDown.y += h * 0.05;
+        double size = std::max(imageBox.width(), imageBox.height());
+        double gap = size * 0.05;
+        imageBox.leftUp.x -= gap;
+        imageBox.leftUp.y -= gap;
+        imageBox.rightDown.x += gap;
+        imageBox.rightDown.y += gap;
     }
 
     QImage img(imageBox.width(), imageBox.height(), QImage::Format_ARGB32);
