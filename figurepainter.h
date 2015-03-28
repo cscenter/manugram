@@ -71,6 +71,7 @@ public:
 
 private:
     std::ostream &out;
+    void drawLabel(Figure &figure);
 };
 
 #endif // FIGURESPAINTER_H

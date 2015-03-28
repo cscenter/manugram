@@ -11,3 +11,14 @@
     <marker id="markerReverseArrow" markerWidth="12" markerHeight="24" refX="0" refY="12" orient="auto">
         <path d="M0, 12 L10.875693444439799558910631881052, 6.9285808591116067657562581242272 M0, 12 L10.875693444439799558910631881052, 17.071419140888393234243741875773"/>
     </marker>
+
+    <defs>
+        <style type="text/css"><![CDATA[
+            text {
+                fill: black;
+                stroke: none;
+                font-family: sans-serif;
+                font-size: 10pt;
+            }
+        ]]></style>
+    </defs>

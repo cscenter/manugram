@@ -81,6 +81,7 @@ void FigureSvgPainter::accept(figures::Segment &segm) {
         out << " marker-end=\"url(#markerArrow)\"";
     }
     out << "/>\n";
+    drawLabel(segm);
 }
 void FigureSvgPainter::accept(figures::SegmentConnection &segm) {
     accept((figures::Segment &)segm);
@@ -89,9 +90,29 @@ void FigureSvgPainter::accept(figures::SegmentConnection &segm) {
 void FigureSvgPainter::accept(figures::Ellipse &fig) {
     BoundingBox box = fig.getBoundingBox();
     out << "<ellipse cx=\"" << box.center().x << "\" cy=\"" << box.center().y << "\" rx=\"" << box.width() / 2 << "\" ry=\"" << box.height() / 2 << "\" />\n";
+    drawLabel(fig);
 }
 
 void FigureSvgPainter::accept(figures::Rectangle &fig) {
     BoundingBox box = fig.getBoundingBox();
     out << "<rect x=\"" << box.leftUp.x << "\" y=\"" << box.leftUp.y << "\" width=\"" << box.width() << "\" height=\"" << box.height() << "\" />\n";
+    drawLabel(fig);
+}
+
+void FigureSvgPainter::drawLabel(Figure &figure) {
+    const std::string &label = figure.label();
+    if (label.empty()) { return; }
+
+    TextPosition position = getTextPosition(figure);
+    Point offset(0, position.height);
+    offset.rotateBy(position.rotation * PI / 180);
+    Point leftDown = position.leftUp + offset;
+
+    out << "<text x=\"" << leftDown.x << "\" y=\"" << leftDown.y << "\"";
+    if (fabs(position.rotation) > 1e-6) {
+        out << " transform=\"rotate(" << position.rotation << " " << leftDown.x << " " << leftDown.y << ")\"";
+    }
+    out << ">";
+    out << label;
+    out << "</text>";
 }
