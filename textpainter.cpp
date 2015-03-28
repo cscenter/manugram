@@ -3,13 +3,49 @@
 #include <QString>
 #include <QPointF>
 #include <QFontMetrics>
+#include <QDebug>
 
 class TextPositionVisitor : public FigureVisitor {
 public:
     TextPosition textPosition() const { return result; }
 
-    virtual void accept(figures::Segment &segm) override {
-        assert(false);
+    virtual void accept(figures::Segment &figure) override {
+        const std::string &label = figure.label();
+
+        Scaler scaler;
+        QString text = QString::fromStdString(label);
+        QPointF a = scaler(figure.getA());
+        QPointF b = scaler(figure.getB());
+        if (a.x() > b.x()) {
+            std::swap(a, b);
+        }
+        QPointF direction = b - a;
+
+        double angle = 0;
+        if (direction.manhattanLength() > 10) {
+            angle = atan2(direction.y(), direction.x()) * 180 / PI;
+        }
+        const double MAX_ANGLE = 30;
+        const int BIG_SIZE = 1e6; // used in QFontMetrics call when there are no limits
+        int length = (int)QVector2D(direction).length();
+
+        QFont font;
+        font.setPointSizeF(10);
+        QFontMetrics metrics(font);
+        QRect baseRect(QRect(QPoint(0, 0), QPoint(BIG_SIZE, BIG_SIZE)));
+        QRect rect = metrics.boundingRect(baseRect, Qt::AlignTop | Qt::AlignLeft, text);
+
+        result.width = rect.width();
+        result.height = rect.height();
+        if (fabs(angle) <= MAX_ANGLE) {
+            Point offset((length - rect.width()) / 2, -rect.height());
+            offset.rotateBy(angle * PI / 180);
+            result.leftUp = scaler(a) + offset;
+            result.rotation = angle;
+        } else {
+            result.leftUp = scaler((a + b) / 2 + QPointF(10, -rect.height() / 2));
+        }
+        return;
     }
     void accept(figures::BoundedFigure &figure) {
         const std::string &label = figure.label();
