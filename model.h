@@ -43,6 +43,20 @@ struct Point {
  */
 struct BoundingBox {
     Point leftUp, rightDown;
+    BoundingBox() : leftUp(INFINITY, INFINITY), rightDown(-INFINITY, -INFINITY) {}
+    BoundingBox(std::initializer_list<Point> points) : BoundingBox() {
+        for (Point p : points) {
+            addPoint(p);
+        }
+    }
+
+    void addPoint(Point p) {
+        leftUp.x = std::min(leftUp.x, p.x);
+        leftUp.y = std::min(leftUp.y, p.y);
+        rightDown.x = std::max(rightDown.x, p.x);
+        rightDown.y = std::max(rightDown.y, p.y);
+    }
+
     Point rightUp()  const { return Point(rightDown.x, leftUp.y); }
     Point leftDown() const { return Point(leftUp.x, rightDown.y); }
     Point center()   const { return (leftUp + rightDown) * 0.5; }
