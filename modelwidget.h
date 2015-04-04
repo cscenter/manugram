@@ -26,6 +26,12 @@ public:
     double scaleFactor();
     void setScaleFactor(double newScaleFactor);
 
+    bool showTrack();
+    void setShowTrack(bool newShowTrack);
+
+    bool showRecognitionResult();
+    void setShowRecognitionResult(bool newShowRecognitionResult);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -52,6 +58,9 @@ private:
     std::list<Track> visibleTracks;
     int _gridStep;
     Scaler scaler;
+
+    bool _showTrack;
+    bool _showRecognitionResult;
 
 signals:
     void canUndoChanged();

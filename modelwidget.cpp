@@ -12,7 +12,7 @@
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
-    QWidget(parent), mouseAction(MouseAction::None), _gridStep(0) {
+    QWidget(parent), mouseAction(MouseAction::None), _gridStep(0), _showTrack(true), _showRecognitionResult(true) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     grabGesture(Qt::PinchGesture);
 }
@@ -47,6 +47,21 @@ void Ui::ModelWidget::setScaleFactor(double newScaleFactor) {
     emit scaleFactorChanged();
     repaint();
 }
+
+bool Ui::ModelWidget::showTrack() {
+    return _showTrack;
+}
+void Ui::ModelWidget::setShowTrack(bool newShowTrack) {
+    _showTrack = newShowTrack;
+}
+
+bool Ui::ModelWidget::showRecognitionResult() {
+    return _showRecognitionResult;
+}
+void Ui::ModelWidget::setShowRecognitionResult(bool newShowRecognitionResult) {
+    _showRecognitionResult = newShowRecognitionResult;
+}
+
 
 void Ui::ModelWidget::setModel(Model model) {
     commitedModel = std::move(model);
@@ -137,8 +152,8 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     }
 
     Model copiedModel;
-    Model &modelToDraw = lastTrack.empty() ? commitedModel : (copiedModel = commitedModel);
-    PFigure modified = recognize(lastTrack, modelToDraw);
+    Model &modelToDraw = (lastTrack.empty() || !showRecognitionResult()) ? commitedModel : (copiedModel = commitedModel);
+    PFigure modified = showRecognitionResult() ? recognize(lastTrack, modelToDraw) : nullptr;
     for (PFigure fig : modelToDraw) {
         if (fig == modified) {
             pen.setColor(Qt::magenta);
@@ -151,12 +166,14 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
         fig->visit(fpainter);
     }
 
-    pen.setColor(QColor(255, 0, 0, 16));
-    pen.setWidth(3 * scaler.scaleFactor);
-    painter.setPen(pen);
-    drawTrack(painter, scaler, lastTrack);
-    for (const Track &track : visibleTracks) {
-        drawTrack(painter, scaler, track);
+    if (showTrack()) {
+        pen.setColor(QColor(255, 0, 0, 16));
+        pen.setWidth(3 * scaler.scaleFactor);
+        painter.setPen(pen);
+        drawTrack(painter, scaler, lastTrack);
+        for (const Track &track : visibleTracks) {
+            drawTrack(painter, scaler, track);
+        }
     }
 }
 
@@ -180,7 +197,9 @@ void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
         repaint();
     } else if (mouseAction == MouseAction::TrackActive) {
         lastTrack.points.push_back(scaler(event->pos()));
-        repaint();
+        if (showTrack() || showRecognitionResult()) {
+            repaint();
+        }
     } else {
         event->ignore();
     }
