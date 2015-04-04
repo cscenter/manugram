@@ -32,7 +32,7 @@ void Ui::ModelWidget::setGridStep(int newGridStep) {
         throw std::runtime_error("Grid step should be >= 0");
     }
     _gridStep = newGridStep;
-    repaint();
+    update();
 }
 
 double Ui::ModelWidget::scaleFactor() {
@@ -45,7 +45,7 @@ void Ui::ModelWidget::setScaleFactor(double newScaleFactor) {
     }
     scaler.scaleFactor = newScaleFactor;
     emit scaleFactorChanged();
-    repaint();
+    update();
 }
 
 bool Ui::ModelWidget::showTrack() {
@@ -89,7 +89,7 @@ void Ui::ModelWidget::undo() {
         emit canUndoChanged();
     }
     emit canRedoChanged();
-    repaint();
+    update();
 }
 
 bool Ui::ModelWidget::canRedo() {
@@ -107,7 +107,7 @@ void Ui::ModelWidget::redo() {
         canRedoChanged();
     }
     canUndoChanged();
-    repaint();
+    update();
 }
 
 double roundDownToMultiple(double x, double multiple) {
@@ -188,17 +188,17 @@ void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
         mouseAction = MouseAction::TrackActive;
         lastTrack.points.push_back(scaler(event->pos()));
     }
-    repaint();
+    update();
 }
 void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
     if (mouseAction == MouseAction::ViewpointMove) {
         scaler = viewpointMoveOldScaler;
         scaler.zeroPoint = scaler.zeroPoint + scaler(viewpointMoveStart) - scaler(event->pos());
-        repaint();
+        update();
     } else if (mouseAction == MouseAction::TrackActive) {
         lastTrack.points.push_back(scaler(event->pos()));
         if (showTrack() || showRecognitionResult()) {
-            repaint();
+            update();
         }
     } else {
         event->ignore();
@@ -214,7 +214,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
         setCursor(Qt::ArrowCursor);
         scaler = viewpointMoveOldScaler;
         scaler.zeroPoint = scaler.zeroPoint + scaler(viewpointMoveStart) - scaler(event->pos());
-        repaint();
+        update();
         return;
     }
     assert(mouseAction == MouseAction::TrackActive);
@@ -235,7 +235,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     connect(timer, &QTimer::timeout, [this, iterator, timer]() {
         visibleTracks.erase(iterator);
         delete timer;
-        repaint();
+        update();
     });
     timer->setInterval(1500);
     timer->setSingleShot(true);
@@ -248,7 +248,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
         emit canUndoChanged();
         emit canRedoChanged();
     }
-    repaint();
+    update();
 }
 void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
     event->ignore();
@@ -256,7 +256,7 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
         event->accept();
         lastTrack = Track();
         mouseAction = MouseAction::None;
-        repaint();
+        update();
     }
     if (event->key() == Qt::Key_Delete) {
         if (commitedModel.selectedFigure) {
@@ -271,7 +271,7 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
             }
             emit canUndoChanged();
             emit canRedoChanged();
-            repaint();
+            update();
         }
     }
 }
@@ -300,7 +300,7 @@ void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 
         emit canUndoChanged();
         emit canRedoChanged();
-        repaint();
+        update();
     }
 }
 
@@ -317,7 +317,7 @@ bool Ui::ModelWidget::event(QEvent *event) {
             scaler.zeroPoint = scaler.zeroPoint + scaler(gesture->lastCenterPoint()) - scaler(gesture->centerPoint());
             scaler.scaleWithFixedPoint(scaler(gesture->centerPoint()), gesture->scaleFactor());
             emit scaleFactorChanged();
-            repaint();
+            update();
 
             return true;
         }
