@@ -1,6 +1,7 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 #include <random>
+#include <typeinfo>
 #include "model.h"
 #include "model_io.h"
 
@@ -81,6 +82,23 @@ private:
         return result;
     }
 };
+
+bool modelsAreEqual(const Model &a, const Model &b) {
+    if (a.size() != b.size()) {
+        return false;
+    }
+    auto ita = a.begin(), itb = b.begin();
+    for (; ita != a.end() && itb != b.end(); ita++, itb++) {
+        // one dereference from iterator, second dereference from shared_ptr
+        Figure &a = **ita;
+        Figure &b = **itb;
+        if (typeid(a) != typeid(b)) {
+            return false;
+        }
+    }
+    assert(ita == a.end() && itb == b.end());
+    return true;
+}
 
 class Tests : public QObject {
     Q_OBJECT
@@ -212,6 +230,7 @@ private slots:
 
                 std::string saved2 = data.str();
                 QCOMPARE(saved1, saved2);
+                QVERIFY(modelsAreEqual(model, restored2));
                 modifier.addFigure();
             }
         }
