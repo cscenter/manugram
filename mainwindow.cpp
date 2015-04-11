@@ -153,7 +153,7 @@ void MainWindow::on_actionSaveAs_triggered() {
         } else {
             std::stringstream data;
             data << model;
-            saveDataToFile(data.str(), currentFileName);
+            saveDataToFile(data.str(), filename);
             currentFileName = filename;
         }
     } catch (io_error &e) {
