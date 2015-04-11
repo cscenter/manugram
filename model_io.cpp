@@ -180,6 +180,7 @@ std::ostream &operator<<(std::ostream &out, Model &model) {
     std::map<PFigure, size_t> ids;
     for (PFigure figure : model) {
         size_t id = ids.size() + 1;
+        assert(ids.find(figure) == ids.end());
         ids[figure] = id;
     }
 
