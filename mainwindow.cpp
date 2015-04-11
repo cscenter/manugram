@@ -5,7 +5,7 @@
 #include "figurepainter.h"
 #include "build_info.h"
 #include <sstream>
-#include <fstream>
+#include <QByteArray>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -94,14 +94,25 @@ void MainWindow::on_actionOpen_triggered() {
     currentFileName = filename;
 }
 
+bool saveDataToFile(const std::string &data, QString &fileName) {
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly)) {
+        return false;
+    }
+    QByteArray buffer(data.data(), data.length());
+    return file.write(buffer) == buffer.size();
+}
+
 void MainWindow::on_actionSave_triggered() {
     if (currentFileName == QString()) {
         ui->actionSaveAs->trigger();
         return;
     }
-    Model &model = this->modelWidget->getModel();
-    std::ofstream file(currentFileName.toStdString());
-    file << model;
+    std::stringstream data;
+    data << this->modelWidget->getModel();
+    if (!saveDataToFile(data.str(), currentFileName)) {
+        QMessageBox::critical(this, "Error", "Unable to save model");
+    }
 }
 
 QString forceFileExtension(QString filename, QString selectedFilter) {
@@ -128,14 +139,20 @@ void MainWindow::on_actionSaveAs_triggered() {
     }
     filename = forceFileExtension(filename, selectedFilter);
     Model &model = this->modelWidget->getModel();
-    std::ofstream file(filename.toStdString());
     if (filename.toLower().endsWith(".svg")) {
-        exportModelToSvg(model, file);
+        std::stringstream data;
+        exportModelToSvg(model, data);
+        if (!saveDataToFile(data.str(), filename)) {
+            QMessageBox::critical(this, "Error", "Unable to save model to SVG");
+        }
     } else if (filename.toLower().endsWith(".png")) {
-        file.close();
         exportModelToImageFile(model, filename);
     } else {
-        file << model;
+        std::stringstream data;
+        data << model;
+        if (!saveDataToFile(data.str(), currentFileName)) {
+            QMessageBox::critical(this, "Error", "Unable to save model");
+        }
         currentFileName = filename;
     }
 }
