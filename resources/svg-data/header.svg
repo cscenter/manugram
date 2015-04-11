@@ -4,12 +4,12 @@
     xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
     fill="none" stroke="black" stroke-width="1">
 
-    <marker id="markerArrow" markerWidth="12" markerHeight="24" refX="12" refY="12" orient="auto">
-        <path d="M12, 12 L1.1243065555602004410893681189482, 6.9285808591116067657562581242272 M12, 12 L1.1243065555602004410893681189482, 17.071419140888393234243741875773"/>
+    <marker id="markerArrow" markerWidth="{{markerSize}}" markerHeight="{{markerSize}}" refX="{{markerCenter}}" refY="{{markerCenter}}" orient="auto">
+        <path d="{{markerDirectPath}}"/>
     </marker>
 
-    <marker id="markerReverseArrow" markerWidth="12" markerHeight="24" refX="0" refY="12" orient="auto">
-        <path d="M0, 12 L10.875693444439799558910631881052, 6.9285808591116067657562581242272 M0, 12 L10.875693444439799558910631881052, 17.071419140888393234243741875773"/>
+    <marker id="markerReverseArrow" markerWidth="{{markerSize}}" markerHeight="{{markerSize}}" refX="{{markerCenter}}" refY="{{markerCenter}}" orient="auto">
+        <path d="{{markerReversePath}}"/>
     </marker>
 
     <defs>

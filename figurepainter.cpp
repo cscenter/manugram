@@ -69,7 +69,28 @@ void FigurePainter::drawLabel(Figure &figure) {
 void FigureSvgPainter::printHeader() {
     QFile resource(":/svg-data/header.svg");
     resource.open(QIODevice::ReadOnly);
-    out << resource.readAll().toStdString();
+    QString header = resource.readAll();
+    header.replace("{{markerSize}}", QString::number(2 * ARROW_LENGTH));
+    header.replace("{{markerCenter}}", QString::number(ARROW_LENGTH));
+
+    for (int id = 0; id < 2; id++) {
+        QString path = "";
+        Point center(ARROW_LENGTH, ARROW_LENGTH);
+        Point dir(id == 0 ? -ARROW_LENGTH : ARROW_LENGTH, 0);
+        for (int k : { -1, 1 }) {
+            Point branch = dir;
+            branch.rotateBy(k * ARROW_BRANCH_ANGLE * PI / 180);
+            Point end = center + branch;
+            path += QString("M%1, %2 ").arg(center.x).arg(center.y);
+            path += QString("L%1, %2 ").arg(end.x).arg(end.y);
+        }
+        header.replace(
+                    id == 0 ? "{{markerDirectPath}}" : "{{markerReversePath}}",
+                    path
+                    );
+    }
+    out << header.toStdString();
+
 }
 void FigureSvgPainter::printFooter() {
     QFile resource(":/svg-data/footer.svg");
