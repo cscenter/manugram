@@ -38,7 +38,6 @@ public:
         switch (type) {
         case 0: {
             auto segment = make_shared<Segment>(a, b);
-            model.addFigure(segment);
             segment->setArrowedA(randint(0, 1));
             segment->setArrowedB(randint(0, 1));
             figure = segment;
