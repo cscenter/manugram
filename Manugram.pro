@@ -22,7 +22,8 @@ SOURCES += \
     layouting.cpp \
     model_io.cpp \
     figurepainter.cpp \
-    textpainter.cpp
+    textpainter.cpp \
+    build_info.cpp
 
 CONFIG(tests) {
     QT += testlib
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     recognition.h \
     layouting.h \
     model_io.h \
-    textpainter.h
+    textpainter.h \
+    build_info.h
 
 FORMS    += mainwindow.ui
 
@@ -57,3 +59,9 @@ android:DEFINES += DEFAULT_RECOGNITION_PRESET=Touch
 !android:DEFINES += DEFAULT_RECOGNITION_PRESET=Mouse
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+buildInfo.target = buildInfo
+buildInfo.commands = "bash $$PWD/build_info_gen.sh $$PWD"
+buildInfo.depends = FORCE
+QMAKE_EXTRA_TARGETS = buildInfo
+PRE_TARGETDEPS = buildInfo
