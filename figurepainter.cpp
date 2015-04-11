@@ -41,15 +41,21 @@ void FigurePainter::accept(figures::Rectangle &fig) {
 const double ARROW_BRANCH_ANGLE = 25;
 const int ARROW_LENGTH = 12;
 
-void FigurePainter::drawArrow(const Point &a, const Point &b) {
+std::vector<std::pair<Point, Point>> generateArrow(const Point &a, const Point &b) {
+    std::vector<std::pair<Point, Point>> result;
     Point dir = b - a;
     dir = dir * (ARROW_LENGTH / dir.length());
-    QPointF start = scaler(a);
     for (int k : { -1, 1 }) {
         Point branch = dir;
         branch.rotateBy(k * ARROW_BRANCH_ANGLE * PI / 180.0);
-        QPointF end = scaler(a + branch);
-        painter.drawLine(start, end);
+        result.push_back({ a, a + branch });
+    }
+    return result;
+}
+
+void FigurePainter::drawArrow(const Point &a, const Point &b) {
+    for (auto segment : generateArrow(a, b)) {
+        painter.drawLine(scaler(segment.first), scaler(segment.second));
     }
 }
 
@@ -75,14 +81,13 @@ void FigureSvgPainter::printHeader() {
 
     for (int id = 0; id < 2; id++) {
         QString path = "";
-        Point center(ARROW_LENGTH, ARROW_LENGTH);
-        Point dir(id == 0 ? -ARROW_LENGTH : ARROW_LENGTH, 0);
-        for (int k : { -1, 1 }) {
-            Point branch = dir;
-            branch.rotateBy(k * ARROW_BRANCH_ANGLE * PI / 180);
-            Point end = center + branch;
-            path += QString("M%1, %2 ").arg(center.x).arg(center.y);
-            path += QString("L%1, %2 ").arg(end.x).arg(end.y);
+        Point start(id == 0 ? 0 : 2 * ARROW_LENGTH, ARROW_LENGTH);
+        Point end(ARROW_LENGTH, ARROW_LENGTH);
+
+        for (auto segment : generateArrow(end, start)) {
+            Point a = segment.first, b = segment.second;
+            path += QString("M%1, %2 ").arg(a.x).arg(a.y);
+            path += QString("L%1, %2 ").arg(b.x).arg(b.y);
         }
         header.replace(
                     id == 0 ? "{{markerDirectPath}}" : "{{markerReversePath}}",
