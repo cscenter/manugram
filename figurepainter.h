@@ -54,7 +54,7 @@ private:
     QPainter &painter;
     Scaler scaler;
 
-    void drawArrow(const Point &a, const Point &b);
+    void drawArrow(const Point &end, const Point &start);
     void drawLabel(Figure &figure);
 };
 

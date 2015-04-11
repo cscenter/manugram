@@ -41,20 +41,20 @@ void FigurePainter::accept(figures::Rectangle &fig) {
 const double ARROW_BRANCH_ANGLE = 25;
 const int ARROW_LENGTH = 12;
 
-std::vector<std::pair<Point, Point>> generateArrow(const Point &a, const Point &b) {
+std::vector<std::pair<Point, Point>> generateArrow(const Point &end, const Point &start) {
     std::vector<std::pair<Point, Point>> result;
-    Point dir = b - a;
+    Point dir = start - end;
     dir = dir * (ARROW_LENGTH / dir.length());
     for (int k : { -1, 1 }) {
         Point branch = dir;
         branch.rotateBy(k * ARROW_BRANCH_ANGLE * PI / 180.0);
-        result.push_back({ a, a + branch });
+        result.push_back({ end, end + branch });
     }
     return result;
 }
 
-void FigurePainter::drawArrow(const Point &a, const Point &b) {
-    for (auto segment : generateArrow(a, b)) {
+void FigurePainter::drawArrow(const Point &end, const Point &start) {
+    for (auto segment : generateArrow(end, start)) {
         painter.drawLine(scaler(segment.first), scaler(segment.second));
     }
 }
