@@ -152,8 +152,9 @@ void MainWindow::on_actionSaveAs_triggered() {
         data << model;
         if (!saveDataToFile(data.str(), currentFileName)) {
             QMessageBox::critical(this, "Error", "Unable to save model");
+        } else {
+            currentFileName = filename;
         }
-        currentFileName = filename;
     }
 }
 
