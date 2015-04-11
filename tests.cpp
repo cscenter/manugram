@@ -8,6 +8,7 @@
 using namespace figures;
 
 using std::make_shared;
+using std::dynamic_pointer_cast;
 
 class ModelModifier {
 public:
@@ -29,7 +30,7 @@ public:
     }
 
     void addFigure() {
-        int type = randint(0, 3);
+        int type = randint(0, 4);
         Point a = genPoint();
         Point b = genPoint();
 
@@ -56,6 +57,17 @@ public:
             }
             figure = make_shared<Curve>(points);
         }   break;
+        case 4: {
+            auto figA = getRandomBoundedFigure();
+            auto figB = getRandomBoundedFigure();
+            if (!figA || !figB) {
+                return;
+            }
+            auto segment = make_shared<SegmentConnection>(figA, figB);
+            segment->setArrowedA(randint(0, 1));
+            segment->setArrowedB(randint(0, 1));
+            figure = segment;
+        }
         }
         if (randint(0, 1) == 0) {
             figure->setLabel(genLabel());
@@ -79,6 +91,27 @@ public:
 private:
     std::default_random_engine generator;
     Model &model;
+
+    PBoundedFigure getRandomBoundedFigure() {
+        size_t count = 0;
+        for (auto fig : model) {
+            auto result = dynamic_pointer_cast<BoundedFigure>(fig);
+            if (result) { count++; }
+        }
+        if (!count) { return nullptr; }
+        int id = randint(0, count - 1);
+        for (auto fig : model) {
+            auto result = dynamic_pointer_cast<BoundedFigure>(fig);
+            if (result) {
+                if (id == 0) {
+                    return result;
+                } else {
+                    id--;
+                }
+            }
+        }
+        abort();
+    }
 
     static const int MIN_COORD = -1e5;
     static const int MAX_COORD =  1e5;
