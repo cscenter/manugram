@@ -265,6 +265,7 @@ public:
     }
 
     typedef std::list<PFigure>::iterator iterator;
+    typedef std::list<PFigure>::const_iterator const_iterator;
 
     iterator addFigure(PFigure a) {
         _figures.push_back(std::move(a));
@@ -274,6 +275,12 @@ public:
         return _figures.begin();
     }
     iterator end() {
+        return _figures.end();
+    }
+    const_iterator begin() const {
+        return _figures.begin();
+    }
+    const_iterator end() const {
         return _figures.end();
     }
     void removeFigure(iterator it) {
