@@ -1,9 +1,11 @@
 #include <QtTest/QtTest>
+#include <QDebug>
 #include "model.h"
+#include "model_io.h"
 
 using namespace figures;
 
-class TestFiguresDistances : public QObject {
+class Tests : public QObject {
     Q_OBJECT
 private slots:
     void testDistanceToSegmentBorder() {
@@ -83,7 +85,33 @@ private slots:
         Ellipse e2({ Point(11, 1), Point(15, 7) });
         QVERIFY(fabs(e2.getApproximateDistanceToBorder(Point(13, 4)) - 2) < EPS);
     }
+
+    void testSimpleSaveLoad() {
+        int testId = 1;
+        for (;; testId++) {
+            char resourceName[64];
+            snprintf(resourceName, sizeof resourceName, ":/tests/%02d.model", testId);
+            QFile file(resourceName);
+            if (!file.open(QFile::ReadOnly)) {
+                break;
+            }
+            qDebug() << "Trying" << resourceName;
+
+            QByteArray inData = file.readAll();
+            std::stringstream inDataStream;
+            inDataStream << inData.toStdString();
+            Model model;
+            inDataStream >> model;
+
+            std::stringstream outDataStream;
+            outDataStream << model;
+            std::string outStr = outDataStream.str();
+            QByteArray outData(outStr.data(), outStr.length());
+            QCOMPARE(outData, inData);
+        }
+        QVERIFY(testId > 1);
+    }
 };
 
-QTEST_MAIN(TestFiguresDistances)
+QTEST_MAIN(Tests)
 #include "tests.moc"
