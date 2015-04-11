@@ -247,6 +247,6 @@ void exportModelToImageFile(Model &model, const QString &filename) {
     }
     painter.end();
     if (!img.save(filename)) {
-        throw std::runtime_error("Unable to save to PNG file");
+        throw io_error("Unable to save to PNG file");
     }
 }
