@@ -3,6 +3,7 @@
 #include "model.h"
 #include "model_io.h"
 #include "figurepainter.h"
+#include "build_info.h"
 #include <fstream>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -160,4 +161,12 @@ void MainWindow::on_actionZoomOut_triggered() {
 
 void MainWindow::on_actionExit_triggered() {
     QApplication::exit();
+}
+
+void MainWindow::on_actionAbout_triggered() {
+    QMessageBox::about(this, "About Manugram",
+                       QString()
+                       + "Git commit hash: " + GIT_LAST_SHA1 + "\n"
+                       + "Git commit date: " + GIT_LAST_TIME
+                       );
 }

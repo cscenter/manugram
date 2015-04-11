@@ -39,6 +39,7 @@ private slots:
     void on_actionZoomIn_triggered();
     void on_actionZoomOut_triggered();
     void on_actionExit_triggered();
+    void on_actionAbout_triggered();
 };
 
 #endif // MAINWINDOW_H
