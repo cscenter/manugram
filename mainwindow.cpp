@@ -167,6 +167,7 @@ void MainWindow::on_actionAbout_triggered() {
     QMessageBox::about(this, "About Manugram",
                        QString()
                        + "Git commit hash: " + GIT_LAST_SHA1 + "\n"
-                       + "Git commit date: " + GIT_LAST_TIME
+                       + "Git commit date: " + GIT_LAST_TIME + "\n"
+                       + "Build time: " + BUILD_TIME
                        );
 }
