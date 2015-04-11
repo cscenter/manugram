@@ -19,6 +19,15 @@ public:
         , labelLetterGen('a', 'z')
     {}
 
+    void doRandom() {
+        int operation = randint(1, 4);
+        if (operation == 1) {
+            removeFigure();
+        } else {
+            addFigure();
+        }
+    }
+
     void addFigure() {
         int type = randint(0, 3);
         Point a = genPoint();
@@ -52,6 +61,19 @@ public:
             figure->setLabel(genLabel());
         }
         model.addFigure(figure);
+    }
+
+    void removeFigure() {
+        if (model.size() == 0) {
+            return;
+        }
+        int id = randint(0, model.size() - 1);
+        for (auto it = model.begin(); it != model.end(); it++, id--) {
+            if (id == 0) {
+                model.removeFigure(it);
+                return;
+            }
+        }
     }
 
 private:
@@ -231,7 +253,7 @@ private slots:
                 std::string saved2 = data.str();
                 QCOMPARE(saved1, saved2);
                 QVERIFY(modelsAreEqual(model, restored2));
-                modifier.addFigure();
+                modifier.doRandom();
             }
         }
     }
