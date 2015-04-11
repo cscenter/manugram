@@ -1,9 +1,86 @@
 #include <QtTest/QtTest>
 #include <QDebug>
+#include <random>
 #include "model.h"
 #include "model_io.h"
 
 using namespace figures;
+
+using std::make_shared;
+
+class ModelModifier {
+public:
+    ModelModifier(Model &model)
+        : model(model)
+        , coordGen(MIN_COORD, MAX_COORD)
+        , curveLengthGen(2, 20)
+        , labelLengthGen(1, 20)
+        , labelLetterGen('a', 'z')
+    {}
+
+    void addFigure() {
+        int type = randint(0, 3);
+        Point a = genPoint();
+        Point b = genPoint();
+
+        PFigure figure;
+        switch (type) {
+        case 0: {
+            auto segment = make_shared<Segment>(a, b);
+            model.addFigure(segment);
+            segment->setArrowedA(randint(0, 1));
+            segment->setArrowedB(randint(0, 1));
+            figure = segment;
+        }   break;
+        case 1:
+            figure = make_shared<Ellipse>(BoundingBox({ a, b }));
+            break;
+        case 2:
+            figure = make_shared<Rectangle>(BoundingBox({ a, b }));
+            break;
+        case 3: {
+            int len = curveLengthGen(generator);
+            std::vector<Point> points;
+            for (int i = 0; i < len; i++) {
+                points.push_back(genPoint());
+            }
+            figure = make_shared<Curve>(points);
+        }   break;
+        }
+        if (randint(0, 1) == 0) {
+            figure->setLabel(genLabel());
+        }
+        model.addFigure(figure);
+    }
+
+private:
+    std::default_random_engine generator;
+    Model &model;
+
+    static const int MIN_COORD = -1e5;
+    static const int MAX_COORD =  1e5;
+    std::uniform_real_distribution<> coordGen;
+    std::uniform_int_distribution<> curveLengthGen;
+    std::uniform_int_distribution<> labelLengthGen, labelLetterGen;
+
+    int randint(int l, int r) {
+        return std::uniform_int_distribution<>(l, r)(generator);
+    }
+
+    Point genPoint() {
+        double x = coordGen(generator);
+        double y = coordGen(generator);
+        return Point(x, y);
+    }
+    std::string genLabel() {
+        int len = labelLengthGen(generator);
+        std::string result = "";
+        for (int i = 0; i < len; i++) {
+            result += labelLetterGen(generator);
+        }
+        return result;
+    }
+};
 
 class Tests : public QObject {
     Q_OBJECT
