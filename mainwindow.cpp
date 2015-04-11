@@ -94,13 +94,15 @@ void MainWindow::on_actionOpen_triggered() {
     currentFileName = filename;
 }
 
-bool saveDataToFile(const std::string &data, QString &fileName) {
+void saveDataToFile(const std::string &data, QString &fileName) {
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly)) {
-        return false;
+        throw io_error("Cannot open file for writing");
     }
     QByteArray buffer(data.data(), data.length());
-    return file.write(buffer) == buffer.size();
+    if (file.write(buffer) != buffer.size()) {
+        throw io_error("Cannot write data to file");
+    }
 }
 
 void MainWindow::on_actionSave_triggered() {
@@ -110,8 +112,10 @@ void MainWindow::on_actionSave_triggered() {
     }
     std::stringstream data;
     data << this->modelWidget->getModel();
-    if (!saveDataToFile(data.str(), currentFileName)) {
-        QMessageBox::critical(this, "Error", "Unable to save model");
+    try {
+        saveDataToFile(data.str(), currentFileName);
+    } catch (io_error &e) {
+        QMessageBox::critical(this, "Unable to save model", e.what());
     }
 }
 
@@ -139,22 +143,21 @@ void MainWindow::on_actionSaveAs_triggered() {
     }
     filename = forceFileExtension(filename, selectedFilter);
     Model &model = this->modelWidget->getModel();
-    if (filename.toLower().endsWith(".svg")) {
-        std::stringstream data;
-        exportModelToSvg(model, data);
-        if (!saveDataToFile(data.str(), filename)) {
-            QMessageBox::critical(this, "Error", "Unable to save model to SVG");
-        }
-    } else if (filename.toLower().endsWith(".png")) {
-        exportModelToImageFile(model, filename);
-    } else {
-        std::stringstream data;
-        data << model;
-        if (!saveDataToFile(data.str(), currentFileName)) {
-            QMessageBox::critical(this, "Error", "Unable to save model");
+    try {
+        if (filename.toLower().endsWith(".svg")) {
+            std::stringstream data;
+            exportModelToSvg(model, data);
+            saveDataToFile(data.str(), filename);
+        } else if (filename.toLower().endsWith(".png")) {
+            exportModelToImageFile(model, filename);
         } else {
+            std::stringstream data;
+            data << model;
+            saveDataToFile(data.str(), currentFileName);
             currentFileName = filename;
         }
+    } catch (io_error &e) {
+        QMessageBox::critical(this, "Unable to save model", e.what());
     }
 }
 
