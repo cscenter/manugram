@@ -4,6 +4,7 @@
 #include "model_io.h"
 #include "figurepainter.h"
 #include "build_info.h"
+#include <sstream>
 #include <fstream>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -72,10 +73,17 @@ void MainWindow::on_actionOpen_triggered() {
     }
 
     std::unique_ptr<Ui::ModelWidget> modelWidget(new Ui::ModelWidget());
-    std::ifstream file(filename.toStdString());
+    QFile file(filename);
+    if (!file.open(QFile::ReadOnly)) {
+        QMessageBox::critical(this, "Error while opening model", "Unable to open file for reading");
+        return;
+    }
+    std::stringstream data;
+    data << file.readAll().toStdString();
+    file.close();
     try {
         Model model;
-        file >> model;
+        data >> model;
         modelWidget->setModel(std::move(model));
     } catch (model_format_error &e) {
         QMessageBox::critical(this, "Error while opening model", e.what());
