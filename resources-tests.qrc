@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/tests">
+        <file alias="01.model">resources/tests/01.model</file>
+        <file alias="02.model">resources/tests/02.model</file>
+        <file alias="03.model">resources/tests/03.model</file>
+    </qresource>
+</RCC>

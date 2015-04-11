@@ -29,6 +29,7 @@ CONFIG(tests) {
     QT += testlib
     CONFIG += testlib
     SOURCES += tests.cpp
+    RESOURCES += resources-tests.qrc
 } else {
     SOURCES += main.cpp
 }
