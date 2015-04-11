@@ -188,6 +188,34 @@ private slots:
         }
         QVERIFY(testId > 1);
     }
+
+    void testStressSaveLoad() {
+        const int PASSES = 10;
+        for (int pass = 0; pass < PASSES; pass++) {
+            qDebug("pass %d/%d", pass + 1, PASSES);
+            Model model;
+            ModelModifier modifier(model);
+            for (int iteration = 0; iteration < 50; iteration++) {
+                std::stringstream data;
+                data << model;
+
+                std::string saved1 = data.str();
+
+                Model restored;
+                data >> restored;
+
+                std::stringstream data2;
+                data2 << restored;
+
+                Model restored2;
+                data2 >> restored2;
+
+                std::string saved2 = data.str();
+                QCOMPARE(saved1, saved2);
+                modifier.addFigure();
+            }
+        }
+    }
 };
 
 QTEST_MAIN(Tests)
