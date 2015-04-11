@@ -38,17 +38,17 @@ void FigurePainter::accept(figures::Rectangle &fig) {
     drawLabel(fig);
 }
 
+const double ARROW_BRANCH_ANGLE = 25;
+const int ARROW_LENGTH = 12;
+
 void FigurePainter::drawArrow(const Point &a, const Point &b) {
-    const double BRANCH_ANGLE = 25 * PI / 180.0;
-    const int ARROW_LENGTH = 12 * scaler.scaleFactor;
     Point dir = b - a;
-    double ang = atan2(dir.y, dir.x);
+    dir = dir * (ARROW_LENGTH / dir.length());
     QPointF start = scaler(a);
-    for (int k = -1; k <= 1; k += 2) {
-        double curAng = ang + BRANCH_ANGLE * k;
-        QPointF end = start;
-        end.setX(end.x() + cos(curAng) * ARROW_LENGTH);
-        end.setY(end.y() + sin(curAng) * ARROW_LENGTH);
+    for (int k : { -1, 1 }) {
+        Point branch = dir;
+        branch.rotateBy(k * ARROW_BRANCH_ANGLE * PI / 180.0);
+        QPointF end = scaler(a + branch);
         painter.drawLine(start, end);
     }
 }
