@@ -137,10 +137,67 @@ private:
     }
 };
 
+class FiguresComparator : public FigureVisitor {
+public:
+    FiguresComparator(const Figure &other, const std::map<PFigure, PFigure> &othersMapping) : other(other), othersMapping(othersMapping), _result(false) {}
+    bool result() const { return _result; }
+
+    virtual void accept(Segment &segm1) override {
+        _result = false;
+        auto &segm2 = dynamic_cast<const Segment&>(other);
+        if (segm1.label() != segm2.label()) { return; }
+        if (segm1.getArrowedA() != segm2.getArrowedA()) { return; }
+        if (segm1.getArrowedB() != segm2.getArrowedB()) { return; }
+        _result =
+                segm1.getA() == segm2.getA() &&
+                segm1.getB() == segm2.getB();
+    }
+
+    virtual void accept(SegmentConnection &segm1) override {
+        _result = false;
+        auto &segm2 = dynamic_cast<const SegmentConnection&>(other);
+        if (segm1.label() != segm2.label()) { return; }
+        if (segm1.getArrowedA() != segm2.getArrowedA()) { return; }
+        if (segm1.getArrowedB() != segm2.getArrowedB()) { return; }
+        _result =
+                segm1.getFigureA() == othersMapping.at(segm2.getFigureA()) &&
+                segm1.getFigureB() == othersMapping.at(segm2.getFigureB());
+    }
+
+    virtual void accept(Curve &curve1) override {
+        _result = false;
+        auto &curve2 = dynamic_cast<const Curve&>(other);
+        if (curve1.label() != curve2.label()) { return; }
+        _result = curve1.points == curve2.points;
+    }
+
+    virtual void accept(figures::Ellipse &fig1) override {
+        _result = false;
+        auto &fig2 = dynamic_cast<const Ellipse&>(other);
+        if (fig1.label() != fig2.label()) { return; }
+        _result = fig1.getBoundingBox() == fig2.getBoundingBox();
+    }
+
+    virtual void accept(figures::Rectangle &fig1) override {
+        _result = false;
+        auto &fig2 = dynamic_cast<const Rectangle&>(other);
+        if (fig1.label() != fig2.label()) { return; }
+        _result = fig1.getBoundingBox() == fig2.getBoundingBox();
+    }
+
+private:
+    const Figure &other;
+    const std::map<PFigure, PFigure> &othersMapping;
+    bool _result;
+};
+
 bool modelsAreEqual(const Model &a, const Model &b) {
     if (a.size() != b.size()) {
         return false;
     }
+
+    std::map<PFigure, PFigure> others;
+
     auto ita = a.begin(), itb = b.begin();
     for (; ita != a.end() && itb != b.end(); ita++, itb++) {
         // one dereference from iterator, second dereference from shared_ptr
@@ -149,6 +206,13 @@ bool modelsAreEqual(const Model &a, const Model &b) {
         if (typeid(a) != typeid(b)) {
             return false;
         }
+        FiguresComparator cmp(b, others);
+        a.visit(cmp);
+        if (!cmp.result()) {
+            return false;
+        }
+        assert(!others.count(*itb));
+        others[*itb] = *ita;
     }
     assert(ita == a.end() && itb == b.end());
     return true;
