@@ -123,8 +123,8 @@ private:
     }
 
     Point genPoint() {
-        double x = coordGen(generator);
-        double y = coordGen(generator);
+        double x = round(coordGen(generator) * 10) / 10;
+        double y = round(coordGen(generator) * 10) / 10;
         return Point(x, y);
     }
     std::string genLabel() {
