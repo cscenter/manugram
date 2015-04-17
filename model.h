@@ -71,6 +71,10 @@ struct BoundingBox {
         rightDown.y = std::max(rightDown.y, p.y);
     }
 
+    bool operator==(const BoundingBox &other) const {
+        return leftUp == other.leftUp && rightDown == other.rightDown;
+    }
+
     Point rightUp()  const { return Point(rightDown.x, leftUp.y); }
     Point leftDown() const { return Point(leftUp.x, rightDown.y); }
     Point center()   const { return (leftUp + rightDown) * 0.5; }
