@@ -241,7 +241,7 @@ private slots:
             char resourceName[64];
             snprintf(resourceName, sizeof resourceName, ":/tests/%02d.model", testId);
             QFile file(resourceName);
-            if (!file.open(QFile::ReadOnly)) {
+            if (!file.open(QFile::ReadOnly | QFile::Text)) {
                 break;
             }
             qDebug() << "Trying" << resourceName;

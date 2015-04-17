@@ -74,7 +74,7 @@ void MainWindow::on_actionOpen_triggered() {
 
     std::unique_ptr<Ui::ModelWidget> modelWidget(new Ui::ModelWidget());
     QFile file(filename);
-    if (!file.open(QFile::ReadOnly)) {
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::critical(this, "Error while opening model", "Unable to open file for reading");
         return;
     }
@@ -96,7 +96,7 @@ void MainWindow::on_actionOpen_triggered() {
 
 void saveDataToFile(const std::string &data, QString &fileName) {
     QFile file(fileName);
-    if (!file.open(QFile::WriteOnly)) {
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
         throw io_error("Cannot open file for writing");
     }
     QByteArray buffer(data.data(), data.length());
