@@ -249,8 +249,14 @@ private slots:
             QByteArray inData = file.readAll();
             std::stringstream inDataStream;
             inDataStream << inData.toStdString();
+
             Model model;
-            inDataStream >> model;
+            try {
+                inDataStream >> model;
+            } catch (model_format_error &e) {
+                qDebug() << e.what();
+                throw;
+            }
 
             std::stringstream outDataStream;
             outDataStream << model;
