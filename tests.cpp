@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include "model.h"
 #include "model_io.h"
+#include <fstream>
 
 using namespace figures;
 
@@ -12,8 +13,9 @@ using std::dynamic_pointer_cast;
 
 class ModelModifier {
 public:
-    ModelModifier(Model &model)
+    ModelModifier(Model &model, std::default_random_engine::result_type seed)
         : model(model)
+        , generator(seed)
         , coordGen(MIN_COORD, MAX_COORD)
         , curveLengthGen(2, 20)
         , labelLengthGen(1, 20)
@@ -88,8 +90,8 @@ public:
     }
 
 private:
-    std::default_random_engine generator;
     Model &model;
+    std::default_random_engine generator;
 
     PBoundedFigure getRandomBoundedFigure() {
         size_t count = 0;
@@ -336,7 +338,7 @@ private slots:
         for (int pass = 0; pass < PASSES; pass++) {
             qDebug("pass %d/%d", pass + 1, PASSES);
             Model model;
-            ModelModifier modifier(model);
+            ModelModifier modifier(model, pass);
             for (int iteration = 0; iteration < 50; iteration++) {
                 std::stringstream data;
                 data << model;
