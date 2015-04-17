@@ -27,6 +27,10 @@ struct Point {
     double lengthSquared() const { return x * x + y * y; }
     double length() const { return sqrt(lengthSquared()); }
 
+    bool operator==(const Point &other) const {
+        return (x - other.x) < 1e-8 && (y - other.y) < 1e-8;
+    }
+
     void rotateBy(double angle) {
         double nx = x * cos(angle) - y * sin(angle);
         double ny = x * sin(angle) + y * cos(angle);
