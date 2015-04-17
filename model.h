@@ -125,7 +125,6 @@ public:
     virtual void accept(figures::Curve &) = 0;
     virtual void accept(figures::Ellipse &) = 0;
     virtual void accept(figures::Rectangle &) = 0;
-    virtual void accept(figures::BoundedFigure &) { throw visitor_implementation_not_found(); }
 };
 
 namespace figures {
