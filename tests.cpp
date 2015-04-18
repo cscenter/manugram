@@ -333,7 +333,7 @@ private slots:
         QVERIFY(testId > 1);
     }
 
-    void testStressSaveLoad() {
+    void testStressModelAndIO() {
         const int PASSES = 10;
         for (int pass = 0; pass < PASSES; pass++) {
             qDebug("pass %d/%d", pass + 1, PASSES);
