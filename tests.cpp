@@ -340,6 +340,7 @@ private slots:
             Model model;
             ModelModifier modifier(model, pass);
             for (int iteration = 0; iteration < 100; iteration++) {
+                QCOMPARE(Figure::figuresAlive(), model.size());
                 std::stringstream data;
                 data << model;
 
@@ -350,9 +351,11 @@ private slots:
 
                 std::stringstream data2;
                 data2 << restored;
+                QCOMPARE(Figure::figuresAlive(), 2 * model.size());
 
                 Model restored2;
                 data2 >> restored2;
+                QCOMPARE(Figure::figuresAlive(), 3 * model.size());
 
                 std::string saved2 = data.str();
                 QCOMPARE(saved1, saved2);
