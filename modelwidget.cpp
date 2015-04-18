@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QWheelEvent>
 #include <QGesture>
 #include <QDebug>
 #include <QTimer>
@@ -322,6 +323,18 @@ void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 
         emit canUndoChanged();
         emit canRedoChanged();
+        update();
+    }
+}
+
+void Ui::ModelWidget::wheelEvent(QWheelEvent *event) {
+    event->ignore();
+    if (event->modifiers().testFlag(Qt::ControlModifier)) {
+        event->accept();
+        double scrolled = event->angleDelta().y() / 8;
+        double factor = 1.0 + 0.1 * (scrolled / 15); // 10% per each 15 degrees (standard step)
+        factor = std::max(factor, 0.1);
+        scaler.scaleWithFixedPoint(scaler(event->pos()), factor);
         update();
     }
 }
