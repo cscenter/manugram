@@ -189,7 +189,7 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     lastTrack = Track();
-    if (event->modifiers().testFlag(Qt::ShiftModifier)) {
+    if (event->modifiers().testFlag(Qt::ShiftModifier) || event->buttons().testFlag(Qt::MiddleButton)) {
         mouseAction = MouseAction::ViewpointMove;
         viewpointMoveStart = event->pos();
         viewpointMoveOldScaler = scaler;
