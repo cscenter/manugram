@@ -20,6 +20,7 @@ std::ostream &operator<<(std::ostream &out , Model &model);
 void exportModelToSvg(Model &m, std::ostream &out);
 void exportModelToImageFile(Model &model, const QString &filename);
 
+std::istream &operator>>(std::istream &in ,       Track &track);
 std::ostream &operator<<(std::ostream &out, const Track &track);
 
 #endif // MODEL_IO_H

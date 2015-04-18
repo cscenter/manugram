@@ -252,6 +252,20 @@ void exportModelToImageFile(Model &model, const QString &filename) {
     }
 }
 
+std::istream &operator>>(std::istream &in, Track &track) {
+    size_t cnt;
+    if (!(in >> cnt)) {
+        throw model_format_error("Unable to read track length");
+    }
+    track.points.resize(cnt);
+    for (Point &p : track.points) {
+        if (!(in >> p.x >> p.y)) {
+            throw model_format_error("Unable to read point in track");
+        }
+    }
+    return in;
+}
+
 std::ostream &operator<<(std::ostream &out, const Track &track) {
     out << track.size() << '\n';
     for (Point p : track.points) {
