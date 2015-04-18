@@ -16,6 +16,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void openFile(const QString &filename);
+
 private:
     static constexpr double SCALE_FACTOR_STEP = 0.2;
     Ui::MainWindow *ui;

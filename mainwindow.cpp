@@ -25,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&zoomInExtraShortcut, &QShortcut::activated, ui->actionZoomIn, &QAction::trigger);
     setModelWidget(new Ui::ModelWidget());
     setWindowIcon(QIcon(":/icon.ico"));
+    if (QApplication::arguments().size() > 1) {
+        openFile(QApplication::arguments()[1]);
+    }
 }
 
 MainWindow::~MainWindow() {
@@ -73,7 +76,10 @@ void MainWindow::on_actionOpen_triggered() {
     if (filename == "") {
         return;
     }
+    openFile(filename);
+}
 
+void MainWindow::openFile(const QString &filename) {
     std::unique_ptr<Ui::ModelWidget> modelWidget(new Ui::ModelWidget());
     QFile file(filename);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
