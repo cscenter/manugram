@@ -73,12 +73,13 @@ void Ui::ModelWidget::setStoreTracks(bool newStoreTracks) {
 }
 
 
-void Ui::ModelWidget::setModel(Model model) {
+void Ui::ModelWidget::setModel(Model model, const Track &extraTrack) {
     commitedModel = std::move(model);
     previousModels.clear();
     redoModels.clear();
     emit canUndoChanged();
     emit canRedoChanged();
+    this->extraTrack = extraTrack;
 }
 Model &Ui::ModelWidget::getModel() {
     return commitedModel;
@@ -176,15 +177,16 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
         fig->visit(fpainter);
     }
 
+    pen.setColor(QColor(255, 0, 0, 16));
+    pen.setWidth(3 * scaler.scaleFactor);
+    painter.setPen(pen);
     if (showTrack()) {
-        pen.setColor(QColor(255, 0, 0, 16));
-        pen.setWidth(3 * scaler.scaleFactor);
-        painter.setPen(pen);
         drawTrack(painter, scaler, lastTrack);
         for (const Track &track : visibleTracks) {
             drawTrack(painter, scaler, track);
         }
     }
+    drawTrack(painter, scaler, extraTrack);
 }
 
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {

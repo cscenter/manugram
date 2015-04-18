@@ -11,7 +11,7 @@ class ModelWidget : public QWidget {
     Q_OBJECT
 public:
     explicit ModelWidget(QWidget *parent = 0);
-    void setModel(Model model);
+    void setModel(Model model, const Track &extraTrack = Track());
     Model &getModel();
 
     bool canUndo();
@@ -56,6 +56,7 @@ private:
     };
 
     Track lastTrack;
+    Track extraTrack;
     MouseAction mouseAction;
     QPoint viewpointMoveStart;
     Scaler viewpointMoveOldScaler;
