@@ -92,9 +92,9 @@ public:
 #ifdef QT_NO_DEBUG
     virtual ~Figure() {}
 #else
-    Figure()                { _figuresAlive++; }
-    Figure(const Figure & ) { _figuresAlive++; }
-    Figure(      Figure &&) { _figuresAlive++; }
+    Figure() { _figuresAlive++; }
+    Figure(const Figure & other) : _label(          other._label)  { _figuresAlive++; }
+    Figure(      Figure &&other) : _label(std::move(other._label)) { _figuresAlive++; }
     virtual ~Figure() { assert(_figuresAlive > 0); _figuresAlive--; }
 #endif
     virtual BoundingBox getBoundingBox() const = 0;
