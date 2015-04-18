@@ -360,6 +360,11 @@ private slots:
                 std::string saved2 = data.str();
                 QCOMPARE(saved1, saved2);
                 QVERIFY(modelsAreEqual(model, restored2));
+
+                Model copyOfSource = model;
+                QVERIFY(modelsAreEqual(model, copyOfSource));
+                QCOMPARE(Figure::figuresAlive(), 4 * model.size());
+
                 modifier.doRandom();
             }
         }
