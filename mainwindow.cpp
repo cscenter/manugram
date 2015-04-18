@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&zoomInExtraShortcut, &QShortcut::activated, ui->actionZoomIn, &QAction::trigger);
     setModelWidget(new Ui::ModelWidget());
     setWindowIcon(QIcon(":/icon.ico"));
-    if (QApplication::arguments().size() > 1) {
-        openFile(QApplication::arguments()[1]);
+    for (int i = 1; i < QApplication::arguments().size(); i++) {
+        openFile(QApplication::arguments()[i]);
     }
 }
 
