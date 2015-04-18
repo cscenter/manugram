@@ -73,16 +73,20 @@ void Ui::ModelWidget::setStoreTracks(bool newStoreTracks) {
 }
 
 
-void Ui::ModelWidget::setModel(Model model, const Track &extraTrack) {
+void Ui::ModelWidget::setModel(Model model) {
     commitedModel = std::move(model);
     previousModels.clear();
     redoModels.clear();
     emit canUndoChanged();
     emit canRedoChanged();
-    this->extraTrack = extraTrack;
+    extraTracks = std::vector<Track>();
 }
 Model &Ui::ModelWidget::getModel() {
     return commitedModel;
+}
+
+void Ui::ModelWidget::addModelExtraTrack(Track track) {
+    extraTracks.push_back(std::move(track));
 }
 
 bool Ui::ModelWidget::canUndo() {
@@ -186,7 +190,9 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
             drawTrack(painter, scaler, track);
         }
     }
-    drawTrack(painter, scaler, extraTrack);
+    for (const Track &track : extraTracks) {
+        drawTrack(painter, scaler, track);
+    }
 }
 
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {

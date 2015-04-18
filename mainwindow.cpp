@@ -95,7 +95,8 @@ void MainWindow::openFile(const QString &filename) {
             Track track;
             data >> track;
             recognize(track, model);
-            modelWidget->setModel(std::move(model), std::move(track));
+            modelWidget->setModel(std::move(model));
+            modelWidget->addModelExtraTrack(std::move(track));
         } catch (model_format_error &e) {
             QMessageBox::critical(this, "Error while opening track", e.what());
             return;
