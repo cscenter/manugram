@@ -332,7 +332,7 @@ void Ui::ModelWidget::wheelEvent(QWheelEvent *event) {
     if (event->modifiers().testFlag(Qt::ControlModifier)) {
         event->accept();
         double scrolled = event->angleDelta().y() / 8;
-        double factor = 1.0 + 0.1 * (scrolled / 15); // 10% per each 15 degrees (standard step)
+        double factor = 1.0 + 0.2 * (scrolled / 15); // 20% per each 15 degrees (standard step)
         factor = std::max(factor, 0.1);
         scaler.scaleWithFixedPoint(scaler(event->pos()), factor);
         update();

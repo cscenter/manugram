@@ -17,7 +17,7 @@ public:
     ~MainWindow();
 
 private:
-    static constexpr double SCALE_FACTOR_STEP = 0.1;
+    static constexpr double SCALE_FACTOR_STEP = 0.2;
     Ui::MainWindow *ui;
     Ui::ModelWidget *modelWidget;
     QString currentFileName;
