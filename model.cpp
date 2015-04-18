@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <map>
 
+#ifndef QT_NO_DEBUG
+size_t Figure::_figuresAlive = 0;
+#endif
+
 double figures::Segment::getApproximateDistanceToBorder(const Point &p) {
     double res = std::min((p - a).length(), (p - b).length());
     // Please note that here we do not care about floatint-point error,

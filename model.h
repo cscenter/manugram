@@ -89,7 +89,12 @@ typedef std::shared_ptr<Figure> PFigure;
 
 class Figure {
 public:
+#ifdef QT_NO_DEBUG
     virtual ~Figure() {}
+#else
+    Figure() { _figuresAlive++; }
+    virtual ~Figure() { assert(_figuresAlive > 0); _figuresAlive--; }
+#endif
     virtual BoundingBox getBoundingBox() const = 0;
     virtual void translate(const Point &diff) = 0;
     virtual std::string str() const = 0;
@@ -104,8 +109,15 @@ public:
     void setLabel(const std::string &newLabel) {
         _label = newLabel;
     }
+#ifndef QT_NO_DEBUG
+    static size_t figuresAlive() { return _figuresAlive; }
+#endif
 protected:
     std::string _label;
+#ifndef QT_NO_DEBUG
+private:
+    static size_t _figuresAlive;
+#endif
 };
 PFigure clone(PFigure figure, const std::map<PFigure, PFigure> &othersMapping);
 
