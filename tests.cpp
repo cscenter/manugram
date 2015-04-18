@@ -339,7 +339,7 @@ private slots:
             qDebug("pass %d/%d", pass + 1, PASSES);
             Model model;
             ModelModifier modifier(model, pass);
-            for (int iteration = 0; iteration < 50; iteration++) {
+            for (int iteration = 0; iteration < 100; iteration++) {
                 std::stringstream data;
                 data << model;
 
