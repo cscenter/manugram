@@ -80,7 +80,6 @@ void MainWindow::on_actionOpen_triggered() {
 }
 
 void MainWindow::openFile(const QString &filename) {
-    std::unique_ptr<Ui::ModelWidget> modelWidget(new Ui::ModelWidget());
     QFile file(filename);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::critical(this, "Error while opening model", "Unable to open file for reading");
@@ -91,17 +90,17 @@ void MainWindow::openFile(const QString &filename) {
     file.close();
     if (filename.toLower().endsWith(".track")) {
         try {
-            Model model;
             Track track;
             data >> track;
-            recognize(track, model);
-            modelWidget->setModel(std::move(model));
+            recognize(track, this->modelWidget->getModel());
             modelWidget->addModelExtraTrack(std::move(track));
         } catch (model_format_error &e) {
             QMessageBox::critical(this, "Error while opening track", e.what());
             return;
         }
+        return;
     } else {
+        std::unique_ptr<Ui::ModelWidget> modelWidget(new Ui::ModelWidget());
         try {
             Model model;
             data >> model;
@@ -110,10 +109,10 @@ void MainWindow::openFile(const QString &filename) {
             QMessageBox::critical(this, "Error while opening model", e.what());
             return;
         }
+        setModelWidget(modelWidget.release());
+        currentFileName = filename;
+        return;
     }
-
-    setModelWidget(modelWidget.release());
-    currentFileName = filename;
 }
 
 void saveDataToFile(const std::string &data, QString &fileName) {
