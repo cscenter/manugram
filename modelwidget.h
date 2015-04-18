@@ -32,6 +32,9 @@ public:
     bool showRecognitionResult();
     void setShowRecognitionResult(bool newShowRecognitionResult);
 
+    bool storeTracks();
+    void setStoreTracks(bool newStoreTracks);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
@@ -61,6 +64,7 @@ private:
 
     bool _showTrack;
     bool _showRecognitionResult;
+    bool _storeTracks;
 
 signals:
     void canUndoChanged();

@@ -1,4 +1,5 @@
 #include "model.h"
+#include "model_io.h"
 #include "modelwidget.h"
 #include "figurepainter.h"
 #include "recognition.h"
@@ -6,13 +7,14 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QGesture>
 #include <QDebug>
 #include <QTimer>
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
-    QWidget(parent), mouseAction(MouseAction::None), _gridStep(0), _showTrack(true), _showRecognitionResult(true) {
+    QWidget(parent), mouseAction(MouseAction::None), _gridStep(0), _showTrack(true), _showRecognitionResult(true), _storeTracks(false) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     grabGesture(Qt::PinchGesture);
 }
@@ -60,6 +62,13 @@ bool Ui::ModelWidget::showRecognitionResult() {
 }
 void Ui::ModelWidget::setShowRecognitionResult(bool newShowRecognitionResult) {
     _showRecognitionResult = newShowRecognitionResult;
+}
+
+bool Ui::ModelWidget::storeTracks() {
+    return _storeTracks;
+}
+void Ui::ModelWidget::setStoreTracks(bool newStoreTracks) {
+    _storeTracks = newStoreTracks;
 }
 
 
@@ -220,6 +229,19 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     assert(mouseAction == MouseAction::TrackActive);
     mouseAction = MouseAction::None;
     lastTrack.points.push_back(scaler(event->pos()));
+    if (storeTracks()) {
+        QFile file(QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss") + ".track");
+        if (!file.open(QFile::WriteOnly | QFile::Text)) {
+            QMessageBox::critical(this, "Error while saving track", "Unable to open file for writing");
+        } else {
+            std::stringstream stream;
+            stream << lastTrack;
+            std::string data = stream.str();
+            if (file.write(data.data(), data.length()) != data.length()) {
+                QMessageBox::critical(this, "Error while saving track", "Unable to write to opened file");
+            }
+        }
+    }
     Model previousModel = commitedModel;
     PFigure modifiedFigure = recognize(lastTrack, commitedModel);
     if (_gridStep > 0 && modifiedFigure) {

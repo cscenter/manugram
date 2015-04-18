@@ -73,6 +73,7 @@
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
+    <addaction name="actionStoreTracks"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -189,6 +190,14 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionStoreTracks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Store tracks</string>
    </property>
   </action>
  </widget>

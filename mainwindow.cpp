@@ -56,6 +56,7 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
         ui->actionZoomOut->setEnabled(modelWidget->scaleFactor() > SCALE_FACTOR_STEP + 1e-8);
     });
     modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? defaultGridStep : 0);
+    modelWidget->setStoreTracks(ui->actionStoreTracks->isChecked());
 
     QScreen *screen = QApplication::screens().at(0);
     modelWidget->setScaleFactor(screen->logicalDotsPerInch() / 96.0);
@@ -199,4 +200,8 @@ void MainWindow::on_actionAbout_triggered() {
                        + "Git commit date: " + GIT_LAST_TIME + "\n"
                        + "Build time: " + BUILD_TIME
                        );
+}
+
+void MainWindow::on_actionStoreTracks_triggered() {
+    modelWidget->setStoreTracks(ui->actionStoreTracks->isChecked());
 }

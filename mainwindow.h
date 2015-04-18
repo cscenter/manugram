@@ -40,6 +40,7 @@ private slots:
     void on_actionZoomOut_triggered();
     void on_actionExit_triggered();
     void on_actionAbout_triggered();
+    void on_actionStoreTracks_triggered();
 };
 
 #endif // MAINWINDOW_H
