@@ -251,3 +251,11 @@ void exportModelToImageFile(Model &model, const QString &filename) {
         throw io_error("Unable to save to PNG file");
     }
 }
+
+std::ostream &operator<<(std::ostream &out, const Track &track) {
+    out << track.size() << '\n';
+    for (Point p : track.points) {
+        out << p.x << ' ' << p.y << '\n';
+    }
+    return out;
+}
