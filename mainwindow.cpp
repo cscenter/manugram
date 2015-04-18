@@ -4,6 +4,7 @@
 #include "model_io.h"
 #include "figurepainter.h"
 #include "build_info.h"
+#include "recognition.h"
 #include <sstream>
 #include <QByteArray>
 #include <QFileDialog>
@@ -67,7 +68,7 @@ void MainWindow::on_actionOpen_triggered() {
                            this,
                            "Select file with a model",
                            QDir::currentPath(),
-                           "Models (*.model)"
+                           "Models (*.model);;Tracks (*.track)"
                        );
     if (filename == "") {
         return;
@@ -82,13 +83,26 @@ void MainWindow::on_actionOpen_triggered() {
     std::stringstream data;
     data << file.readAll().toStdString();
     file.close();
-    try {
-        Model model;
-        data >> model;
-        modelWidget->setModel(std::move(model));
-    } catch (model_format_error &e) {
-        QMessageBox::critical(this, "Error while opening model", e.what());
-        return;
+    if (filename.toLower().endsWith(".track")) {
+        try {
+            Model model;
+            Track track;
+            data >> track;
+            recognize(track, model);
+            modelWidget->setModel(std::move(model), std::move(track));
+        } catch (model_format_error &e) {
+            QMessageBox::critical(this, "Error while opening track", e.what());
+            return;
+        }
+    } else {
+        try {
+            Model model;
+            data >> model;
+            modelWidget->setModel(std::move(model));
+        } catch (model_format_error &e) {
+            QMessageBox::critical(this, "Error while opening model", e.what());
+            return;
+        }
     }
 
     setModelWidget(modelWidget.release());
