@@ -71,7 +71,7 @@ void MainWindow::on_actionOpen_triggered() {
                            this,
                            "Select file with a model",
                            QDir::currentPath(),
-                           "Models (*.model);;Tracks (*.track)"
+                           "Models (*.mgm);;Tracks (*.track)"
                        );
     if (filename == "") {
         return;
@@ -156,7 +156,7 @@ void MainWindow::on_actionSaveAs_triggered() {
                            this,
                            "Select file to save in",
                            QDir::currentPath(),
-                           "Models (*.model);;SVG (*.svg);;PNG (*.png)",
+                           "Models (*.mgm);;SVG (*.svg);;PNG (*.png)",
                            &selectedFilter
                        );
     if (filename == "") {
