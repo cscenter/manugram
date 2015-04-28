@@ -221,10 +221,15 @@ PFigure recognizeClicks(const Point &click, Model &model) {
     if (bestFit.figure) {
         model.selectedFigure = bestFit.figure;
     } else {
+        bool found = false;
         for (PFigure figure : model) {
             if (figure->isInsideOrOnBorder(click)) {
                 model.selectedFigure = figure;
+                found = true;
             }
+        }
+        if (!found) {
+            model.selectedFigure = nullptr;
         }
     }
 
