@@ -34,3 +34,9 @@ Used resources
 ==============
 Icon from http://www.icons4android.com/icon/1120 was used, edited on http://romannurik.github.io/AndroidAssetStudio/icons-launcher.html
 Icon in ICO format (for Windows) converted by http://www.icoconverter.com
+
+Invariants
+==========
+1. Output operations do not throw exceptions. The only kind of error is underlying stream error - you have to manually check output stream bad bits afterwards, if you wish
+2. `exportModelToImageFile` throws exception if something goes wrong with QFile
+3. Output to `std::stringstream` is not checked for success - I assume that the only reason for it to fail is `bad_alloc`
