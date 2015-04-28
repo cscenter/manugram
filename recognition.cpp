@@ -174,9 +174,12 @@ PFigure recognizeGrabs(const Track &track, Model &model) {
             }
 
             // now we try translation
-            figure->translate(end - start);
-            model.recalculate();
-            return figure;
+            // but only if figure was selected previously (#65)
+            if (figure == model.selectedFigure) {
+                figure->translate(end - start);
+                model.recalculate();
+                return figure;
+            }
         }
     }
     return nullptr;
