@@ -62,7 +62,7 @@ android:DEFINES += DEFAULT_RECOGNITION_PRESET=Touch
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 buildInfo.target = buildInfo
-buildInfo.commands = "bash $$PWD/build_info_gen.sh $$PWD"
+buildInfo.commands = "bash \"$$PWD/build_info_gen.sh\" \"$$PWD\""
 buildInfo.depends = FORCE
 QMAKE_EXTRA_TARGETS = buildInfo
 PRE_TARGETDEPS = buildInfo
