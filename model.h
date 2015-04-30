@@ -332,13 +332,20 @@ public:
     PFigure selectedFigure;
 };
 
+struct TrackPoint : Point {
+    int time;
+
+    TrackPoint() : Point(), time(0) {}
+    TrackPoint(const Point &a, int _time) : Point(a), time(_time) {}
+};
+
 struct Track {
-    std::vector<Point> points;
+    std::vector<TrackPoint> points;
 
     bool empty() const { return points.empty(); }
     size_t size() const { return points.size(); }
-    Point &operator[](size_t id)       { return points[id]; }
-    const Point &operator[](size_t id) const { return points[id]; }
+    TrackPoint &operator[](size_t id)       { return points[id]; }
+    const TrackPoint &operator[](size_t id) const { return points[id]; }
 };
 
 #endif // MODEL_H

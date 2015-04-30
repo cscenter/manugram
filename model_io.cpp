@@ -258,8 +258,8 @@ std::istream &operator>>(std::istream &in, Track &track) {
         throw model_format_error("Unable to read track length");
     }
     track.points.resize(cnt);
-    for (Point &p : track.points) {
-        if (!(in >> p.x >> p.y)) {
+    for (TrackPoint &p : track.points) {
+        if (!(in >> p.x >> p.y >> p.time)) {
             throw model_format_error("Unable to read point in track");
         }
     }
@@ -268,8 +268,8 @@ std::istream &operator>>(std::istream &in, Track &track) {
 
 std::ostream &operator<<(std::ostream &out, const Track &track) {
     out << track.size() << '\n';
-    for (Point p : track.points) {
-        out << p.x << ' ' << p.y << '\n';
+    for (TrackPoint p : track.points) {
+        out << p.x << ' ' << p.y << ' ' << p.time << '\n';
     }
     return out;
 }

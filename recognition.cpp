@@ -385,7 +385,8 @@ PFigure recognize(const Track &_track, Model &model) {
         return candidates[id];
     }
 
-    auto result = make_shared<Curve>(smoothCurve(track.points));
+    std::vector<Point> points(track.points.begin(), track.points.end());
+    auto result = make_shared<Curve>(smoothCurve(points));
     model.addFigure(result);
     return result;
 }
