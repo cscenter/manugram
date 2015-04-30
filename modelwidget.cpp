@@ -21,9 +21,20 @@ Ui::ModelWidget::ModelWidget(QWidget *parent) :
 }
 
 void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
+    QPen oldPen = painter.pen();
     for (size_t i = 0; i + 1 < track.size(); i++) {
+        double len = (track[i + 1] - track[i]).length();
+        double speed = len / (track[i + 1].time - track[i].time);
+        double k = std::min(510.0, speed * 255);
+        QColor color;
+        if (k <= 255) color = QColor(255, k, 0);
+        else color = QColor(255 - (k - 255), 255, 0);
+        QPen pen = oldPen;
+        pen.setColor(color);
+        painter.setPen(pen);
         painter.drawLine(scaler(track[i]), scaler(track[i + 1]));
     }
+    painter.setPen(oldPen);
 }
 
 int Ui::ModelWidget::gridStep() {
@@ -204,7 +215,8 @@ void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
         setCursor(Qt::ClosedHandCursor);
     } else {
         mouseAction = MouseAction::TrackActive;
-        lastTrack.points.push_back(scaler(event->pos()));
+        trackTimer.start();
+        lastTrack.points.push_back(TrackPoint(scaler(event->pos()), trackTimer.elapsed()));
     }
     update();
 }
@@ -214,7 +226,7 @@ void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
         scaler.zeroPoint = scaler.zeroPoint + scaler(viewpointMoveStart) - scaler(event->pos());
         update();
     } else if (mouseAction == MouseAction::TrackActive) {
-        lastTrack.points.push_back(scaler(event->pos()));
+        lastTrack.points.push_back(TrackPoint(scaler(event->pos()), trackTimer.elapsed()));
         if (showTrack() || showRecognitionResult()) {
             update();
         }
@@ -237,7 +249,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
     }
     assert(mouseAction == MouseAction::TrackActive);
     mouseAction = MouseAction::None;
-    lastTrack.points.push_back(scaler(event->pos()));
+    lastTrack.points.push_back(TrackPoint(scaler(event->pos()), trackTimer.elapsed()));
     if (storeTracks()) {
         QFile file(QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss") + ".track");
         if (!file.open(QFile::WriteOnly | QFile::Text)) {

@@ -2,6 +2,7 @@
 #define MODELWIDGET_H
 
 #include <QWidget>
+#include <QElapsedTimer>
 #include <list>
 #include "model.h"
 #include "figurepainter.h"
@@ -58,6 +59,8 @@ private:
 
     Track lastTrack;
     std::vector<Track> extraTracks;
+    QElapsedTimer trackTimer;
+
     MouseAction mouseAction;
     QPoint viewpointMoveStart;
     Scaler viewpointMoveOldScaler;
