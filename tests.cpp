@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include "model.h"
 #include "model_io.h"
+#include "recognition.h"
 #include <fstream>
 
 using namespace figures;
@@ -368,6 +369,45 @@ private slots:
                 modifier.doRandom();
             }
         }
+    }
+
+    void testRecognition() {
+        std::pair<const char*, const std::type_info&> types[] = {
+            { "segment", typeid(figures::Segment) },
+        };
+        setRecognitionPreset(RecognitionPreset::Mouse);
+        int passed = 0, total = 0;
+        for (const auto &currentType : types) {
+            qDebug() << currentType.first;
+            int testId = 1;
+            for (;; testId++) {
+                char resourceName[64];
+                snprintf(resourceName, sizeof resourceName, ":/tests/tracks/mouse/%s/%02d.track", currentType.first, testId);
+                QFile file(resourceName);
+                if (!file.open(QFile::ReadOnly | QFile::Text)) {
+                    break;
+                }
+
+                QByteArray inData = file.readAll();
+                std::stringstream inDataStream;
+                inDataStream << inData.toStdString();
+
+                Track track;
+                inDataStream >> track;
+
+                Model model;
+                PFigure figure = recognize(track, model);
+                if (!figure || typeid(*figure) != currentType.second) {
+                    qDebug() << "Failed" << currentType.first << testId;
+                    //qDebug() << "Received: " << figure->str().c_str();
+                } else {
+                    passed++;
+                }
+                total++;
+            }
+            QVERIFY(testId > 1);
+        }
+        QCOMPARE(passed, total);
     }
 };
 

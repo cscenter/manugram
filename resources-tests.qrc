@@ -4,4 +4,24 @@
         <file alias="02.mgm">resources/tests/02.mgm</file>
         <file alias="03.mgm">resources/tests/03.mgm</file>
     </qresource>
+    <qresource prefix="/tests/tracks/mouse/segment">
+        <file alias="01.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/01.track</file>
+        <file alias="02.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/02.track</file>
+        <file alias="03.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/03.track</file>
+        <file alias="04.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/04.track</file>
+        <file alias="05.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/05.track</file>
+        <file alias="06.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/06.track</file>
+        <file alias="07.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/07.track</file>
+        <file alias="08.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/08.track</file>
+        <file alias="09.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/09.track</file>
+        <file alias="10.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/10.track</file>
+        <file alias="11.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/11.track</file>
+        <file alias="12.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/12.track</file>
+        <file alias="13.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/13.track</file>
+        <file alias="14.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/14.track</file>
+        <file alias="15.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/15.track</file>
+        <file alias="16.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/16.track</file>
+        <file alias="17.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/17.track</file>
+        <file alias="18.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/18.track</file>
+    </qresource>
 </RCC>
