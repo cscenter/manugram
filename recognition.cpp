@@ -10,7 +10,7 @@ using std::make_shared;
 using std::dynamic_pointer_cast;
 
 int FIGURE_SELECT_GAP = -1;
-int CLOSED_FIGURE_GAP = -1;
+int MIN_CLOSED_FIGURE_GAP = -1;
 const int TRACK_FIT_GAP = 10;
 const int DELETION_MOVE_MINIMAL_LENGTH = 5;
 const int DELETION_MOVE_MAX_ANGLE = 30;
@@ -22,11 +22,11 @@ void setRecognitionPreset(RecognitionPreset preset) {
     switch (preset) {
     case RecognitionPreset::Mouse:
         FIGURE_SELECT_GAP = 10;
-        CLOSED_FIGURE_GAP = 10;
+        MIN_CLOSED_FIGURE_GAP = 10;
         break;
     case RecognitionPreset::Touch:
         FIGURE_SELECT_GAP = 30;
-        CLOSED_FIGURE_GAP = 50;
+        MIN_CLOSED_FIGURE_GAP = 50;
         break;
     };
 }
@@ -47,6 +47,24 @@ BoundingBox getBoundingBox(const Track &track) {
     return res;
 }
 
+double getClosedFigureGap(const BoundingBox &box) {
+    return std::max(
+                (double)MIN_CLOSED_FIGURE_GAP,
+                std::max(box.width(), box.height()) * 0.1
+                );
+}
+
+double getClosedFigureGap(const Track &track) {
+    return getClosedFigureGap(getBoundingBox(track));
+}
+double getClosedFigureGap(const std::vector<Point> &points) {
+    BoundingBox box;
+    for (Point p : points) {
+        box.addPoint(p);
+    }
+    return getClosedFigureGap(box);
+}
+
 double getCircumference(const Track &track) {
     double res = 0;
     for (size_t i = 0; i + 1 < track.size(); i++) {
@@ -63,6 +81,7 @@ double getClosedCircumference(const Track &track) {
 bool cutToClosed(Track &track) {
     auto &points = track.points;
     auto it = points.begin();
+    const double CLOSED_FIGURE_GAP = getClosedFigureGap(track);
     while (it != points.end() && (points[0] - *it).length() <= CLOSED_FIGURE_GAP) {
         it++;
     }
@@ -309,6 +328,7 @@ BoundingBox getBestFitRectangle(const Track &track) {
 
 std::vector<Point> smoothCurve(std::vector<Point> current) {
     assert(!current.empty());
+    const double CLOSED_FIGURE_GAP = getClosedFigureGap(current);
 
     Point start = current[0];
     Point end = current.back();
@@ -337,7 +357,7 @@ std::vector<Point> smoothCurve(std::vector<Point> current) {
 }
 
 PFigure recognize(const Track &_track, Model &model) {
-    if (FIGURE_SELECT_GAP < 0 || CLOSED_FIGURE_GAP < 0) {
+    if (FIGURE_SELECT_GAP < 0 || MIN_CLOSED_FIGURE_GAP < 0) {
         throw std::logic_error("Recognition preset is not selected");
     }
 
@@ -346,6 +366,7 @@ PFigure recognize(const Track &_track, Model &model) {
     Track track = _track;
     if (track.empty()) { return nullptr; }
 
+    const double CLOSED_FIGURE_GAP = getClosedFigureGap(track);
     // Very small tracks are clicks
     if (getClosedCircumference(track) <= CLOSED_FIGURE_GAP) {
         return recognizeClicks(track[0], model);
