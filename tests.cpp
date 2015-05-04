@@ -374,6 +374,8 @@ private slots:
     void testRecognition() {
         std::pair<const char*, const std::type_info&> types[] = {
             { "segment", typeid(figures::Segment) },
+            { "ellipse", typeid(figures::Ellipse) },
+            { "rectangle", typeid(figures::Rectangle) },
         };
         setRecognitionPreset(RecognitionPreset::Mouse);
         int passed = 0, total = 0;

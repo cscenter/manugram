@@ -24,4 +24,35 @@
         <file alias="17.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/17.track</file>
         <file alias="18.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/segment/18.track</file>
     </qresource>
+    <qresource prefix="/tests/tracks/mouse/rectangle">
+        <file alias="01.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/01.track</file>
+        <file alias="02.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/02.track</file>
+        <file alias="03.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/03.track</file>
+        <file alias="04.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/04.track</file>
+        <file alias="05.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/05.track</file>
+        <file alias="06.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/06.track</file>
+        <file alias="07.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/07.track</file>
+        <file alias="08.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/08.track</file>
+        <file alias="09.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/09.track</file>
+        <file alias="10.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/10.track</file>
+        <file alias="11.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/11.track</file>
+        <file alias="12.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/12.track</file>
+        <file alias="13.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/rectangle/13.track</file>
+    </qresource>
+    <qresource prefix="/tests/tracks/mouse/ellipse">
+        <file alias="01.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/01.track</file>
+        <file alias="02.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/02.track</file>
+        <file alias="03.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/03.track</file>
+        <file alias="04.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/04.track</file>
+        <file alias="05.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/05.track</file>
+        <file alias="06.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/06.track</file>
+        <file alias="07.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/07.track</file>
+        <file alias="08.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/08.track</file>
+        <file alias="09.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/09.track</file>
+        <file alias="10.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/10.track</file>
+        <file alias="11.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/11.track</file>
+        <file alias="12.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/12.track</file>
+        <file alias="13.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/13.track</file>
+        <file alias="14.track">F:/cscenter/practice1415/Manugram/resources/tests/tracks/mouse/ellipse/14.track</file>
+    </qresource>
 </RCC>
