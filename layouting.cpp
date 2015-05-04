@@ -21,6 +21,11 @@ void GridAlignLayouter::updateLayout(Model &, PFigure changed) {
         alignPoint(box.rightDown);
         boundedFigure->setBoundingBox(box);
     }
+    if (auto curve = dynamic_pointer_cast<Curve>(changed)) {
+        for (Point &p : curve->points) {
+            alignPoint(p);
+        }
+    }
     if (typeid(*changed) == typeid(figures::Segment)) {
         auto segment = dynamic_pointer_cast<Segment>(changed);
         Point a = segment->getA();
