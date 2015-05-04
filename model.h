@@ -159,6 +159,8 @@ public:
     Point getB() const { return b; }
     bool getArrowedA() const { return arrowedA; }
     bool getArrowedB() const { return arrowedB; }
+    void setA(const Point &val) { a = val; }
+    void setB(const Point &val) { b = val; }
     void setArrowedA(bool val) { arrowedA = val; }
     void setArrowedB(bool val) { arrowedB = val; }
 
