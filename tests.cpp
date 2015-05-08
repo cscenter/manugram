@@ -376,6 +376,7 @@ private slots:
             { "segment", typeid(figures::Segment) },
             { "ellipse", typeid(figures::Ellipse) },
             { "rectangle", typeid(figures::Rectangle) },
+            { "curve", typeid(figures::Curve) },
         };
         setRecognitionPreset(RecognitionPreset::Mouse);
         int passed = 0, total = 0;
