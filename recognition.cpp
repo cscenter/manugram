@@ -78,10 +78,13 @@ double getClosedCircumference(const Track &track) {
     return res;
 }
 
-bool cutToClosed(Track &track) {
+bool cutToClosedFromEnd(Track &track) {
     auto &points = track.points;
     auto it = points.begin();
     const double CLOSED_FIGURE_GAP = getClosedFigureGap(track);
+    if ((points[0] - points.back()).length() > CLOSED_FIGURE_GAP * 3) {
+        return false;
+    }
     while (it != points.end() && (points[0] - *it).length() <= CLOSED_FIGURE_GAP) {
         it++;
     }
@@ -96,6 +99,15 @@ bool cutToClosed(Track &track) {
     }
     points.erase(it, points.end());
     return true;
+}
+
+bool cutToClosed(Track &track) {
+    if (cutToClosedFromEnd(track)) return true;
+
+    reverse(track.points.begin(), track.points.end());
+    bool result = cutToClosedFromEnd(track);
+    reverse(track.points.begin(), track.points.end());
+    return result;
 }
 
 double fitsToTrack(const Track &track, const PFigure &figure) {
@@ -384,6 +396,7 @@ PFigure recognize(const Track &_track, Model &model) {
 
     // Drawing new figures
     std::vector<PFigure> candidates;
+    Track uncuttedTrack = track;
     if (!cutToClosed(track))  {
         candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
     } else {
@@ -408,7 +421,7 @@ PFigure recognize(const Track &_track, Model &model) {
         return candidates[id];
     }
 
-    std::vector<Point> points(track.points.begin(), track.points.end());
+    std::vector<Point> points(uncuttedTrack.points.begin(), uncuttedTrack.points.end());
     auto result = make_shared<Curve>(smoothCurve(points));
     model.addFigure(result);
     return result;
