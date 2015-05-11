@@ -102,7 +102,8 @@ public:
     virtual std::string str() const = 0;
     virtual void visit(FigureVisitor &) = 0;
     virtual bool isInsideOrOnBorder(const Point &p) = 0;
-    virtual double getApproximateDistanceToBorder(const Point &p) = 0;
+    virtual Point getApproximateNearestPointOnBorder(const Point &p) = 0;
+    double getApproximateDistanceToBorder(const Point &p) { return (p - getApproximateNearestPointOnBorder(p)).length(); }
     virtual void recalculate() {}
     virtual bool dependsOn(const PFigure &) { return false; }
     std::string label() const {
@@ -180,14 +181,14 @@ public:
     }
 
     bool isInsideOrOnBorder(const Point &p) override;
-    double getApproximateDistanceToBorder(const Point &p) override;
+    Point getApproximateNearestPointOnBorder(const Point &p) override;
 
 protected:
     Segment() : arrowedA(false), arrowedB(false) {}
 
     Point a, b;
     bool arrowedA, arrowedB;
-    double getDistanceToLine(const Point &p);
+    Point getNearestOnLine(const Point &p);
 };
 class Curve : public Figure {
 public:
@@ -197,7 +198,7 @@ public:
     virtual std::string str() const override;
     virtual void visit(FigureVisitor &v) override { v.accept(*this); }
     virtual bool isInsideOrOnBorder(const Point &p) override;
-    virtual double getApproximateDistanceToBorder(const Point &p) override;
+    virtual Point getApproximateNearestPointOnBorder(const Point &p) override;
     std::vector<Point> points;
 };
 
@@ -248,7 +249,7 @@ public:
         return res.str();
     }
     bool isInsideOrOnBorder(const Point &p) override;
-    double getApproximateDistanceToBorder(const Point &) override;
+    Point getApproximateNearestPointOnBorder(const Point &) override;
 };
 class Rectangle : public BoundedFigure {
 public:
@@ -260,7 +261,7 @@ public:
         return res.str();
     }
     bool isInsideOrOnBorder(const Point &p) override;
-    double getApproximateDistanceToBorder(const Point &p) override;
+    Point getApproximateNearestPointOnBorder(const Point &p) override;
 };
 } // namespace figures
 
