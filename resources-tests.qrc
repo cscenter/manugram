@@ -63,5 +63,7 @@
         <file alias="05.track">resources/tests/tracks/mouse/curve/05.track</file>
         <file alias="06.track">resources/tests/tracks/mouse/curve/06.track</file>
         <file alias="07.track">resources/tests/tracks/mouse/curve/07.track</file>
+        <file alias="08.track">resources/tests/tracks/mouse/curve/08.track</file>
+        <file alias="09.track">resources/tests/tracks/mouse/curve/09.track</file>
     </qresource>
 </RCC>
