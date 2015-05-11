@@ -112,14 +112,18 @@ bool cutToClosed(Track &track) {
 
 double fitsToTrack(const Track &track, const PFigure &figure) {
     BoundingBox box = getBoundingBox(track);
-    double maxDistance = std::max(box.width(), box.height()) * 0.1;
-    double failDistance = std::max(box.width(), box.height()) * 0.2;
+    double maxDistanceX = std::max((double)TRACK_FIT_GAP, box.width() * 0.1);
+    double maxDistanceY = std::max((double)TRACK_FIT_GAP, box.height() * 0.1);
+    double failDistanceX = maxDistanceX * 2;
+    double failDistanceY = maxDistanceY * 2;
 
     int goodCount = 0;
     for (Point p : track.points) {
-        double dist = figure->getApproximateDistanceToBorder(p);
-        if (dist > failDistance) { return 0; }
-        goodCount += dist <= maxDistance;
+        Point p2 = figure->getApproximateNearestPointOnBorder(p);
+        double dx = fabs(p.x - p2.x);
+        double dy = fabs(p.y - p2.y);
+        if (dx > failDistanceX || dy > failDistanceY) { return 0; }
+        goodCount += dx <= maxDistanceX && dy <= maxDistanceY;
     }
 
     return goodCount * 1.0 / track.size();
