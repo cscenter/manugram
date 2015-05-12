@@ -22,10 +22,9 @@ Ui::ModelWidget::ModelWidget(QWidget *parent) :
 
 void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
     QPen oldPen = painter.pen();
+    std::vector<double> speeds = calculateRelativeSpeeds(track);
     for (size_t i = 0; i + 1 < track.size(); i++) {
-        double len = (track[i + 1] - track[i]).length();
-        double speed = len / (track[i + 1].time - track[i].time);
-        double k = std::min(510.0, speed * 255);
+        double k = speeds[i] * 510;
         QColor color;
         if (k <= 255) color = QColor(255, k, 0);
         else color = QColor(255 - (k - 255), 255, 0);

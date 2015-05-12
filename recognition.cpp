@@ -3,6 +3,7 @@
 #include <memory>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 
 using std::min;
 using std::max;
@@ -429,4 +430,27 @@ PFigure recognize(const Track &_track, Model &model) {
     auto result = make_shared<Curve>(smoothCurve(points));
     model.addFigure(result);
     return result;
+}
+
+std::vector<double> calculateRelativeSpeeds(const Track &track) {
+    std::vector<double> res;
+    for (size_t i = 0; i + 1 < track.size(); i++) {
+        double len = (track[i + 1] - track[i]).length();
+        double speed = len / (track[i + 1].time - track[i].time);
+        if (std::isinf(speed) || std::isnan(speed)) { speed = INFINITY; }
+        res.push_back(speed);
+    }
+    if (res.empty()) { return res; }
+
+    auto percentiles = res;
+    sort(percentiles.begin(), percentiles.end());
+    double p10 = percentiles[percentiles.size() / 10];
+    double p90 = percentiles[percentiles.size() * 9 / 10];
+    for (auto &x : res) {
+        x = (x - p10) / (p90 - p10);
+        if (std::isinf(x) || std::isnan(x)) { x = 0.5; }
+        x = std::max(x, 0.0);
+        x = std::min(x, 1.0);
+    }
+    return res;
 }
