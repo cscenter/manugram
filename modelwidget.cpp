@@ -26,8 +26,8 @@ void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
     for (size_t i = 0; i + 1 < track.size(); i++) {
         double k = speeds[i] * 510;
         QColor color;
-        if (k <= 255) color = QColor(255, k, 0);
-        else color = QColor(255 - (k - 255), 255, 0);
+        if (k <= 255) color = QColor(255, k, 0, 127);
+        else color = QColor(255 - (k - 255), 255, 0, 127);
         QPen pen = oldPen;
         pen.setColor(color);
         painter.setPen(pen);
