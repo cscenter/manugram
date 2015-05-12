@@ -372,6 +372,17 @@ std::vector<Point> smoothCurve(std::vector<Point> current) {
     return result;
 }
 
+bool hasStopNear(const Track &track, const std::vector<int> &stops, const Point &goal) {
+    const double MAX_STOP_DISTANCE = getClosedFigureGap(track) * 2;
+    for (int id : stops) {
+        Point p = track[id];
+        if ((p - goal).length() <= MAX_STOP_DISTANCE) {
+            return true;
+        }
+    }
+    return false;
+}
+
 PFigure recognize(const Track &_track, Model &model) {
     if (FIGURE_SELECT_GAP < 0 || MIN_CLOSED_FIGURE_GAP < 0) {
         throw std::logic_error("Recognition preset is not selected");
@@ -402,24 +413,26 @@ PFigure recognize(const Track &_track, Model &model) {
     std::vector<PFigure> candidates;
     Track uncuttedTrack = track;
     if (!cutToClosed(track))  {
-        candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
+        std::vector<int> stops = getSpeedBreakpoints(track);
+        if (stops.size() >= 2) {
+            Point start = track[0], end = track[track.size() - 1];
+            bool ok = true;
+            for (Point p : { start, end }) {
+                ok &= hasStopNear(track, stops, p);
+            }
+            if (ok) {
+                candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
+            }
+        }
     } else {
         candidates.push_back(make_shared<Ellipse>(getBoundingBox(track)));
 
         std::vector<int> stops = getSpeedBreakpoints(track);
         // check that there were stops in corners
         BoundingBox rect = getBestFitRectangle(track);
-        const double MAX_STOP_DISTANCE = getClosedFigureGap(track) * 2;
         bool ok = true;
         for (Point corner : { rect.leftUp, rect.rightDown, rect.leftDown(), rect.rightUp() }) {
-            bool found = false;
-            for (int id : stops) {
-                Point p = track[id];
-                if ((p - corner).length() <= MAX_STOP_DISTANCE) {
-                    found = true;
-                }
-            }
-            ok &= found;
+            ok &= hasStopNear(track, stops, corner);
         }
         if (ok) {
             candidates.push_back(make_shared<Rectangle>(rect));
