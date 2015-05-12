@@ -44,6 +44,9 @@ const int ARROW_LENGTH = 12;
 std::vector<std::pair<Point, Point>> generateArrow(const Point &end, const Point &start) {
     std::vector<std::pair<Point, Point>> result;
     Point dir = start - end;
+    if (dir == Point()) {
+        return result;
+    }
     dir = dir * (ARROW_LENGTH / dir.length());
     for (int k : { -1, 1 }) {
         Point branch = dir;
