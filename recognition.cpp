@@ -13,9 +13,9 @@ using std::dynamic_pointer_cast;
 int FIGURE_SELECT_GAP = -1;
 int MIN_CLOSED_FIGURE_GAP = -1;
 const int TRACK_FIT_GAP = 10;
-const int DELETION_MOVE_MINIMAL_LENGTH = 5;
 const int DELETION_MOVE_MAX_ANGLE = 30;
 const int DELETION_MOVE_MIN_COUNT = 3;
+const int DELETION_MAX_TIME = 1000;
 const double SQUARING_MIN_RATIO = 0.8;
 const double MIN_FIT_POINTS_AMOUNT = 0.75;
 
@@ -132,29 +132,28 @@ double fitsToTrack(const Track &track, const PFigure &figure) {
 
 using namespace figures;
 
+double getAngle(Point v1, Point v2) {
+    Point v(Point::dotProduct(v1, v2), Point::crossProduct(v1, v2));
+    if (v == Point()) return NAN;
+    return atan2(v.y, v.x);
+}
+
 bool isDeletionTrack(const Track &track) {
+    std::vector<int> stops = getSpeedBreakpoints(track);
+    if (track.points.back().time > DELETION_MAX_TIME) {
+        return false;
+    }
     int cnt = 0;
-    std::cout << "new\n";
-    for (int i = 0; i < (int)track.size(); i++) {
-        int prevPoint = i - 1;
-        while (prevPoint >= 0 && (track[i] - track[prevPoint]).length() < DELETION_MOVE_MINIMAL_LENGTH) {
-            prevPoint--;
-        }
-        int nextPoint = i + 1;
-        while (nextPoint < (int)track.size() && (track[i] - track[nextPoint]).length() < DELETION_MOVE_MINIMAL_LENGTH) {
-            nextPoint++;
-        }
-        if (prevPoint >= 0 && nextPoint < (int)track.size()) {
-            Point vec1 = track[nextPoint] - track[i];
-            Point vec2 = track[prevPoint] - track[i];
-            double ang = acos(Point::dotProduct(vec1, vec2) / (vec1.length() * vec2.length()));
-            if (ang <= PI * DELETION_MOVE_MAX_ANGLE / 180) {
-                cnt++;
-                i = nextPoint;
-            }
+    for (int i = 1; i + 1 < (int)track.size(); i++) {
+        Point v1 = track[i - 1] - track[i];
+        Point v2 = track[i + 1] - track[i];
+        double ang = fabs(getAngle(v1, v2));
+        if (std::isnan(ang)) continue;
+        ang = std::min(ang, 2 * PI - ang);
+        if (ang < DELETION_MOVE_MAX_ANGLE * PI / 180) {
+            cnt++;
         }
     }
-    std::cout << "deletion cnt = " << cnt << "\n";
     return cnt >= DELETION_MOVE_MIN_COUNT;
 }
 
