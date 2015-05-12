@@ -33,6 +33,13 @@ void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
         painter.setPen(pen);
         painter.drawLine(scaler(track[i]), scaler(track[i + 1]));
     }
+    std::vector<int> stops = getSpeedBreakpoints(track);
+    for (int stop : stops) {
+        QPen pen = oldPen;
+        pen.setColor(QColor(0, 255, 255));
+        painter.setPen(pen);
+        painter.drawEllipse(scaler(track[stop]), scaler.scaleFactor * 10, scaler.scaleFactor * 10);
+    }
     painter.setPen(oldPen);
 }
 

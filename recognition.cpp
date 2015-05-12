@@ -444,13 +444,39 @@ std::vector<double> calculateRelativeSpeeds(const Track &track) {
 
     auto percentiles = res;
     sort(percentiles.begin(), percentiles.end());
-    double p10 = percentiles[percentiles.size() / 10];
     double p90 = percentiles[percentiles.size() * 9 / 10];
     for (auto &x : res) {
-        x = (x - p10) / (p90 - p10);
+        x = x / p90;
         if (std::isinf(x) || std::isnan(x)) { x = 0.5; }
         x = std::max(x, 0.0);
         x = std::min(x, 1.0);
     }
     return res;
+}
+
+std::vector<int> getSpeedBreakpoints(const Track &track) {
+    std::vector<double> speeds = calculateRelativeSpeeds(track);
+    if (speeds.empty()) { return std::vector<int>(); }
+
+    const double SPEED_STOP_THRESHOLD = 0.1;
+    const double STOP_AREA = getClosedFigureGap(track) * 3;
+
+    std::vector<int> stops;
+    for (size_t i = 0; i < speeds.size(); i++) {
+        if (speeds[i] > SPEED_STOP_THRESHOLD) continue;
+
+        Point current = track[i];
+        int left = i, right = i;
+        bool ok = true;
+        while (left  >= 0                  && (track[left ] - current).length() <= STOP_AREA) { ok = ok && speeds[left]  >= speeds[i]; left--;  }
+        while (right <  (int)speeds.size() && (track[right] - current).length() <= STOP_AREA) { ok = ok && speeds[right] >= speeds[i]; right++; }
+        if (ok) {
+            stops.push_back(i);
+            while (i < track.size() && (track[i] - current).length() <= STOP_AREA) {
+                i++;
+            }
+            i--;
+        }
+    }
+    return stops;
 }

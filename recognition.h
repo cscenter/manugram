@@ -15,5 +15,6 @@ int figureSelectGap();
 PFigure recognize(const Track &track, Model &model);
 
 std::vector<double> calculateRelativeSpeeds(const Track &track);
+std::vector<int> getSpeedBreakpoints(const Track &track);
 
 #endif // RECOGNITION_H
