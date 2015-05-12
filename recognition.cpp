@@ -406,7 +406,25 @@ PFigure recognize(const Track &_track, Model &model) {
         candidates.push_back(make_shared<Segment>(track[0], track[track.size() - 1]));
     } else {
         candidates.push_back(make_shared<Ellipse>(getBoundingBox(track)));
-        candidates.push_back(make_shared<Rectangle>(getBestFitRectangle(track)));
+
+        std::vector<int> stops = getSpeedBreakpoints(track);
+        // check that there were stops in corners
+        BoundingBox rect = getBestFitRectangle(track);
+        const double MAX_STOP_DISTANCE = getClosedFigureGap(track) * 2;
+        bool ok = true;
+        for (Point corner : { rect.leftUp, rect.rightDown, rect.leftDown(), rect.rightUp() }) {
+            bool found = false;
+            for (int id : stops) {
+                Point p = track[id];
+                if ((p - corner).length() <= MAX_STOP_DISTANCE) {
+                    found = true;
+                }
+            }
+            ok &= found;
+        }
+        if (ok) {
+            candidates.push_back(make_shared<Rectangle>(rect));
+        }
     }
 
     if (candidates.empty()) { return nullptr; }
@@ -459,7 +477,7 @@ std::vector<int> getSpeedBreakpoints(const Track &track) {
     if (speeds.empty()) { return std::vector<int>(); }
 
     const double SPEED_STOP_THRESHOLD = 0.1;
-    const double STOP_AREA = getClosedFigureGap(track) * 3;
+    const double STOP_AREA = 15;
 
     std::vector<int> stops;
     for (size_t i = 0; i < speeds.size(); i++) {
