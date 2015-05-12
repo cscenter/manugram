@@ -22,7 +22,6 @@
         <file alias="15.track">resources/tests/tracks/mouse/segment/15.track</file>
         <file alias="16.track">resources/tests/tracks/mouse/segment/16.track</file>
         <file alias="17.track">resources/tests/tracks/mouse/segment/17.track</file>
-        <file alias="18.track">resources/tests/tracks/mouse/segment/18.track</file>
     </qresource>
     <qresource prefix="/tests/tracks/mouse/rectangle">
         <file alias="01.track">resources/tests/tracks/mouse/rectangle/01.track</file>
