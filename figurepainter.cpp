@@ -1,6 +1,8 @@
 #include "figurepainter.h"
 #include "textpainter.h"
 
+std::vector<std::pair<Point, Point>> generateArrow(const Point &end, const Point &start);
+
 void FigurePainter::accept(figures::Segment &segm) {
     painter.drawLine(scaler(segm.getA()), scaler(segm.getB()));
     if (segm.getArrowedA()) {
@@ -16,8 +18,20 @@ void FigurePainter::accept(figures::SegmentConnection &segm) {
 }
 
 void FigurePainter::accept(figures::Curve &fig) {
+    fig.selfCheck();
     for (size_t i = 0; i + 1 < fig.points.size(); i++) {
-        painter.drawLine(scaler(fig.points[i]), scaler(fig.points[i + 1]));
+        Point a = fig.points[i], b = fig.points[i + 1];
+        painter.drawLine(scaler(a), scaler(b));
+        if (fig.arrowBegin[i]) {
+            for (auto segm : generateArrow(a, b)) {
+                painter.drawLine(scaler(segm.first), scaler(segm.second));
+            }
+        }
+        if (fig.arrowEnd[i]) {
+            for (auto segm : generateArrow(b, a)) {
+                painter.drawLine(scaler(segm.first), scaler(segm.second));
+            }
+        }
     }
     drawLabel(fig);
 }
@@ -128,7 +142,20 @@ void FigureSvgPainter::accept(figures::Curve &fig) {
     for (Point p : fig.points) {
         out << " " << p.x << "," << p.y;
     }
-    out << "\"/>";
+    out << "\"/>\n";
+    for (size_t i = 0; i < fig.arrowBegin.size(); i++) {
+        std::vector<std::pair<Point, Point>> arrows[] = {
+            generateArrow(fig.points[i], fig.points[i + 1]),
+            generateArrow(fig.points[i + 1], fig.points[i]),
+        };
+        if (!fig.arrowBegin[i]) { arrows[0].clear(); }
+        if (!fig.arrowEnd[i]) { arrows[1].clear(); }
+        for (auto arrow : arrows) if (!arrow.empty()) {
+            for (auto segm : arrow) {
+                out << "  <path d=\"M" << segm.first.x << "," << segm.first.y << " L" << segm.second.x << "," << segm.second.y << "\"/>\n";
+            }
+        }
+    }
     drawLabel(fig);
 }
 

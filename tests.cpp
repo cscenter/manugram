@@ -57,7 +57,12 @@ public:
             for (int i = 0; i < len; i++) {
                 points.push_back(genPoint());
             }
-            figure = make_shared<Curve>(points);
+            auto curve = make_shared<Curve>(points);
+            for (int i = 0; i + 1 < len; i++) {
+                curve->arrowBegin[i] = randint(0, 1);
+                //curve->arrowEnd[i] = randint(0, 1);
+            }
+            figure = curve;
         }   break;
         case 4: {
             auto figA = getRandomBoundedFigure();
@@ -172,6 +177,8 @@ public:
         auto &curve2 = dynamic_cast<const Curve&>(other);
         if (curve1.label() != curve2.label()) { return; }
         _result = curve1.points == curve2.points;
+        _result &= curve1.arrowBegin == curve2.arrowBegin;
+        _result &= curve1.arrowEnd == curve2.arrowEnd;
     }
 
     virtual void accept(figures::Ellipse &fig1) override {

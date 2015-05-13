@@ -192,7 +192,7 @@ protected:
 };
 class Curve : public Figure {
 public:
-    Curve(const std::vector<Point> _points) : points(_points) {}
+    Curve(const std::vector<Point> _points) : points(_points), arrowBegin(std::max(1u, points.size()) - 1), arrowEnd(std::max(1u, points.size()) - 1) {}
     virtual BoundingBox getBoundingBox() const override;
     virtual void translate(const Point &diff) override;
     virtual std::string str() const override;
@@ -200,6 +200,12 @@ public:
     virtual bool isInsideOrOnBorder(const Point &p) override;
     virtual Point getApproximateNearestPointOnBorder(const Point &p) override;
     std::vector<Point> points;
+    std::vector<bool> arrowBegin, arrowEnd;
+
+    void selfCheck() {
+        assert(arrowBegin.size() == arrowEnd.size());
+        assert(std::max(1u, points.size()) - 1 == arrowBegin.size());
+    }
 };
 
 class BoundedFigure : public Figure {

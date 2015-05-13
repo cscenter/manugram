@@ -58,6 +58,25 @@ std::istream &operator>>(std::istream &in, Model &model) {
                 }
             }
             figures.push_back(std::make_shared<figures::Curve>(points));
+        } else if (type == "curveArrowAtBegin" || type == "curveArrowAtEnd") {
+            std::shared_ptr<figures::Curve> figure;
+            if (figures.empty() || !(figure = std::dynamic_pointer_cast<figures::Curve>(figures.back()))) {
+                throw model_format_error("misplaced " + type + ": last figure is not a curve");
+            }
+            size_t id;
+            if (!(in >> id)) {
+                throw model_format_error("unable to read id of arrow position on curve");
+            }
+            if (id >= figure->arrowBegin.size()) {
+                throw model_format_error("invalid id of arrow position on curve");
+            }
+            if (type == "curveArrowAtBegin") {
+                figure->arrowBegin.at(id) = true;
+            } else if (type == "curveArrowAtEnd") {
+                figure->arrowEnd.at(id) = true;
+            } else {
+                assert(false);
+            }
         } else if (type == "rectangle") {
             double x1, y1, x2, y2;
             if (!(in >> x1 >> y1 >> x2 >> y2)) {
@@ -134,6 +153,15 @@ public:
             printPoint(p);
         }
         out << "\n";
+        fig.selfCheck();
+        for (size_t i = 0; i < fig.arrowBegin.size(); i++) {
+            if (fig.arrowBegin[i]) {
+                out << "  curveArrowAtBegin " << i << "\n";
+            }
+            if (fig.arrowEnd[i]) {
+                out << "  curveArrowAtEnd " << i << "\n";
+            }
+        }
         printLabel(fig);
     }
 
@@ -174,6 +202,11 @@ std::ostream &operator<<(std::ostream &out, Model &model) {
     operations += !!model.selectedFigure;
     for (PFigure figure : model) {
         operations += !figure->label().empty();
+
+        if (auto curve = std::dynamic_pointer_cast<figures::Curve>(figure)) {
+            operations += std::count(curve->arrowBegin.begin(), curve->arrowBegin.end(), true);
+            operations += std::count(curve->arrowEnd.begin(), curve->arrowEnd.end(), true);
+        }
     }
     out << operations << '\n';
 
