@@ -17,18 +17,45 @@ void FigurePainter::accept(figures::SegmentConnection &segm) {
     accept(static_cast<figures::Segment &>(segm));
 }
 
+Point getControlPoint(Point a, Point b, Point c) {
+    Point side1 = a - b, side2 = c - b;
+    double needLength = side2.length() * 0.25;
+    side1 = side1 * (1.0 / side1.length());
+    side2 = side2 * (1.0 / side2.length());
+    Point perp = (side1 + side2) * 0.5;
+    perp = perp * (1.0 / perp.length());
+    if (Point::crossProduct(perp, side2) >= 0) {
+        perp.rotateBy(PI / 2);
+    } else {
+        perp.rotateBy(-PI / 2);
+    }
+    return b + perp * needLength;
+}
+
 void FigurePainter::accept(figures::Curve &fig) {
     fig.selfCheck();
     for (size_t i = 0; i + 1 < fig.points.size(); i++) {
         Point a = fig.points[i], b = fig.points[i + 1];
-        painter.drawLine(scaler(a), scaler(b));
+        Point controlA = b, controlB = a;
+        if (i > 0) {
+            controlA = getControlPoint(fig.points[i - 1], a, b);
+        }
+        if (i + 2 < fig.points.size()) {
+            controlB = getControlPoint(fig.points[i + 2], b, a);
+        }
+
+        QPainterPath path;
+        path.moveTo(scaler(a));
+        path.cubicTo(scaler(controlA), scaler(controlB), scaler(b));
+        painter.drawPath(path);
+        //painter.drawLine(scaler(a), scaler(b));
         if (fig.arrowBegin[i]) {
-            for (auto segm : generateArrow(a, b)) {
+            for (auto segm : generateArrow(a, controlA)) {
                 painter.drawLine(scaler(segm.first), scaler(segm.second));
             }
         }
         if (fig.arrowEnd[i]) {
-            for (auto segm : generateArrow(b, a)) {
+            for (auto segm : generateArrow(b, controlB)) {
                 painter.drawLine(scaler(segm.first), scaler(segm.second));
             }
         }
