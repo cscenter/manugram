@@ -145,6 +145,16 @@ void Ui::ModelWidget::redo() {
     update();
 }
 
+void Ui::ModelWidget::modifyModelAndCommit(std::function<void()> action) {
+    previousModels.push_back(commitedModel);
+    redoModels.clear();
+    action();
+    emit canUndoChanged();
+    emit canRedoChanged();
+    update();
+}
+
+
 double roundDownToMultiple(double x, double multiple) {
     return floor(x / multiple) * multiple;
 }
@@ -333,17 +343,14 @@ void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Delete) {
         if (commitedModel.selectedFigure) {
             event->accept();
-            previousModels.push_back(commitedModel);
-            redoModels.clear();
-            for (auto it = commitedModel.begin(); it != commitedModel.end(); it++) {
-                if (*it == commitedModel.selectedFigure) {
-                    commitedModel.removeFigure(it);
-                    break;
+            modifyModelAndCommit([this]() {
+                for (auto it = commitedModel.begin(); it != commitedModel.end(); it++) {
+                    if (*it == commitedModel.selectedFigure) {
+                        commitedModel.removeFigure(it);
+                        break;
+                    }
                 }
-            }
-            emit canUndoChanged();
-            emit canRedoChanged();
-            update();
+            });
         }
     }
 }
@@ -365,14 +372,9 @@ void Ui::ModelWidget::mouseDoubleClickEvent(QMouseEvent *event) {
                                              QString::fromStdString(figure->label()),
                                                       &ok);
     if (ok) {
-        previousModels.push_back(commitedModel);
-        redoModels.clear();
-
-        figure->setLabel(newLabel.toStdString());
-
-        emit canUndoChanged();
-        emit canRedoChanged();
-        update();
+        modifyModelAndCommit([figure, &newLabel]() {
+            figure->setLabel(newLabel.toStdString());
+        });
     }
 }
 

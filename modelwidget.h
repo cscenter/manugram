@@ -72,6 +72,7 @@ private:
     bool _showRecognitionResult;
     bool _storeTracks;
 
+    void modifyModelAndCommit(std::function<void()> action);
     void customContextMenuRequested(const QPoint &pos);
 
 signals:
