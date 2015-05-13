@@ -4,6 +4,7 @@
 #include "figurepainter.h"
 #include "recognition.h"
 #include "layouting.h"
+#include "model_ops.h"
 #include <QPainter>
 #include <QMouseEvent>
 #include <QInputDialog>
@@ -228,19 +229,27 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
 void Ui::ModelWidget::customContextMenuRequested(const QPoint &pos) {
     PFigure figure = findClickedFigure(commitedModel, scaler(pos));
     if (figure) {
-        QMenu contextMenu;
+        std::shared_ptr<figures::Curve> curve = std::dynamic_pointer_cast<figures::Curve>(figure);
+        if (curve) {
+            QMenu contextMenu;
+            QAction verticalSymmetry("Make vertically symmetric", this);
+            connect(&verticalSymmetry, &QAction::triggered, [this, curve]() {
+                modifyModelAndCommit([curve]() {
+                    makeVerticallySymmetric(curve);
+                });
+            });
+            contextMenu.addAction(&verticalSymmetry);
 
-        QAction verticalSymmetry("Make vertically symmetric", this);
-        connect(&verticalSymmetry, &QAction::triggered, [this, figure]() {
-            QMessageBox::information(this, "Context menu action", ("Vertically symmetric\n" + figure->str()).c_str());
-            update();
-        });
-        contextMenu.addAction(&verticalSymmetry);
+            QAction horizontalSymmetry("Make horizontally symmetric", this);
+            connect(&horizontalSymmetry, &QAction::triggered, [this, curve]() {
+                modifyModelAndCommit([curve]() {
+                    makeHorizontallySymmetric(curve);
+                });
+            });
+            contextMenu.addAction(&horizontalSymmetry);
 
-        QAction horizontalSymmetry("Make horizontally symmetric", this);
-        contextMenu.addAction(&horizontalSymmetry);
-
-        contextMenu.exec(mapToGlobal(pos));
+            contextMenu.exec(mapToGlobal(pos));
+        }
     }
 }
 

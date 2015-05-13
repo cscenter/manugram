@@ -23,7 +23,8 @@ SOURCES += \
     model_io.cpp \
     figurepainter.cpp \
     textpainter.cpp \
-    build_info.cpp
+    build_info.cpp \
+    model_ops.cpp
 
 CONFIG(tests) {
     QT += testlib
@@ -42,7 +43,8 @@ HEADERS  += mainwindow.h \
     layouting.h \
     model_io.h \
     textpainter.h \
-    build_info.h
+    build_info.h \
+    model_ops.h
 
 FORMS    += mainwindow.ui
 
