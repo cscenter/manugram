@@ -283,6 +283,27 @@ PFigure recognizeClicks(const Point &click, Model &model) {
         }
         return segm;
     }
+
+    std::shared_ptr<Curve> curve = dynamic_pointer_cast<Curve>(model.selectedFigure);
+    if (curve) {
+        std::pair<double, size_t> nearestSegment(INFINITY, 0);
+        for (size_t i = 0; i < curve->arrowBegin.size(); i++) {
+            Segment s(curve->points[i], curve->points[i + 1]);
+            double currentDistance = s.getApproximateDistanceToBorder(click);
+            nearestSegment = std::min(nearestSegment, std::make_pair(currentDistance, i));
+        }
+        if (nearestSegment.first <= FIGURE_SELECT_GAP) {
+            size_t i = nearestSegment.second;
+            Point a = curve->points[i], b = curve->points[i + 1];
+            if ((click - a).length() <= FIGURE_SELECT_GAP) {
+                curve->arrowBegin[i] = !curve->arrowBegin[i];
+            }
+            if ((click - b).length() <= FIGURE_SELECT_GAP) {
+                curve->arrowEnd[i] = !curve->arrowEnd[i];
+            }
+        }
+        return curve;
+    }
     return nullptr;
 }
 
