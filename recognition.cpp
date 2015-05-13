@@ -404,6 +404,8 @@ bool hasStopNear(const Track &track, const std::vector<int> &stops, const Point 
     return false;
 }
 
+std::vector<int> getSpeedBreakpoints(const Track &track, const double SPEED_STOP_THRESHOLD);
+
 PFigure recognize(const Track &_track, Model &model) {
     if (FIGURE_SELECT_GAP < 0 || MIN_CLOSED_FIGURE_GAP < 0) {
         throw std::logic_error("Recognition preset is not selected");
@@ -477,12 +479,14 @@ PFigure recognize(const Track &_track, Model &model) {
         return candidates[id];
     }
 
-    std::vector<int> stops = getSpeedBreakpoints(uncuttedTrack);
+    // custom speed threshold for stops breakpoints
+    std::vector<int> stops = getSpeedBreakpoints(uncuttedTrack, 0.02);
     stops.insert(stops.begin(), 0);
     stops.push_back(uncuttedTrack.size() - 1);
     stops.erase(unique(stops.begin(), stops.end()), stops.end());
 
     std::vector<Point> points;
+    std::vector<int> curveStops;
     for (size_t i = 0; i + 1 < stops.size(); i++) {
         int a = stops[i], b = stops[i + 1];
         std::vector<Point> currentSegment;
@@ -494,8 +498,12 @@ PFigure recognize(const Track &_track, Model &model) {
 
         // there is no need to add first point on all iterations except the very first
         points.insert(points.end(), currentSegment.begin() + (i > 0), currentSegment.end());
+        curveStops.push_back(points.size() - currentSegment.size());
     }
     auto result = make_shared<Curve>(points);
+    for (int stop : curveStops) {
+        result->isStop.at(stop) = true;
+    }
     model.addFigure(result);
     return result;
 }
@@ -535,11 +543,10 @@ std::vector<double> calculateRelativeSpeeds(const Track &track) {
     return res;
 }
 
-std::vector<int> getSpeedBreakpoints(const Track &track) {
+std::vector<int> getSpeedBreakpoints(const Track &track, const double SPEED_STOP_THRESHOLD) {
     std::vector<double> speeds = calculateRelativeSpeeds(track);
     if (speeds.empty()) { return std::vector<int>(); }
 
-    const double SPEED_STOP_THRESHOLD = 0.07;
     const double STOP_AREA = 15;
 
     std::vector<int> stops;
@@ -560,4 +567,8 @@ std::vector<int> getSpeedBreakpoints(const Track &track) {
         }
     }
     return stops;
+}
+
+std::vector<int> getSpeedBreakpoints(const Track &track) {
+    return getSpeedBreakpoints(track, 0.07); // default for figures
 }

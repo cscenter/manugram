@@ -37,10 +37,10 @@ void FigurePainter::accept(figures::Curve &fig) {
     for (size_t i = 0; i + 1 < fig.points.size(); i++) {
         Point a = fig.points[i], b = fig.points[i + 1];
         Point controlA = b, controlB = a;
-        if (i > 0) {
+        if (i > 0 && !fig.isStop[i]) {
             controlA = getControlPoint(fig.points[i - 1], a, b);
         }
-        if (i + 2 < fig.points.size()) {
+        if (i + 2 < fig.points.size() && !fig.isStop[i + 1]) {
             controlB = getControlPoint(fig.points[i + 2], b, a);
         }
 
