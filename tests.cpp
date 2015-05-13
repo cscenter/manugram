@@ -60,7 +60,7 @@ public:
             auto curve = make_shared<Curve>(points);
             for (int i = 0; i + 1 < len; i++) {
                 curve->arrowBegin[i] = randint(0, 1);
-                //curve->arrowEnd[i] = randint(0, 1);
+                curve->arrowEnd[i] = randint(0, 1);
             }
             figure = curve;
         }   break;
