@@ -483,6 +483,19 @@ PFigure recognize(const Track &_track, Model &model) {
     return result;
 }
 
+PFigure findClickedFigure(const Model &model, const Point &click) {
+    double nearest = INFINITY;
+    PFigure answer;
+    for (PFigure figure : model) {
+        double distance = figure->getApproximateDistanceToBorder(click);
+        if (distance <= FIGURE_SELECT_GAP && distance < nearest) {
+            nearest = distance;
+            answer = figure;
+        }
+    }
+    return answer;
+}
+
 std::vector<double> calculateRelativeSpeeds(const Track &track) {
     std::vector<double> res;
     for (size_t i = 0; i + 1 < track.size(); i++) {

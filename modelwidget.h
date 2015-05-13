@@ -72,6 +72,8 @@ private:
     bool _showRecognitionResult;
     bool _storeTracks;
 
+    void customContextMenuRequested(const QPoint &pos);
+
 signals:
     void canUndoChanged();
     void canRedoChanged();

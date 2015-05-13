@@ -12,12 +12,15 @@
 #include <QGesture>
 #include <QDebug>
 #include <QTimer>
+#include <QMenu>
 #include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
     QWidget(parent), mouseAction(MouseAction::None), _gridStep(0), _showTrack(true), _showRecognitionResult(true), _storeTracks(false) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     grabGesture(Qt::PinchGesture);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QWidget::customContextMenuRequested, this, &Ui::ModelWidget::customContextMenuRequested);
 }
 
 void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
@@ -212,14 +215,34 @@ void Ui::ModelWidget::paintEvent(QPaintEvent *) {
     }
 }
 
+void Ui::ModelWidget::customContextMenuRequested(const QPoint &pos) {
+    PFigure figure = findClickedFigure(commitedModel, scaler(pos));
+    if (figure) {
+        QMenu contextMenu;
+
+        QAction verticalSymmetry("Make vertically symmetric", this);
+        connect(&verticalSymmetry, &QAction::triggered, [this, figure]() {
+            QMessageBox::information(this, "Context menu action", ("Vertically symmetric\n" + figure->str()).c_str());
+            update();
+        });
+        contextMenu.addAction(&verticalSymmetry);
+
+        QAction horizontalSymmetry("Make horizontally symmetric", this);
+        contextMenu.addAction(&horizontalSymmetry);
+
+        contextMenu.exec(mapToGlobal(pos));
+    }
+}
+
 void Ui::ModelWidget::mousePressEvent(QMouseEvent *event) {
     lastTrack = Track();
+
     if (event->modifiers().testFlag(Qt::ShiftModifier) || event->buttons().testFlag(Qt::MiddleButton)) {
         mouseAction = MouseAction::ViewpointMove;
         viewpointMoveStart = event->pos();
         viewpointMoveOldScaler = scaler;
         setCursor(Qt::ClosedHandCursor);
-    } else {
+    } else if (event->buttons().testFlag(Qt::LeftButton)) {
         mouseAction = MouseAction::TrackActive;
         trackTimer.start();
         lastTrack.points.push_back(TrackPoint(scaler(event->pos()), trackTimer.elapsed()));
