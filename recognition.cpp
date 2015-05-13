@@ -477,8 +477,25 @@ PFigure recognize(const Track &_track, Model &model) {
         return candidates[id];
     }
 
-    std::vector<Point> points(uncuttedTrack.points.begin(), uncuttedTrack.points.end());
-    auto result = make_shared<Curve>(smoothCurve(points));
+    std::vector<int> stops = getSpeedBreakpoints(uncuttedTrack);
+    stops.insert(stops.begin(), 0);
+    stops.push_back(uncuttedTrack.size() - 1);
+    stops.erase(unique(stops.begin(), stops.end()), stops.end());
+
+    std::vector<Point> points;
+    for (size_t i = 0; i + 1 < stops.size(); i++) {
+        int a = stops[i], b = stops[i + 1];
+        std::vector<Point> currentSegment;
+        for (int i2 = a; i2 <= b; i2++) {
+            currentSegment.push_back(uncuttedTrack[i2]);
+        }
+        currentSegment = smoothCurve(currentSegment);
+        currentSegment.erase(unique(currentSegment.begin(), currentSegment.end()), currentSegment.end());
+
+        // there is no need to add first point on all iterations except the very first
+        points.insert(points.end(), currentSegment.begin() + (i > 0), currentSegment.end());
+    }
+    auto result = make_shared<Curve>(points);
     model.addFigure(result);
     return result;
 }
