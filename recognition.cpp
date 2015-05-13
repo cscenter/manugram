@@ -522,7 +522,7 @@ std::vector<int> getSpeedBreakpoints(const Track &track) {
     std::vector<double> speeds = calculateRelativeSpeeds(track);
     if (speeds.empty()) { return std::vector<int>(); }
 
-    const double SPEED_STOP_THRESHOLD = 0.1;
+    const double SPEED_STOP_THRESHOLD = 0.07;
     const double STOP_AREA = 15;
 
     std::vector<int> stops;
