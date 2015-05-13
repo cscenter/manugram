@@ -62,6 +62,9 @@ public:
                 curve->arrowBegin[i] = randint(0, 1);
                 curve->arrowEnd[i] = randint(0, 1);
             }
+            for (int i = 0; i < len; i++) {
+                curve->isStop[i] = randint(0, 5) == 0;
+            }
             figure = curve;
         }   break;
         case 4: {
@@ -179,6 +182,7 @@ public:
         _result = curve1.points == curve2.points;
         _result &= curve1.arrowBegin == curve2.arrowBegin;
         _result &= curve1.arrowEnd == curve2.arrowEnd;
+        _result &= curve1.isStop == curve2.isStop;
     }
 
     virtual void accept(figures::Ellipse &fig1) override {

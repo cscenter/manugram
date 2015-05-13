@@ -77,6 +77,19 @@ std::istream &operator>>(std::istream &in, Model &model) {
             } else {
                 assert(false);
             }
+        } else if (type == "curveStop") {
+            std::shared_ptr<figures::Curve> figure;
+            if (figures.empty() || !(figure = std::dynamic_pointer_cast<figures::Curve>(figures.back()))) {
+                throw model_format_error("misplaced curveStop: last figure is not a curve");
+            }
+            size_t id;
+            if (!(in >> id)) {
+                throw model_format_error("unable to read id of arrow position on curve");
+            }
+            if (id >= figure->isStop.size()) {
+                throw model_format_error("invalid id of stop on curve");
+            }
+            figure->isStop[id] = true;
         } else if (type == "rectangle") {
             double x1, y1, x2, y2;
             if (!(in >> x1 >> y1 >> x2 >> y2)) {
@@ -154,6 +167,11 @@ public:
         }
         out << "\n";
         fig.selfCheck();
+        for (size_t i = 0; i < fig.isStop.size(); i++) {
+            if (fig.isStop[i]) {
+                out << "  curveStop " << i << "\n";
+            }
+        }
         for (size_t i = 0; i < fig.arrowBegin.size(); i++) {
             if (fig.arrowBegin[i]) {
                 out << "  curveArrowAtBegin " << i << "\n";
@@ -206,6 +224,7 @@ std::ostream &operator<<(std::ostream &out, Model &model) {
         if (auto curve = std::dynamic_pointer_cast<figures::Curve>(figure)) {
             operations += std::count(curve->arrowBegin.begin(), curve->arrowBegin.end(), true);
             operations += std::count(curve->arrowEnd.begin(), curve->arrowEnd.end(), true);
+            operations += std::count(curve->isStop.begin(), curve->isStop.end(), true);
         }
     }
     out << operations << '\n';
