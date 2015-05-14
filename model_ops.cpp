@@ -39,6 +39,8 @@ void makeHorizontallySymmetric(std::shared_ptr<figures::Curve> curve) {
     while (cnt < points.size() && points[cnt].x <= midX) {
         cnt++;
     }
+    assert(cnt >= 1);
+    assert(cnt < points.size());
 
     Point midPoint;
     bool hasMidPoint = getVerticalIntersection(points.at(cnt - 1), points.at(cnt), midX, midPoint);
