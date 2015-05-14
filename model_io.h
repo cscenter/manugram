@@ -1,7 +1,6 @@
 #ifndef MODEL_IO_H
 #define MODEL_IO_H
 
-#include <iostream>
 #include "model.h"
 #include <QString>
 class io_error : std::runtime_error {

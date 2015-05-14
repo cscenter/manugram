@@ -14,7 +14,6 @@
 #include <QDebug>
 #include <QTimer>
 #include <QMenu>
-#include <iostream>
 
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
     QWidget(parent), mouseAction(MouseAction::None), _gridStep(0), _showTrack(true), _showRecognitionResult(true), _storeTracks(false) {

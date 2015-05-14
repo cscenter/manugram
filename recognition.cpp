@@ -229,7 +229,6 @@ void squareBoundedFigure(PBoundedFigure figure) {
     if (siz1 > siz2) {
         std::swap(siz1, siz2);
     }
-    std::cout << "bounded size=" << siz1 << ";" << siz2 << "; k=" << (siz1 / siz2) << "\n";
     if (siz1 / siz2 < SQUARING_MIN_RATIO) { return; }
 
     double siz = (siz1 + siz2) / 2;
@@ -469,7 +468,6 @@ PFigure recognize(const Track &_track, Model &model) {
         fits.push_back(fitsToTrack(track, figure));
     }
     size_t id = max_element(fits.begin(), fits.end()) - fits.begin();
-    std::cout << "max_fit = " << fits[id] << "; id = " << id << "\n";
     if (fits[id] >= MIN_FIT_POINTS_AMOUNT) { // we allow some of points to fall out of our track
         auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(candidates[id]);
         if (boundedFigure) {
