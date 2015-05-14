@@ -45,6 +45,8 @@ void makeHorizontallySymmetric(std::shared_ptr<figures::Curve> curve) {
     Point midPoint;
     bool hasMidPoint = getVerticalIntersection(points.at(cnt - 1), points.at(cnt), midX, midPoint);
     points.erase(points.begin() + cnt, points.end());
+    curve->isStop.erase(curve->isStop.begin() + cnt, curve->isStop.end());
+
     bool midArrowBegin = curve->arrowBegin.at(cnt - 1);
     bool midArrowEnd = curve->arrowEnd.at(cnt - 1);
 
@@ -55,11 +57,13 @@ void makeHorizontallySymmetric(std::shared_ptr<figures::Curve> curve) {
     if (hasMidPoint) {
         curve->arrowEnd.push_back(midArrowEnd);
         points.push_back(midPoint);
+        curve->isStop.push_back(false);
         curve->arrowBegin.push_back(midArrowEnd);
     }
     curve->arrowEnd.push_back(midArrowBegin);
     for (int i = cnt - 1; i >= 0; i--) {
         points.push_back(Point(2 * midX - points[i].x, points[i].y));
+        curve->isStop.push_back(curve->isStop[i]);
         if (i > 0) {
             curve->arrowBegin.push_back(curve->arrowEnd[i - 1]);
             curve->arrowEnd.push_back(curve->arrowBegin[i - 1]);
