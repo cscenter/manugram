@@ -64,6 +64,11 @@ struct BoundingBox {
         }
     }
 
+    void translate(const Point &diff) {
+        leftUp += diff;
+        rightDown += diff;
+    }
+
     void addPoint(Point p) {
         leftUp.x = std::min(leftUp.x, p.x);
         leftUp.y = std::min(leftUp.y, p.y);
@@ -220,8 +225,7 @@ public:
         box = _box;
     }
     void translate(const Point &diff) override {
-        box.leftUp += diff;
-        box.rightDown += diff;
+        box.translate(diff);
     }
 protected:
     BoundingBox box;
