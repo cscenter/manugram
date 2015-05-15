@@ -250,6 +250,20 @@ void Ui::ModelWidget::customContextMenuRequested(const QPoint &pos) {
 
             contextMenu.exec(mapToGlobal(pos));
         }
+
+        auto bounded = std::dynamic_pointer_cast<figures::BoundedFigure>(figure);
+        if (bounded) {
+            QMenu contextMenu;
+            QAction topBottomTree("Arrange children in a tree", this);
+            connect(&topBottomTree, &QAction::triggered, [this, bounded]() {
+                modifyModelAndCommit([this, bounded]() {
+                    makeTopBottomTree(commitedModel, bounded);
+                });
+            });
+            contextMenu.addAction(&topBottomTree);
+
+            contextMenu.exec(mapToGlobal(pos));
+        }
     }
 }
 
