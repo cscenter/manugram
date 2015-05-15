@@ -1,0 +1,32 @@
+29
+rectangle -157.819 -190.477 -34.2018 -66.86
+  label= 28 very
+странный
+漢語
+ellipse 36 -163 75 -124
+  label= 1 A
+ellipse -7.5 -104.5 23.5 -73.5
+  label= 1 B
+ellipse -9.5 -58 25.5 -23
+ellipse 41 -62 77.5 -25.5
+ellipse 100 -59 133.5 -25.5
+ellipse 75.75 -104.5 89.75 -93.5
+  label= 1 C
+segment_connection 2 3  0 0
+segment_connection 2 7  0 0
+segment_connection 7 5  0 0
+segment_connection 3 4  0 0
+  label= 4 edge
+segment_connection 7 6  0 0
+ellipse 175 -128 220.5 -82.5
+segment_connection 2 13  1 0
+  label= 7 another
+curve 7 -20 -115 -14 -19 112 -7 226 -47 240 -90 228 -141 62 -181
+  curveStop 0
+  curveStop 6
+curve 13 -149 21 -104 21 -104 0 -139 -2 -146 -18 -126 -37 -96 -36.5833 -66 -37 -46 -18 -53 -2 -88 0 -88 21 -43 21
+  curveStop 0
+  curveStop 2
+  curveStop 10
+  curveStop 12
+selected= 16

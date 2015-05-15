@@ -1,0 +1,22 @@
+21
+curve 19 299 140 327 137 336 158 357 158 361 140 377 138 386 110 336 66 338 42 396.5 32.8373 455 42 457 66 407 110 416 138 432 140 436 158 457 158 466 137 494 140
+  curveStop 0
+  curveStop 1
+  curveStop 2
+  curveStop 4
+  curveStop 14
+  curveStop 16
+  curveStop 17
+  curveStop 18
+curve 19 15 140 43 137 52 158 73 158 77 140 93 138 102 110 52 66 54 42 137 29 176 37 180 66 141 93 130 131 160 137 171 162 185 163 187 142 210 135
+  curveStop 0
+  curveStop 1
+  curveStop 2
+  curveStop 4
+  curveStop 17
+  curveStop 18
+segment 210 90 300 90 0 1
+rectangle 60 180 180 210
+  label= 4 ДО
+rectangle 336 180 456 210
+  label= 10 ПОСЛЕ

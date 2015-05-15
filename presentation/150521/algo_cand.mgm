@@ -1,0 +1,26 @@
+23
+rectangle 120 150 270 210
+  label= 57 Остановки около
+начала и конца?
+rectangle 270 90 420 120
+  label= 32 Замкнутая фигура?
+segment_connection 2 1  0 1
+  label= 6 Нет
+rectangle 150 240 240 270
+  label= 15 Отрезок?
+segment_connection 1 4  0 1
+  label= 4 Да
+rectangle 450 150 540 180
+  label= 13 Эллипс?
+rectangle 300 150 420 210
+  label= 51 Остановки пера 
+возле углов?
+segment_connection 2 7  0 1
+  label= 4 Да
+segment_connection 2 6  0 1
+  label= 4 Да
+rectangle 300 240 420 270
+  label= 27 Прямоугольник?
+segment_connection 7 10  0 1
+  label= 4 Да
+selected= 11
