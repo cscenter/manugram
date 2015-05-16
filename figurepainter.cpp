@@ -18,6 +18,9 @@ void FigurePainter::accept(figures::SegmentConnection &segm) {
 }
 
 Point getControlPoint(Point a, Point b, Point c) {
+    if (a == b) {
+        return c;
+    }
     Point side1 = a - b, side2 = c - b;
     double needLength = side2.length() * 0.25;
     side1 = side1 * (1.0 / side1.length());
@@ -36,6 +39,9 @@ void FigurePainter::accept(figures::Curve &fig) {
     fig.selfCheck();
     for (size_t i = 0; i + 1 < fig.points.size(); i++) {
         Point a = fig.points[i], b = fig.points[i + 1];
+        if (a == b) {
+            continue;
+        }
         Point controlA = b, controlB = a;
         if (i > 0 && !fig.isStop[i]) {
             controlA = getControlPoint(fig.points[i - 1], a, b);
