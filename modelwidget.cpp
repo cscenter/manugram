@@ -21,6 +21,9 @@ Ui::ModelWidget::ModelWidget(QWidget *parent) :
     grabGesture(Qt::PinchGesture);
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QWidget::customContextMenuRequested, this, &Ui::ModelWidget::customContextMenuRequested);
+#if DISABLE_SHOW_RECOGNITION_RESULT == 1
+    setShowRecognitionResult(false);
+#endif
 }
 
 void drawTrack(QPainter &painter, Scaler &scaler, const Track &track) {
@@ -288,6 +291,15 @@ void Ui::ModelWidget::mouseMoveEvent(QMouseEvent *event) {
         update();
     } else if (mouseAction == MouseAction::TrackActive) {
         lastTrack.points.push_back(TrackPoint(scaler(event->pos()), trackTimer.elapsed()));
+        #if ENABLE_FAST_REDRAW == 1
+        if (showTrack() && !showRecognitionResult()) {
+            QPoint a = scaler(lastTrack[lastTrack.size() - 2]).toPoint();
+            QPoint b = event->pos();
+            QRect r = QRect(a, a).united(QRect(b, b));
+            r.adjust(-2, -2, +2, +2);
+            update(r);
+        } else
+        #endif
         if (showTrack() || showRecognitionResult()) {
             update();
         }
