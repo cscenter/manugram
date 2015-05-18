@@ -26,6 +26,9 @@ Point getControlPoint(Point a, Point b, Point c) {
     side1 = side1 * (1.0 / side1.length());
     side2 = side2 * (1.0 / side2.length());
     Point perp = (side1 + side2) * 0.5;
+    if (perp == Point()) {
+        return b + side2 * needLength;
+    }
     perp = perp * (1.0 / perp.length());
     if (Point::crossProduct(perp, side2) >= 0) {
         perp.rotateBy(PI / 2);
