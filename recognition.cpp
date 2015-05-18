@@ -237,13 +237,13 @@ void squareBoundedFigure(PBoundedFigure figure) {
 }
 
 struct SelectionFit {
-    bool isSegment;
+    bool isArrowable;
     double distance;
     PFigure figure;
 
-    SelectionFit() : isSegment(false), distance(HUGE_VAL), figure(nullptr) {}
+    SelectionFit() : isArrowable(false), distance(HUGE_VAL), figure(nullptr) {}
     bool operator<(const SelectionFit &other) const {
-        if (isSegment != other.isSegment) { return isSegment > other.isSegment; }
+        if (isArrowable != other.isArrowable) { return isArrowable > other.isArrowable; }
         return distance < other.distance;
     }
 };
@@ -251,7 +251,7 @@ PFigure recognizeClicks(const Point &click, Model &model) {
     SelectionFit bestFit;
     for (PFigure figure : model) {
         SelectionFit currentFit;
-        currentFit.isSegment = !!dynamic_pointer_cast<Segment>(figure);
+        currentFit.isArrowable = !!dynamic_pointer_cast<Segment>(figure) || !!dynamic_pointer_cast<Curve>(figure);
         currentFit.distance = figure->getApproximateDistanceToBorder(click);
         currentFit.figure = figure;
         if (currentFit.distance >= FIGURE_SELECT_GAP) { continue; }
