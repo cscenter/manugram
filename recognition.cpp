@@ -111,7 +111,8 @@ bool cutToClosed(Track &track) {
     return result;
 }
 
-double fitsToTrack(const Track &track, const PFigure &figure) {
+// (amount of point fitted, -(average error))
+std::pair<double, double> fitsToTrack(const Track &track, const PFigure &figure) {
     BoundingBox box = getBoundingBox(track);
     double maxDistanceX = std::max((double)TRACK_FIT_GAP, box.width() * 0.1);
     double maxDistanceY = std::max((double)TRACK_FIT_GAP, box.height() * 0.1);
@@ -119,15 +120,23 @@ double fitsToTrack(const Track &track, const PFigure &figure) {
     double failDistanceY = maxDistanceY * 2;
 
     int goodCount = 0;
+    double averageError = 0;
     for (Point p : track.points) {
         Point p2 = figure->getApproximateNearestPointOnBorder(p);
         double dx = fabs(p.x - p2.x);
         double dy = fabs(p.y - p2.y);
-        if (dx > failDistanceX || dy > failDistanceY) { return 0; }
+        if (dx > failDistanceX || dy > failDistanceY) { return std::make_pair(0, 0); }
         goodCount += dx <= maxDistanceX && dy <= maxDistanceY;
-    }
 
-    return goodCount * 1.0 / track.size();
+        dx /= maxDistanceX;
+        dy /= maxDistanceY;
+        double error = dx * dx + dy * dy;
+        averageError += error;
+    }
+    averageError /= track.size();
+    averageError = sqrt(averageError);
+
+    return std::make_pair(goodCount * 1.0 / track.size(), -averageError);
 }
 
 using namespace figures;
@@ -452,7 +461,7 @@ PFigure recognize(const Track &_track, Model &model) {
         std::vector<int> stops = getSpeedBreakpoints(track);
         // check that there were stops in corners
         BoundingBox rect = getBestFitRectangle(track);
-        bool ok = true;
+        bool ok = stops.size() >= 4;
         for (Point corner : { rect.leftUp, rect.rightDown, rect.leftDown(), rect.rightUp() }) {
             ok &= hasStopNear(track, stops, corner);
         }
@@ -463,12 +472,12 @@ PFigure recognize(const Track &_track, Model &model) {
 
     if (candidates.empty()) { return nullptr; }
 
-    std::vector<double> fits;
+    std::vector<std::pair<double, double> > fits;
     for (PFigure figure : candidates) {
         fits.push_back(fitsToTrack(track, figure));
     }
     size_t id = max_element(fits.begin(), fits.end()) - fits.begin();
-    if (fits[id] >= MIN_FIT_POINTS_AMOUNT) { // we allow some of points to fall out of our track
+    if (fits[id].first >= MIN_FIT_POINTS_AMOUNT) { // we allow some of points to fall out of our track
         auto boundedFigure = dynamic_pointer_cast<BoundedFigure>(candidates[id]);
         if (boundedFigure) {
             squareBoundedFigure(boundedFigure);
