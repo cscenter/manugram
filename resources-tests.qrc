@@ -36,6 +36,8 @@
         <file alias="10.track">resources/tests/tracks/mouse/rectangle/10.track</file>
         <file alias="11.track">resources/tests/tracks/mouse/rectangle/11.track</file>
         <file alias="12.track">resources/tests/tracks/mouse/rectangle/12.track</file>
+        <file alias="13.track">resources/tests/tracks/mouse/rectangle/13.track</file>
+        <file alias="14.track">resources/tests/tracks/mouse/rectangle/14.track</file>
     </qresource>
     <qresource prefix="/tests/tracks/mouse/ellipse">
         <file alias="01.track">resources/tests/tracks/mouse/ellipse/01.track</file>
@@ -52,6 +54,9 @@
         <file alias="12.track">resources/tests/tracks/mouse/ellipse/12.track</file>
         <file alias="13.track">resources/tests/tracks/mouse/ellipse/13.track</file>
         <file alias="14.track">resources/tests/tracks/mouse/ellipse/14.track</file>
+        <file alias="15.track">resources/tests/tracks/mouse/ellipse/15.track</file>
+        <file alias="16.track">resources/tests/tracks/mouse/ellipse/16.track</file>
+        <file alias="17.track">resources/tests/tracks/mouse/ellipse/17.track</file>
     </qresource>
     <qresource prefix="/tests/tracks/mouse/curve">
         <file alias="01.track">resources/tests/tracks/mouse/curve/01.track</file>
