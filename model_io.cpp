@@ -247,16 +247,7 @@ std::ostream &operator<<(std::ostream &out, Model &model) {
     return out;
 }
 
-void exportModelToSvg(Model &m, std::ostream &out) {
-    FigureSvgPainter painter(out);
-    painter.printHeader();
-    for (PFigure figure : m) {
-        figure->visit(painter);
-    }
-    painter.printFooter();
-}
-
-void exportModelToImageFile(Model &model, const QString &filename) {
+BoundingBox getImageBox(Model &model) {
     BoundingBox imageBox;
     for (const PFigure &fig : model) {
         BoundingBox box = fig->getBoundingBox();
@@ -286,6 +277,20 @@ void exportModelToImageFile(Model &model, const QString &filename) {
         imageBox.rightDown.x += gap;
         imageBox.rightDown.y += gap;
     }
+    return imageBox;
+}
+
+void exportModelToSvg(Model &m, std::ostream &out) {
+    FigureSvgPainter painter(out);
+    painter.printHeader();
+    for (PFigure figure : m) {
+        figure->visit(painter);
+    }
+    painter.printFooter();
+}
+
+void exportModelToImageFile(Model &model, const QString &filename) {
+    BoundingBox imageBox = getImageBox(model);
 
     QImage img(imageBox.width(), imageBox.height(), QImage::Format_ARGB32);
     QPainter painter(&img);
