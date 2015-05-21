@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QShortcut>
 #include <QScreen>
+#include <QClipboard>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     for (int i = 1; i < QApplication::arguments().size(); i++) {
         openFile(QApplication::arguments()[i]);
     }
+    connect(QApplication::clipboard(), &QClipboard::changed, this, &MainWindow::clipboard_changed);
 }
 
 MainWindow::~MainWindow() {
@@ -58,6 +60,9 @@ void MainWindow::setModelWidget(Ui::ModelWidget *newWidget) {
     });
     connect(modelWidget, &Ui::ModelWidget::scaleFactorChanged, [this]() {
         ui->actionZoomOut->setEnabled(modelWidget->scaleFactor() > SCALE_FACTOR_STEP + 1e-8);
+    });
+    connect(modelWidget, &Ui::ModelWidget::canGetSelectedMimeDataChanged, [this]() {
+        ui->actionCopy->setEnabled(modelWidget->canGetSelectedMimeData());
     });
     modelWidget->setGridStep(ui->actionShowGrid->isChecked() ? defaultGridStep : 0);
     modelWidget->setStoreTracks(ui->actionStoreTracks->isChecked());
@@ -224,4 +229,21 @@ void MainWindow::on_actionAbout_triggered() {
 
 void MainWindow::on_actionStoreTracks_triggered() {
     modelWidget->setStoreTracks(ui->actionStoreTracks->isChecked());
+}
+
+void MainWindow::on_actionCopy_triggered() {
+    QMimeData *data = modelWidget->selectedMimeData();
+    if (data) {
+        QApplication::clipboard()->setMimeData(data);
+    }
+}
+
+void MainWindow::on_actionPaste_triggered() {
+    const QMimeData *data = QApplication::clipboard()->mimeData();
+    modelWidget->pasteMimeData(data);
+}
+
+void MainWindow::clipboard_changed() {
+    const QMimeData *data = QApplication::clipboard()->mimeData();
+    ui->actionPaste->setEnabled(modelWidget->canPasteMimeData(data));
 }

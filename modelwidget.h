@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QElapsedTimer>
+#include <QMimeData>
 #include <list>
 #include "model.h"
 #include "figurepainter.h"
@@ -36,6 +37,11 @@ public:
 
     bool storeTracks();
     void setStoreTracks(bool newStoreTracks);
+
+    bool canGetSelectedMimeData();
+    QMimeData *selectedMimeData();
+    bool canPasteMimeData(const QMimeData *mimeData);
+    void pasteMimeData(const QMimeData *mimeData);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -79,6 +85,7 @@ signals:
     void canUndoChanged();
     void canRedoChanged();
     void scaleFactorChanged();
+    void canGetSelectedMimeDataChanged();
 
 public slots:
 };

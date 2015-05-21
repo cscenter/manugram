@@ -43,6 +43,10 @@ private slots:
     void on_actionExit_triggered();
     void on_actionAbout_triggered();
     void on_actionStoreTracks_triggered();
+    void on_actionCopy_triggered();
+    void on_actionPaste_triggered();
+
+    void clipboard_changed();
 };
 
 #endif // MAINWINDOW_H

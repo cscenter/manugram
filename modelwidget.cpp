@@ -15,6 +15,8 @@
 #include <QTimer>
 #include <QMenu>
 
+const char *MIME_TYPE_MODEL = "application/x-manugram-model";
+
 Ui::ModelWidget::ModelWidget(QWidget *parent) :
     QWidget(parent), mouseAction(MouseAction::None), _gridStep(0), _showTrack(true), _showRecognitionResult(true), _storeTracks(false) {
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
@@ -102,6 +104,7 @@ void Ui::ModelWidget::setModel(Model model) {
     redoModels.clear();
     emit canUndoChanged();
     emit canRedoChanged();
+    emit canGetSelectedMimeDataChanged();
     extraTracks = std::vector<Track>();
 }
 Model &Ui::ModelWidget::getModel() {
@@ -127,6 +130,7 @@ void Ui::ModelWidget::undo() {
         emit canUndoChanged();
     }
     emit canRedoChanged();
+    emit canGetSelectedMimeDataChanged();
     update();
 }
 
@@ -145,7 +149,56 @@ void Ui::ModelWidget::redo() {
         emit canRedoChanged();
     }
     emit canUndoChanged();
+    emit canGetSelectedMimeDataChanged();
     update();
+}
+
+bool Ui::ModelWidget::canGetSelectedMimeData() {
+    PFigure selection = commitedModel.selectedFigure;
+    if (!selection) {
+        return false;
+    }
+    if (std::dynamic_pointer_cast<figures::SegmentConnection>(selection)) {
+        return false;
+    }
+    return true;
+}
+
+QMimeData *Ui::ModelWidget::selectedMimeData() {
+    if (!canGetSelectedMimeData()) {
+        return nullptr;
+    }
+    PFigure selection = commitedModel.selectedFigure;
+    Model toCopy;
+    toCopy.addFigure(selection);
+    std::stringstream stream;
+    stream << toCopy;
+    std::string data = stream.str();
+
+    QMimeData *mimeData = new QMimeData;
+    mimeData->setData(MIME_TYPE_MODEL, QByteArray::fromStdString(data));
+    return mimeData;
+}
+
+bool Ui::ModelWidget::canPasteMimeData(const QMimeData *mimeData) {
+    return mimeData->hasFormat(MIME_TYPE_MODEL);
+}
+
+void Ui::ModelWidget::pasteMimeData(const QMimeData *mimeData) {
+    assert(canPasteMimeData(mimeData));
+    std::stringstream stream;
+    stream << mimeData->data(MIME_TYPE_MODEL).toStdString();
+
+    Model copiedModel;
+    stream >> copiedModel;
+    assert(copiedModel.size() == 1);
+
+    PFigure figure = *copiedModel.begin();
+    figure->translate(Point(20, 20));
+    modifyModelAndCommit([figure, this]() {
+        commitedModel.addFigure(figure);
+        commitedModel.selectedFigure = figure;
+    });
 }
 
 void Ui::ModelWidget::modifyModelAndCommit(std::function<void()> action) {
@@ -154,6 +207,7 @@ void Ui::ModelWidget::modifyModelAndCommit(std::function<void()> action) {
     action();
     emit canUndoChanged();
     emit canRedoChanged();
+    emit canGetSelectedMimeDataChanged();
     update();
 }
 
@@ -364,6 +418,7 @@ void Ui::ModelWidget::mouseReleaseEvent(QMouseEvent *event) {
         emit canUndoChanged();
         emit canRedoChanged();
     }
+    emit canGetSelectedMimeDataChanged();
     update();
 }
 void Ui::ModelWidget::keyReleaseEvent(QKeyEvent *event) {
