@@ -142,9 +142,9 @@ void Ui::ModelWidget::redo() {
     commitedModel = std::move(redoModels.front());
     redoModels.pop_front();
     if (!canRedo()) {
-        canRedoChanged();
+        emit canRedoChanged();
     }
-    canUndoChanged();
+    emit canUndoChanged();
     update();
 }
 
