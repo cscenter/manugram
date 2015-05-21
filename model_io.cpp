@@ -282,7 +282,7 @@ BoundingBox getImageBox(Model &model) {
 
 void exportModelToSvg(Model &m, std::ostream &out) {
     FigureSvgPainter painter(out);
-    painter.printHeader();
+    painter.printHeader(getImageBox(m));
     for (PFigure figure : m) {
         figure->visit(painter);
     }

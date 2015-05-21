@@ -62,7 +62,7 @@ class FigureSvgPainter : public FigureVisitor {
 public:
     FigureSvgPainter(std::ostream &out) : out(out) {}
 
-    void printHeader();
+    void printHeader(BoundingBox viewport);
     void printFooter();
 
     virtual void accept(figures::Segment &segm) override;

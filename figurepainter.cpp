@@ -125,12 +125,16 @@ void FigurePainter::drawLabel(Figure &figure) {
     painter.restore();
 }
 
-void FigureSvgPainter::printHeader() {
+void FigureSvgPainter::printHeader(BoundingBox viewport) {
     QFile resource(":/svg-data/header.svg");
     resource.open(QIODevice::ReadOnly);
     QString header = resource.readAll();
     header.replace("{{markerSize}}", QString::number(2 * ARROW_LENGTH));
     header.replace("{{markerCenter}}", QString::number(ARROW_LENGTH));
+    header.replace("{{viewboxLeft}}", QString::number(viewport.leftUp.x));
+    header.replace("{{viewboxTop}}", QString::number(viewport.leftUp.y));
+    header.replace("{{viewboxWidth}}", QString::number(viewport.width()));
+    header.replace("{{viewboxHeight}}", QString::number(viewport.height()));
 
     for (int id = 0; id < 2; id++) {
         QString path = "";
