@@ -75,7 +75,7 @@ void MainWindow::on_actionOpen_triggered() {
     QString filename = QFileDialog::getOpenFileName(
                            this,
                            "Select file with a model",
-                           QDir::currentPath(),
+                           "",
                            "Models (*.mgm);;Tracks (*.track)"
                        );
     if (filename == "") {
@@ -160,7 +160,7 @@ void MainWindow::on_actionSaveAs_triggered() {
     QString filename = QFileDialog::getSaveFileName(
                            this,
                            "Select file to save in",
-                           QDir::currentPath(),
+                           "",
                            "Models (*.mgm);;SVG (*.svg);;PNG (*.png);;LaTeX using TikZ (*.tex)",
                            &selectedFilter
                        );
