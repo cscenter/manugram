@@ -76,4 +76,22 @@ private:
     void drawLabel(Figure &figure);
 };
 
+class FigureTikzPainter : public FigureVisitor {
+public:
+    FigureTikzPainter(std::ostream &out) : out(out) {}
+
+    void printHeader(BoundingBox viewport);
+    void printFooter();
+
+    virtual void accept(figures::Segment &segm) override;
+    virtual void accept(figures::SegmentConnection &segm) override;
+    virtual void accept(figures::Curve &fig) override;
+    virtual void accept(figures::Ellipse &fig) override;
+    virtual void accept(figures::Rectangle &fig) override;
+
+private:
+    std::ostream &out;
+    void drawLabel(Figure &figure);
+};
+
 #endif // FIGURESPAINTER_H

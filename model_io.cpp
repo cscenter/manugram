@@ -289,6 +289,15 @@ void exportModelToSvg(Model &m, std::ostream &out) {
     painter.printFooter();
 }
 
+void exportModelToTikz(Model &m, std::ostream &out) {
+    FigureTikzPainter painter(out);
+    painter.printHeader(getImageBox(m));
+    for (PFigure figure : m) {
+        figure->visit(painter);
+    }
+    painter.printFooter();
+}
+
 void exportModelToImageFile(Model &model, const QString &filename) {
     BoundingBox imageBox = getImageBox(model);
 

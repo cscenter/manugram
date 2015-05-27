@@ -161,7 +161,7 @@ void MainWindow::on_actionSaveAs_triggered() {
                            this,
                            "Select file to save in",
                            QDir::currentPath(),
-                           "Models (*.mgm);;SVG (*.svg);;PNG (*.png)",
+                           "Models (*.mgm);;SVG (*.svg);;PNG (*.png);;LaTeX using TikZ (*.tex)",
                            &selectedFilter
                        );
     if (filename == "") {
@@ -173,6 +173,10 @@ void MainWindow::on_actionSaveAs_triggered() {
         if (filename.toLower().endsWith(".svg")) {
             std::stringstream data;
             exportModelToSvg(model, data);
+            saveDataToFile(data.str(), filename);
+        } else if (filename.toLower().endsWith(".tex")) {
+            std::stringstream data;
+            exportModelToTikz(model, data);
             saveDataToFile(data.str(), filename);
         } else if (filename.toLower().endsWith(".png")) {
             exportModelToImageFile(model, filename);

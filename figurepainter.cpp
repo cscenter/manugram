@@ -1,6 +1,8 @@
 #include "figurepainter.h"
 #include "textpainter.h"
 
+// ==================== STANDARD ====================
+
 std::vector<std::pair<Point, Point>> generateArrow(const Point &end, const Point &start);
 
 void FigurePainter::accept(figures::Segment &segm) {
@@ -124,6 +126,8 @@ void FigurePainter::drawLabel(Figure &figure) {
     painter.drawText(rect, Qt::AlignLeft | Qt::AlignTop, QString::fromStdString(label));
     painter.restore();
 }
+
+// ==================== SVG ====================
 
 void FigureSvgPainter::printHeader(BoundingBox viewport) {
     QFile resource(":/svg-data/header.svg");
@@ -252,4 +256,89 @@ void FigureSvgPainter::drawLabel(Figure &figure) {
         }
     }
     out << "</text>";
+}
+
+// ==================== TIKZ ====================
+
+void FigureTikzPainter::printHeader(BoundingBox) {
+    out << "\\begin{tikzpicture}[yscale=-1,x=0.1em,y=0.1em,line width=0.1em]\n";
+
+}
+void FigureTikzPainter::printFooter() {
+    out << "\\end{tikzpicture}\n";
+}
+
+void FigureTikzPainter::accept(figures::Segment &segm) {
+    Point a = segm.getA();
+    Point b = segm.getB();
+    out << "\\draw ";
+    if (segm.getArrowedA() || segm.getArrowedB()) {
+        out << "[";
+        if (segm.getArrowedA()) { out << "<"; }
+        out << "-";
+        if (segm.getArrowedB()) { out << ">"; }
+        out << "] ";
+    }
+    out << "(" << a.x << "," << a.y << ") -- (" << b.x << "," << b.y << ");\n";
+    drawLabel(segm);
+}
+void FigureTikzPainter::accept(figures::SegmentConnection &segm) {
+    accept((figures::Segment &)segm);
+}
+
+void FigureTikzPainter::accept(figures::Curve &fig) {
+    if (fig.points.empty()) { return; }
+    out << "% polyline start\n";
+    for (size_t i = 0; i + 1 < fig.points.size(); i++) {
+        figures::Segment s(fig.points[i], fig.points[i + 1]);
+        s.setArrowedA(fig.arrowBegin[i]);
+        s.setArrowedB(fig.arrowEnd[i]);
+        accept(s);
+    }
+    out << "% polyline end\n";
+    drawLabel(fig);
+}
+
+void FigureTikzPainter::accept(figures::Ellipse &fig) {
+    BoundingBox box = fig.getBoundingBox();
+    out << "\\draw (" << box.center().x << "," << box.center().y << ") circle ";
+    if (fabs(box.width() - box.height()) < 1e-8) {
+        out << "[radius=" << box.width() / 2 << "];\n";
+    } else {
+        out << "[x radius=" << box.width() / 2 << ", y radius=" << box.height() / 2 << "];\n";
+    }
+    drawLabel(fig);
+}
+
+void FigureTikzPainter::accept(figures::Rectangle &fig) {
+    BoundingBox box = fig.getBoundingBox();
+    out << "\\draw (" << box.leftUp.x << "," << box.leftUp.y << ") rectangle (" << box.rightDown.x << "," << box.rightDown.y << ");\n";
+    drawLabel(fig);
+}
+
+void FigureTikzPainter::drawLabel(Figure &figure) {
+    const std::string &label = figure.label();
+    if (label.empty()) { return; }
+
+    TextPosition position = getTextPosition(figure);
+    Point offset(position.width / 2, position.height);
+    offset.rotateBy(position.rotation * PI / 180);
+
+    Point leftCenter = position.leftUp + offset;
+
+    out << "\\node[align=left,above";
+    if (fabs(position.rotation) > 1e-6) {
+        out << ",rotate=" << -position.rotation;
+    }
+    out << "]";
+    out << " at (" << leftCenter.x << "," << leftCenter.y << ")";
+    out << " {\n";
+    std::vector<std::string> lines = getLines(label);
+    for (size_t i = 0; i < lines.size(); i++) {
+        out << lines[i];
+        if (i + 1 < lines.size()) {
+            out << "\\\\\n";
+        }
+    }
+    out << "};\n";
 }
